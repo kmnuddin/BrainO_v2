@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import getpass
 from collections.abc import Mapping
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from braino.context import RunContext
@@ -47,7 +47,7 @@ def decide(
     record = context.proposals.get(proposal_id)
     if record.status != "pending":
         raise ProposalAlreadyDecidedError(f"proposal {proposal_id} is already {record.status}")
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     if not approve:
         decision = Decision(approved=False, decided_by=decided_by, decided_at=now, note=note)

@@ -10,8 +10,12 @@ AI analysis agent. It can be used on its own from Python or the command line.
 ```bash
 cd engine
 python -m venv .venv && source .venv/bin/activate   # or: uv venv && source .venv/bin/activate
-pip install -e ".[dev]"
+pip install -e ".[dev,eeg]"
 ```
+
+Python 3.11 or newer is required. The `eeg` extra installs the scientific stack (MNE-Python,
+MNE-BIDS, NumPy and extra file readers); without it, the core (tools, provenance, CLI) still
+works.
 
 ## Command line
 
@@ -123,6 +127,18 @@ def detect_bad_channels(params: DetectInput, ctx: RunContext) -> BadChannels:
 
 The AI agent can run decision tools, which only creates proposals; approving is never one of its
 tools.
+
+## Test data
+
+Tests that need real recordings download small public sample files (one recording per supported
+format, about 33 MB in total) from MNE-Python's test data repository, check their SHA-256
+hashes, and cache them. They are marked `network`.
+
+- Cache folder: the OS cache folder, or `BRAINO_TEST_DATA=/some/path`.
+- Offline: `BRAINO_SKIP_NETWORK=1 pytest` skips the download tests.
+- In tests: `sample_data.fetch_recording("brainvision")` returns the path to open, and the
+  `synthetic_raw` fixture gives a small deterministic MNE recording that needs no download.
+- Adding a file: see the docstring of [`tests/sample_data.py`](tests/sample_data.py).
 
 ## Checks
 

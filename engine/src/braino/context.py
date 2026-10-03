@@ -13,7 +13,7 @@ from __future__ import annotations
 import json
 import secrets
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from braino import __version__
@@ -34,7 +34,7 @@ class NoDatasetError(RuntimeError):
 
 def new_run_id() -> str:
     """A sortable, unique run ID such as ``20261003T142501Z-3fa9c2``."""
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     return f"{stamp}-{secrets.token_hex(3)}"
 
 

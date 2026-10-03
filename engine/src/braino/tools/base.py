@@ -19,8 +19,8 @@ import inspect
 import re
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 from typing import Any, TypeVar, get_type_hints
 
 from pydantic import BaseModel, Field
@@ -43,7 +43,7 @@ DECISION_NOTE = (
 )
 
 
-class Risk(str, Enum):
+class Risk(StrEnum):
     """How much a tool can change an analysis.
 
     ``DECISION`` tools change which data or which statistical model the results rest on, so
@@ -122,7 +122,7 @@ class Tool:
             proposal_id=call.proposal_id,
             tool=self.name,
             run_id=context.run_id,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
             arguments=params.model_dump(mode="json"),
             proposal=result.model_dump(mode="json"),
         )
