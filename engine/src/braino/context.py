@@ -17,6 +17,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from braino import __version__
+from braino.provenance.recorder import ProvenanceRecorder
+from braino.provenance.store import RUNS_DIR
 
 DERIVATIVES_NAME = "braino"
 """Folder name of BrainO's outputs under ``<dataset>/derivatives/``."""
@@ -44,13 +46,33 @@ class RunContext:
 
     run_id: str = field(default_factory=new_run_id)
 
+    provenance: ProvenanceRecorder = field(init=False, repr=False, compare=False)
+    """Records every tool call of the run; written under ``runs/<run_id>/`` if there is a
+    dataset."""
+
     def __post_init__(self) -> None:
-        if self.dataset_root is None:
-            return
-        root = Path(self.dataset_root).expanduser().resolve()
-        if not root.is_dir():
-            raise NotADirectoryError(f"dataset root {root} is not a directory")
-        object.__setattr__(self, "dataset_root", root)
+        if self.dataset_root is not None:
+            root = Path(self.dataset_root).expanduser().resolve()
+            if not root.is_dir():
+                raise NotADirectoryError(f"dataset root {root} is not a directory")
+            object.__setattr__(self, "dataset_root", root)
+        recorder = ProvenanceRecorder(
+            run_id=self.run_id,
+            dataset_root=self.dataset_root,
+            run_dir=(lambda: self.output_dir(RUNS_DIR, self.run_id)) if self.dataset_root else None,
+        )
+        object.__setattr__(self, "provenance", recorder)
+
+    def record_input(self, path: Path) -> Path:
+        """Record (and hash) a file the running tool reads. Returns ``path``."""
+        self.provenance.record_input(path)
+        return path
+
+    def record_output(self, path: Path) -> Path:
+        """Declare a file the running tool writes; it is hashed when the tool finishes.
+        Returns ``path``."""
+        self.provenance.record_output(path)
+        return path
 
     @property
     def dataset(self) -> Path:

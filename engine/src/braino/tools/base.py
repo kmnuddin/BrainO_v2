@@ -75,14 +75,21 @@ class Tool:
         Raises ``pydantic.ValidationError`` if the arguments or the result do not match the
         declared models, and :class:`MissingContextError` if the tool needs a context and
         none was given.
+
+        With a context, the call (including a failed one) is recorded in its provenance.
         """
         params = self.input_model.model_validate(dict(arguments))
-        if self.needs_context:
-            if context is None:
+        if context is None:
+            if self.needs_context:
                 raise MissingContextError(f"tool {self.name!r} needs a RunContext")
-            result = self.func(params, context)
-        else:
-            result = self.func(params)
+            return self._call(params, None)
+        with context.provenance.tool_call(self.name, self.risk.value, params) as call:
+            result = self._call(params, context)
+            call.result = result
+        return result
+
+    def _call(self, params: BaseModel, context: RunContext | None) -> BaseModel:
+        result = self.func(params, context) if self.needs_context else self.func(params)
         if not isinstance(result, self.output_model):
             result = self.output_model.model_validate(result)
         return result

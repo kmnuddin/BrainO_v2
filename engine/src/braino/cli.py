@@ -11,11 +11,16 @@ from pydantic import ValidationError
 
 from braino import __version__
 from braino.context import NoDatasetError, RunContext
+from braino.provenance import RunNotFoundError, list_runs, load_run
 from braino.tools import ToolNotFoundError, registry
 
 app = typer.Typer(help="BrainO: EEG and fMRI analysis engine.", no_args_is_help=True)
 tools_app = typer.Typer(help="List, inspect and run analysis tools.", no_args_is_help=True)
 app.add_typer(tools_app, name="tools")
+runs_app = typer.Typer(help="Inspect the provenance of past runs.", no_args_is_help=True)
+app.add_typer(runs_app, name="runs")
+
+_DATASET_HELP = "Root of the BIDS dataset to work on"
 
 
 @app.command()
@@ -49,9 +54,7 @@ def tool_schema(
 def run_tool(
     name: Annotated[str, typer.Argument(help="Tool name, e.g. system.info")],
     arguments: Annotated[str, typer.Option("--args", help="Tool arguments as JSON")] = "{}",
-    dataset: Annotated[
-        Path | None, typer.Option("--dataset", help="Root of the BIDS dataset to work on")
-    ] = None,
+    dataset: Annotated[Path | None, typer.Option("--dataset", help=_DATASET_HELP)] = None,
 ) -> None:
     """Run a tool and print its result as JSON."""
     try:
@@ -71,8 +74,51 @@ def run_tool(
 
     try:
         context = RunContext(dataset_root=dataset)
+    except NotADirectoryError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(code=1) from None
+    if dataset is not None:
+        typer.echo(f"run {context.run_id}", err=True)
+
+    try:
         result = t.run(parsed, context)
-    except (ValidationError, NoDatasetError, NotADirectoryError) as exc:
+    except (ValidationError, NoDatasetError) as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(code=1) from None
     typer.echo(result.model_dump_json(indent=2))
+
+
+def _derivatives_root(dataset: Path) -> Path:
+    try:
+        return RunContext(dataset_root=dataset).derivatives_root
+    except NotADirectoryError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(code=1) from None
+
+
+@runs_app.command("list")
+def runs_list(
+    dataset: Annotated[Path, typer.Option("--dataset", help=_DATASET_HELP)],
+) -> None:
+    """List recorded runs, oldest first, with the tools each one called."""
+    root = _derivatives_root(dataset)
+    for run_id in list_runs(root):
+        calls = load_run(root, run_id).calls
+        failed = sum(call.status == "error" for call in calls)
+        tools = ", ".join(dict.fromkeys(call.tool for call in calls))
+        status = f"{len(calls)} calls" + (f", {failed} failed" if failed else "")
+        typer.echo(f"{run_id}  {status:<20} {tools}")
+
+
+@runs_app.command("show")
+def runs_show(
+    run_id: Annotated[str, typer.Argument(help="Run ID, as printed by 'braino runs list'")],
+    dataset: Annotated[Path, typer.Option("--dataset", help=_DATASET_HELP)],
+) -> None:
+    """Print the full provenance record of a run as JSON."""
+    try:
+        log = load_run(_derivatives_root(dataset), run_id)
+    except RunNotFoundError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(code=1) from None
+    typer.echo(log.model_dump_json(indent=2))

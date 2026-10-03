@@ -22,6 +22,8 @@ braino tools schema system.info   # JSON schema the AI agent sees for a tool
 braino tools run system.info      # run a tool, print the result as JSON
 braino tools run <tool> --args '{"key": "value"}'
 braino tools run <tool> --dataset path/to/bids   # for tools that read a dataset or write outputs
+braino runs list --dataset path/to/bids          # recorded runs and the tools they called
+braino runs show <run-id> --dataset path/to/bids # full provenance record of a run, as JSON
 ```
 
 ## Tools
@@ -73,13 +75,24 @@ from braino.tools import RunContext, registry
 @tool(name="eeg.band_power", risk=Risk.COMPUTE)
 def band_power(params: BandPowerInput, ctx: RunContext) -> BandPowerOutput:
     """Compute mean power in a frequency band for each channel."""
-    out_dir = ctx.output_dir("sub-01", "eeg")   # created on first use
+    raw = ctx.record_input(ctx.dataset / params.recording)  # hashed for provenance
+    out = ctx.record_output(ctx.output_dir("sub-01", "eeg") / "band_power.json")
     ...
 
 
 ctx = RunContext(dataset_root=Path("path/to/bids"))
 registry.get("eeg.band_power").run({"recording": "...", "band": [8, 12]}, ctx)
 ```
+
+### Provenance
+
+Every tool call run with a context is recorded: tool, risk level, validated arguments, result,
+success or error, timing, and the SHA-256 hash of each file declared with `record_input` /
+`record_output`. A run's records are written to `derivatives/braino/runs/<run-id>/`:
+`run.json` holds the environment (BrainO, Python, OS and analysis-library versions) and
+`calls.jsonl` holds one line per tool call. Runs without a dataset keep their records in memory
+(`ctx.provenance.calls`). Tools must not call other tools; chaining is the job of the pipeline
+runner and the agent.
 
 ## Checks
 
