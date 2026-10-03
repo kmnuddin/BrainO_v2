@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Callable, Iterator
 from typing import Any
 
+from pydantic import BaseModel
+
 from braino.tools.base import Risk, Tool, ToolFuncT, make_tool
 
 
@@ -22,11 +24,16 @@ class ToolRegistry:
         self._tools[tool.name] = tool
         return tool
 
-    def tool(self, *, name: str, risk: Risk) -> Callable[[ToolFuncT], ToolFuncT]:
-        """Decorator that registers a function as a tool and returns it unchanged."""
+    def tool(
+        self, *, name: str, risk: Risk, apply: Callable[..., BaseModel] | None = None
+    ) -> Callable[[ToolFuncT], ToolFuncT]:
+        """Decorator that registers a function as a tool and returns it unchanged.
+
+        Decision tools also pass ``apply``; see :func:`~braino.tools.base.make_tool`.
+        """
 
         def decorator(func: ToolFuncT) -> ToolFuncT:
-            self.register(make_tool(func, name=name, risk=risk))
+            self.register(make_tool(func, name=name, risk=risk, apply=apply))
             return func
 
         return decorator

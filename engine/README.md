@@ -24,6 +24,9 @@ braino tools run <tool> --args '{"key": "value"}'
 braino tools run <tool> --dataset path/to/bids   # for tools that read a dataset or write outputs
 braino runs list --dataset path/to/bids          # recorded runs and the tools they called
 braino runs show <run-id> --dataset path/to/bids # full provenance record of a run, as JSON
+braino proposals list --pending --dataset path/to/bids        # decisions waiting for you
+braino proposals approve <id> --dataset path/to/bids [--edit '{"channels": ["T7"]}'] [--note ...]
+braino proposals reject <id> --dataset path/to/bids [--note ...]
 ```
 
 ## Tools
@@ -93,6 +96,33 @@ success or error, timing, and the SHA-256 hash of each file declared with `recor
 `calls.jsonl` holds one line per tool call. Runs without a dataset keep their records in memory
 (`ctx.provenance.calls`). Tools must not call other tools; chaining is the job of the pipeline
 runner and the agent.
+
+### Decision tools
+
+A `decision` tool works in two steps, so that nothing the results rest on changes without a
+person's approval:
+
+1. **Propose.** Running the tool computes a proposal (e.g. channels to drop), saves it to
+   `derivatives/braino/proposals/<id>.json` and returns a `PendingProposal`. Nothing changes yet.
+2. **Decide.** A person approves (optionally editing fields), or rejects, with
+   `braino proposals approve|reject` or `braino.tools.decide(...)`. On approval the tool's `apply`
+   function commits the final version. The proposal file keeps the original, the final version,
+   who decided, when, and why.
+
+```python
+def apply_bad_channels(proposal: BadChannels, ctx: RunContext) -> Applied:
+    """Mark the approved channels as bad in the derivatives."""
+    ...
+
+
+@tool(name="eeg.detect_bad_channels", risk=Risk.DECISION, apply=apply_bad_channels)
+def detect_bad_channels(params: DetectInput, ctx: RunContext) -> BadChannels:
+    """Find noisy or flat channels and propose them for removal."""
+    ...
+```
+
+The AI agent can run decision tools, which only creates proposals; approving is never one of its
+tools.
 
 ## Checks
 

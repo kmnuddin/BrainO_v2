@@ -75,8 +75,12 @@ def test_llm_schema_shape(local_registry: ToolRegistry) -> None:
     assert set(function["parameters"]["required"]) == {"a", "b"}
 
 
+def apply_add(proposal: AddOutput, ctx: RunContext) -> AddOutput:
+    return proposal
+
+
 def test_only_decision_tools_require_approval() -> None:
-    assert make_tool(add, name="math.add", risk=Risk.DECISION).requires_approval
+    assert make_tool(add, name="math.add", risk=Risk.DECISION, apply=apply_add).requires_approval
     assert not make_tool(add, name="math.add", risk=Risk.COMPUTE).requires_approval
 
 

@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from braino import __version__
+from braino.provenance.proposals import PROPOSALS_DIR, ProposalStore
 from braino.provenance.recorder import ProvenanceRecorder
 from braino.provenance.store import RUNS_DIR
 
@@ -50,6 +51,9 @@ class RunContext:
     """Records every tool call of the run; written under ``runs/<run_id>/`` if there is a
     dataset."""
 
+    proposals: ProposalStore = field(init=False, repr=False, compare=False)
+    """Proposals made by decision tools, awaiting or holding the user's decision."""
+
     def __post_init__(self) -> None:
         if self.dataset_root is not None:
             root = Path(self.dataset_root).expanduser().resolve()
@@ -62,6 +66,15 @@ class RunContext:
             run_dir=(lambda: self.output_dir(RUNS_DIR, self.run_id)) if self.dataset_root else None,
         )
         object.__setattr__(self, "provenance", recorder)
+        proposals = (
+            ProposalStore(
+                self.dataset_root / "derivatives" / DERIVATIVES_NAME / PROPOSALS_DIR,
+                prepare=lambda: self.output_dir(PROPOSALS_DIR),
+            )
+            if self.dataset_root
+            else ProposalStore()
+        )
+        object.__setattr__(self, "proposals", proposals)
 
     def record_input(self, path: Path) -> Path:
         """Record (and hash) a file the running tool reads. Returns ``path``."""

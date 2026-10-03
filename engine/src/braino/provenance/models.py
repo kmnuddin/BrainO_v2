@@ -45,6 +45,39 @@ class ToolCallRecord(BaseModel):
     finished_at: datetime
     inputs: list[FileRecord] = Field(default_factory=list)
     outputs: list[FileRecord] = Field(default_factory=list)
+    proposal_id: str | None = Field(
+        default=None, description="The proposal this call created or applied (decision tools)"
+    )
+
+
+class Decision(BaseModel):
+    """A person's approval or rejection of a proposal."""
+
+    approved: bool
+    decided_by: str = Field(description="Who decided, e.g. 'user:alice'")
+    decided_at: datetime
+    note: str | None = None
+    final: dict[str, Any] | None = Field(
+        default=None, description="What was applied: the proposal with the user's edits"
+    )
+    edited: bool = False
+    applied_in: str | None = Field(
+        default=None, description="'<run_id>-<call_index>' of the call that applied it"
+    )
+    apply_result: dict[str, Any] | None = None
+
+
+class ProposalRecord(BaseModel):
+    """What a decision tool proposed, and what the user decided."""
+
+    proposal_id: str = Field(description="'<run_id>-<call_index>' of the proposing call")
+    tool: str
+    run_id: str
+    created_at: datetime
+    arguments: dict[str, Any]
+    proposal: dict[str, Any]
+    status: Literal["pending", "approved", "rejected"] = "pending"
+    decision: Decision | None = None
 
 
 class RunLog(BaseModel):

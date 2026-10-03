@@ -59,6 +59,8 @@ class ActiveCall:
     risk: str
     arguments: BaseModel
     started_at: datetime
+    call_index: int
+    proposal_id: str | None = None
     inputs: list[FileRecord] = field(default_factory=list)
     output_paths: list[Path] = field(default_factory=list)
     result: BaseModel | None = None
@@ -94,7 +96,9 @@ class ProvenanceRecorder:
         self._hash_cache: dict[tuple[Path, int, int], str] = {}
 
     @contextmanager
-    def tool_call(self, tool: str, risk: str, arguments: BaseModel) -> Iterator[ActiveCall]:
+    def tool_call(
+        self, tool: str, risk: str, arguments: BaseModel, *, proposal_id: str | None = None
+    ) -> Iterator[ActiveCall]:
         """Record the tool call executed inside the ``with`` block.
 
         An exception raised in the block is recorded as a failed call and re-raised.
@@ -104,7 +108,14 @@ class ProvenanceRecorder:
                 f"cannot start {tool!r} while {self._active.tool!r} is running; "
                 "tools must not call other tools"
             )
-        active = ActiveCall(tool=tool, risk=risk, arguments=arguments, started_at=_now())
+        active = ActiveCall(
+            tool=tool,
+            risk=risk,
+            arguments=arguments,
+            started_at=_now(),
+            call_index=len(self.calls) + 1,
+            proposal_id=proposal_id,
+        )
         self._active = active
         try:
             yield active
@@ -133,7 +144,7 @@ class ProvenanceRecorder:
     def _finish(self, active: ActiveCall, outputs: list[FileRecord], error: str | None) -> None:
         record = ToolCallRecord(
             run_id=self.run.run_id,
-            call_index=len(self.calls) + 1,
+            call_index=active.call_index,
             tool=active.tool,
             risk=active.risk,
             arguments=active.arguments.model_dump(mode="json"),
@@ -144,6 +155,7 @@ class ProvenanceRecorder:
             finished_at=_now(),
             inputs=active.inputs,
             outputs=outputs,
+            proposal_id=active.proposal_id,
         )
         self.calls.append(record)
         if self._run_dir_factory is None:
