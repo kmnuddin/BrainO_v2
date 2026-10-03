@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterator
 from typing import Any
 
-from braino.tools.base import InT, OutT, Risk, Tool, make_tool
+from braino.tools.base import Risk, Tool, ToolFuncT, make_tool
 
 
 class ToolNotFoundError(KeyError):
@@ -22,12 +22,10 @@ class ToolRegistry:
         self._tools[tool.name] = tool
         return tool
 
-    def tool(
-        self, *, name: str, risk: Risk
-    ) -> Callable[[Callable[[InT], OutT]], Callable[[InT], OutT]]:
+    def tool(self, *, name: str, risk: Risk) -> Callable[[ToolFuncT], ToolFuncT]:
         """Decorator that registers a function as a tool and returns it unchanged."""
 
-        def decorator(func: Callable[[InT], OutT]) -> Callable[[InT], OutT]:
+        def decorator(func: ToolFuncT) -> ToolFuncT:
             self.register(make_tool(func, name=name, risk=risk))
             return func
 

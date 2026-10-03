@@ -2,6 +2,10 @@
 
 A tool is a plain Python function that takes one Pydantic model and returns another. The
 input model's JSON schema is what the language model sees, so field descriptions matter.
+
+A tool that reads a dataset or writes outputs takes a second parameter annotated
+:class:`~braino.context.RunContext`. The caller supplies the context; it is not part of the
+input schema, so the language model never sees or chooses it.
 """
 
 from __future__ import annotations
@@ -15,14 +19,16 @@ from typing import Any, TypeVar, get_type_hints
 
 from pydantic import BaseModel
 
+from braino.context import RunContext
+
 # Dotted lower-case names, e.g. "eeg.preprocess" or "stats.cluster_permutation".
 _NAME_PATTERN = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$")
 
 # OpenAI-style function names may not contain dots, so the LLM sees "eeg__preprocess".
 LLM_NAME_SEPARATOR = "__"
 
-InT = TypeVar("InT", bound=BaseModel)
-OutT = TypeVar("OutT", bound=BaseModel)
+ToolFuncT = TypeVar("ToolFuncT", bound=Callable[..., BaseModel])
+"""A tool function: ``(params: In) -> Out`` or ``(params: In, ctx: RunContext) -> Out``."""
 
 
 class Risk(str, Enum):
@@ -41,6 +47,10 @@ class ToolDefinitionError(TypeError):
     """Raised when a function cannot be turned into a tool."""
 
 
+class MissingContextError(RuntimeError):
+    """Raised when a tool that needs a :class:`RunContext` is run without one."""
+
+
 @dataclass(frozen=True)
 class Tool:
     name: str
@@ -48,7 +58,8 @@ class Tool:
     risk: Risk
     input_model: type[BaseModel]
     output_model: type[BaseModel]
-    func: Callable[[Any], BaseModel]
+    func: Callable[..., BaseModel]
+    needs_context: bool = False
 
     @property
     def llm_name(self) -> str:
@@ -58,14 +69,20 @@ class Tool:
     def requires_approval(self) -> bool:
         return self.risk is Risk.DECISION
 
-    def run(self, arguments: Mapping[str, Any]) -> BaseModel:
+    def run(self, arguments: Mapping[str, Any], context: RunContext | None = None) -> BaseModel:
         """Validate ``arguments``, call the tool and validate its result.
 
         Raises ``pydantic.ValidationError`` if the arguments or the result do not match the
-        declared models.
+        declared models, and :class:`MissingContextError` if the tool needs a context and
+        none was given.
         """
         params = self.input_model.model_validate(dict(arguments))
-        result = self.func(params)
+        if self.needs_context:
+            if context is None:
+                raise MissingContextError(f"tool {self.name!r} needs a RunContext")
+            result = self.func(params, context)
+        else:
+            result = self.func(params)
         if not isinstance(result, self.output_model):
             result = self.output_model.model_validate(result)
         return result
@@ -83,8 +100,9 @@ class Tool:
         }
 
 
-def make_tool(func: Callable[[InT], OutT], *, name: str, risk: Risk) -> Tool:
-    """Build a :class:`Tool` from a function annotated ``(params: InModel) -> OutModel``.
+def make_tool(func: Callable[..., BaseModel], *, name: str, risk: Risk) -> Tool:
+    """Build a :class:`Tool` from a function annotated ``(params: InModel) -> OutModel`` or
+    ``(params: InModel, ctx: RunContext) -> OutModel``.
 
     The function's docstring becomes the description shown to the language model.
     """
@@ -94,10 +112,16 @@ def make_tool(func: Callable[[InT], OutT], *, name: str, risk: Risk) -> Tool:
         )
 
     params = list(inspect.signature(func).parameters.values())
-    if len(params) != 1:
-        raise ToolDefinitionError(f"tool {name!r} must take exactly one parameter")
+    if len(params) not in (1, 2):
+        raise ToolDefinitionError(f"tool {name!r} must take (params) or (params, ctx: RunContext)")
 
     hints = get_type_hints(func)
+    needs_context = len(params) == 2
+    if needs_context and hints.get(params[1].name) is not RunContext:
+        raise ToolDefinitionError(
+            f"tool {name!r}: second parameter must be annotated with RunContext"
+        )
+
     input_model = hints.get(params[0].name)
     output_model = hints.get("return")
     for role, model in (("parameter", input_model), ("return", output_model)):
@@ -120,4 +144,5 @@ def make_tool(func: Callable[[InT], OutT], *, name: str, risk: Risk) -> Tool:
         input_model=input_model,
         output_model=output_model,
         func=func,
+        needs_context=needs_context,
     )

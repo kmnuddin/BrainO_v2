@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Annotated
 
 import typer
 from pydantic import ValidationError
 
 from braino import __version__
+from braino.context import NoDatasetError, RunContext
 from braino.tools import ToolNotFoundError, registry
 
 app = typer.Typer(help="BrainO: EEG and fMRI analysis engine.", no_args_is_help=True)
@@ -47,6 +49,9 @@ def tool_schema(
 def run_tool(
     name: Annotated[str, typer.Argument(help="Tool name, e.g. system.info")],
     arguments: Annotated[str, typer.Option("--args", help="Tool arguments as JSON")] = "{}",
+    dataset: Annotated[
+        Path | None, typer.Option("--dataset", help="Root of the BIDS dataset to work on")
+    ] = None,
 ) -> None:
     """Run a tool and print its result as JSON."""
     try:
@@ -65,8 +70,9 @@ def run_tool(
         raise typer.Exit(code=1)
 
     try:
-        result = t.run(parsed)
-    except ValidationError as exc:
+        context = RunContext(dataset_root=dataset)
+        result = t.run(parsed, context)
+    except (ValidationError, NoDatasetError, NotADirectoryError) as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(code=1) from None
     typer.echo(result.model_dump_json(indent=2))

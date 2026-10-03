@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 from pydantic import BaseModel, Field, ValidationError
 
 from braino import __version__
 from braino.tools import (
+    MissingContextError,
     Risk,
+    RunContext,
     ToolDefinitionError,
     ToolNotFoundError,
     ToolRegistry,
@@ -96,9 +100,69 @@ def test_non_model_annotations_rejected() -> None:
         return AddOutput(total=params)
 
     with pytest.raises(ToolDefinitionError, match="Pydantic model"):
-        make_tool(plain, name="math.plain", risk=Risk.READ)  # type: ignore[type-var]
+        make_tool(plain, name="math.plain", risk=Risk.READ)
 
 
 def test_builtin_system_info_registered() -> None:
     result = registry.get("system.info").run({})
     assert result.model_dump()["braino_version"] == __version__
+
+
+class NoteInput(BaseModel):
+    text: str
+
+
+class NoteOutput(BaseModel):
+    path: str
+
+
+def write_note(params: NoteInput, ctx: RunContext) -> NoteOutput:
+    """Write a note into the derivatives folder."""
+    path = ctx.output_dir("notes") / f"{ctx.run_id}.txt"
+    path.write_text(params.text, encoding="utf-8")
+    return NoteOutput(path=str(path))
+
+
+def test_context_tool_receives_context(tmp_path: Path) -> None:
+    tool = make_tool(write_note, name="notes.write", risk=Risk.COMPUTE)
+    assert tool.needs_context
+    ctx = RunContext(dataset_root=tmp_path, run_id="run-1")
+    result = tool.run({"text": "hello"}, ctx)
+    written = ctx.derivatives_root / "notes" / "run-1.txt"
+    assert result == NoteOutput(path=str(written))
+    assert written.read_text(encoding="utf-8") == "hello"
+
+
+def test_context_tool_without_context_fails() -> None:
+    tool = make_tool(write_note, name="notes.write", risk=Risk.COMPUTE)
+    with pytest.raises(MissingContextError):
+        tool.run({"text": "hello"})
+
+
+def test_context_is_not_in_llm_schema() -> None:
+    schema = make_tool(write_note, name="notes.write", risk=Risk.COMPUTE).llm_schema()
+    assert set(schema["function"]["parameters"]["properties"]) == {"text"}
+
+
+def test_context_free_tool_ignores_context() -> None:
+    tool = make_tool(add, name="math.add", risk=Risk.COMPUTE)
+    assert not tool.needs_context
+    assert tool.run({"a": 1, "b": 1}, RunContext()) == AddOutput(total=2)
+
+
+def test_second_parameter_must_be_run_context() -> None:
+    def wrong(params: AddInput, extra: int) -> AddOutput:
+        """Second parameter is not a context."""
+        return AddOutput(total=extra)
+
+    with pytest.raises(ToolDefinitionError, match="RunContext"):
+        make_tool(wrong, name="math.wrong", risk=Risk.READ)
+
+
+def test_too_many_parameters_rejected() -> None:
+    def three(params: AddInput, ctx: RunContext, extra: int) -> AddOutput:
+        """Too many parameters."""
+        return AddOutput(total=extra)
+
+    with pytest.raises(ToolDefinitionError, match="must take"):
+        make_tool(three, name="math.three", risk=Risk.READ)

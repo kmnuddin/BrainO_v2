@@ -21,6 +21,7 @@ braino tools list                 # registered analysis tools and their risk lev
 braino tools schema system.info   # JSON schema the AI agent sees for a tool
 braino tools run system.info      # run a tool, print the result as JSON
 braino tools run <tool> --args '{"key": "value"}'
+braino tools run <tool> --dataset path/to/bids   # for tools that read a dataset or write outputs
 ```
 
 ## Tools
@@ -54,6 +55,31 @@ def band_power(params: BandPowerInput) -> BandPowerOutput:
 - **Risk levels:** `read` (inspect only), `compute` (produces new results), `decision` (changes
   which data or statistical model the results rest on, e.g. dropping channels; the agent must
   ask the user before running these).
+
+### Run context
+
+A tool that reads a dataset or writes outputs takes a second parameter, a `RunContext`. It says
+which BIDS dataset the run works on, gives the run an ID, and hands out output folders under
+`<dataset>/derivatives/braino/` (a BIDS-Derivatives dataset). The caller supplies the context;
+it is not part of the tool's input schema, so the AI agent cannot choose where data is read from
+or written to.
+
+```python
+from pathlib import Path
+
+from braino.tools import RunContext, registry
+
+
+@tool(name="eeg.band_power", risk=Risk.COMPUTE)
+def band_power(params: BandPowerInput, ctx: RunContext) -> BandPowerOutput:
+    """Compute mean power in a frequency band for each channel."""
+    out_dir = ctx.output_dir("sub-01", "eeg")   # created on first use
+    ...
+
+
+ctx = RunContext(dataset_root=Path("path/to/bids"))
+registry.get("eeg.band_power").run({"recording": "...", "band": [8, 12]}, ctx)
+```
 
 ## Checks
 
