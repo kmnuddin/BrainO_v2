@@ -1,0 +1,39 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Python (engine/)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local data and models (never commit participant data or model weights)
+/data/
+*.gguf
+*.safetensors
+
+# Unity (viewer/)
+viewer/[Ll]ibrary/
+viewer/[Tt]emp/
+viewer/[Oo]bj/
+viewer/[Bb]uild/
+viewer/[Bb]uilds/
+viewer/[Ll]ogs/
+viewer/[Uu]ser[Ss]ettings/
+viewer/[Mm]emoryCaptures/
+viewer/*.csproj
+viewer/*.sln
+viewer/*.unityproj
+viewer/.vs/
