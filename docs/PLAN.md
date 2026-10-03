@@ -304,6 +304,76 @@ Durations assume one developer working full-time; part-time roughly doubles them
 
 **Total for milestone 1: about 13–18 months full-time.**
 
+### Milestone 1 build order
+The detailed order of work within milestone 1. Near-term stages are specified in more detail than
+later ones; later stages will be refined as they come closer.
+
+**Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
+these, and they are cheapest to settle while only one tool exists.
+
+1. **Run context in the tool contract.** Tools receive a `RunContext` (BIDS root,
+   `derivatives/braino/` output folder, run ID, provenance logger) in addition to their arguments.
+2. **Provenance store.** Each tool call records input file hashes, parameters, library versions,
+   outputs and timing as JSON next to the derivatives. Script export and the agent's audit log
+   are both built from this record.
+3. **Propose/apply for `decision` tools.** A decision tool returns a proposal (e.g. channels to
+   drop); a separate apply step commits it. The CLI, the UI and the agent then all handle approval
+   the same way.
+4. **Test-data setup.** Small public sample files for each format, downloaded with `pooch` and
+   cached in CI; network-dependent tests are marked. Scientific dependencies (mne, mne-bids, numpy)
+   go in an `[eeg]` extra so the core install stays light.
+
+*Optional spike (2–3 days):* serve a small Qwen model with llama.cpp on the RTX 2080 Ti and have
+it call `system.info` through `registry.schemas()`. This tests local tool calling end to end
+months before M1.3, while the tool contract is still cheap to change.
+
+**Stage B — M1.1 Import.**
+
+5. **Format detection and readers:** EDF/BDF, BrainVision, FIF and EEGLAB first; then CNT, MFF,
+   GDF, Curry, Nihon Kohden and Persyst; XDF last (custom code on top of pyxdf).
+6. **Normalised recordings:** channel types, montages, and events/annotations. Every format stores
+   events differently, so this is expected to be the hardest part of import.
+7. **De-identification:** EDF patient fields, measurement info and file names, with tests that
+   check the personal data is gone.
+8. **BIDS conversion** with mne-bids. Subject, session and task labels come from CLI options or a
+   mapping file; the result is checked with bids-validator.
+9. **`dataset.inspect` and `eeg.qc_report` tools**, with CLI commands `braino import`,
+   `braino inspect` and `braino qc`.
+
+**Stage C — M1.2 Pipeline → v0.1.**
+
+10. **Choose the validation dataset first** (ERP CORE is a candidate), so the pipeline is built
+    against the published effect it must reproduce.
+11. **Tools, in dependency order:** `eeg.preprocess` → `eeg.detect_bad_channels` (decision) →
+    `eeg.ica_clean` (decision) → `eeg.epoch` with autoreject → `eeg.erp`, `eeg.spectral`,
+    `eeg.tfr` → `stats.mass_univariate`, `stats.cluster_permutation`.
+12. **Pipeline spec and runner:** steps declared in YAML/JSON, results cached, re-run from any
+    step. These specs later become the agent's validated templates.
+13. **Script export** from the provenance record.
+14. **Docs site, example notebooks and a PyPI release workflow** → v0.1.
+
+**Stage D — M1.3–M1.4 Local agent → v0.2.**
+
+15. **Eval harness first** (tasks with expected outputs), so every agent change is scored.
+16. **LLM client** for the OpenAI-compatible API, with schema-constrained tool calls.
+17. **Agent loop in the CLI**, with approval prompts for decision tools.
+18. **Templates and plan checks**, built on the Stage C pipeline specs.
+19. **RAG index** over the MNE, BIDS and BrainO documentation.
+20. **Baseline evaluation**, then LoRA fine-tuning on the HPC only where the evals show gaps.
+
+**Stage E — M1.5 Server and UI.**
+
+21. **FastAPI server** exposing the tool registry (already schema-driven, so this layer stays thin).
+22. **Job runner** with progress reported over WebSocket.
+23. **Electron/React app**, in this order: data browser → plots → agent panel with approvals →
+    trace browser (the hardest view, so it comes last).
+
+**Stage F — M1.6 Unity viewer → v1.0.**
+
+24. **Scene service** in the engine for binary meshes and arrays.
+25. **Unity viewer:** WebGL build, JS bridge, sensor topographies over time.
+26. **Picking:** clicking a sensor in the 3D view opens its ERP plot in the main UI.
+
 ### Later phases
 - **Phase 2 — EEG depth:** source localisation on cortical surfaces, connectivity, ML decoding,
   BrainO connectome view driven by computed connectivity.
