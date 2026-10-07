@@ -13,7 +13,7 @@ import mne
 import sample_data
 
 # Formats MNE cannot detect on its own. The Neuroscan CNT header of this file reports 0 samples,
-# so the sample width has to be given; BrainO's own reader dispatch (M1.1) must handle this.
+# so the sample width has to be given here; braino.io.read_raw infers it.
 READERS = {"cnt": partial(mne.io.read_raw_cnt, data_format="int16")}
 
 
