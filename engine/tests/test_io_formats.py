@@ -88,12 +88,31 @@ def test_plain_folder_is_not_a_recording(tmp_path: Path) -> None:
         detect_format(tmp_path)
 
 
-def test_mff_folder(tmp_path: Path) -> None:
-    folder = tmp_path / "rec.mff"
+def mff(folder: Path) -> Path:
     write(folder / "info.xml", "<fileInfo/>")
-    detected = detect_format(folder)
+    write(folder / "signal1.bin", b"\x00" * 8)
+    write(folder / "Contents" / "PkgInfo", "????????")
+    return folder
+
+
+@pytest.mark.parametrize("pick", ["", "signal1.bin", "Contents/PkgInfo"])
+def test_mff_lists_the_files_inside_the_folder(tmp_path: Path, pick: str) -> None:
+    folder = mff(tmp_path / "rec.mff")
+    detected = detect_format(folder / pick if pick else folder)
     assert detected.format.id == "egi_mff"
-    assert detected.files == (folder,)
+    assert detected.path == folder
+    assert [p.relative_to(folder).as_posix() for p in detected.files] == [
+        "Contents/PkgInfo",
+        "info.xml",
+        "signal1.bin",
+    ]
+
+
+def test_mff_without_signal(tmp_path: Path) -> None:
+    folder = mff(tmp_path / "rec.mff")
+    (folder / "signal1.bin").unlink()
+    with pytest.raises(MissingFileError, match=r"signal1\.bin"):
+        detect_format(folder)
 
 
 @pytest.mark.parametrize("pick", [".vhdr", ".eeg", ".vmrk"])
@@ -131,6 +150,57 @@ def test_eeglab_with_fdt(tmp_path: Path) -> None:
         detected = detect_format(tmp_path / pick)
         assert detected.path == header
         assert [p.name for p in detected.files] == ["rec.set", "rec.fdt"]
+
+
+def eeglab_set(path: Path, datfile: str, *, wrapped: bool = True) -> Path:
+    """A minimal EEGLAB .set whose data is in ``datfile``, saved with or without the ``EEG``
+    struct around its fields (EEGLAB has written both)."""
+    scipy_io = pytest.importorskip("scipy.io")
+    fields = {"nbchan": 1, "srate": 100.0, "datfile": datfile}
+    scipy_io.savemat(path, {"EEG": fields} if wrapped else fields, appendmat=False)
+    return path
+
+
+@pytest.mark.parametrize("wrapped", [True, False])
+def test_eeglab_renamed_data_file(tmp_path: Path, wrapped: bool) -> None:
+    header = eeglab_set(tmp_path / "rec.set", "other_name.fdt", wrapped=wrapped)
+    write(tmp_path / "other_name.fdt", b"\x00" * 8)
+    for pick in ("rec.set", "other_name.fdt"):
+        detected = detect_format(tmp_path / pick)
+        assert detected.path == header
+        assert [p.name for p in detected.files] == ["rec.set", "other_name.fdt"]
+
+
+def test_eeglab_orphan_fdt(tmp_path: Path) -> None:
+    eeglab_set(tmp_path / "rec.set", "rec_data.fdt")
+    with pytest.raises(MissingFileError, match=r"orphan\.fdt"):
+        detect_format(write(tmp_path / "orphan.fdt", b"\x00"))
+
+
+@pytest.mark.parametrize("pick", ["rec_raw.fif", "rec_raw-1.fif", "rec_raw-2.fif"])
+def test_split_fif_neuromag_naming(tmp_path: Path, pick: str) -> None:
+    for name in ("rec_raw.fif", "rec_raw-1.fif", "rec_raw-2.fif", "rec_raw-4.fif"):
+        write(tmp_path / name, b"\x00" * 16)
+    detected = detect_format(tmp_path / pick)
+    assert detected.path == tmp_path / "rec_raw.fif"
+    # rec_raw-4.fif is not a part: rec_raw-3.fif is missing.
+    assert [p.name for p in detected.files] == ["rec_raw.fif", "rec_raw-1.fif", "rec_raw-2.fif"]
+
+
+@pytest.mark.parametrize("pick", ["01", "02"])
+def test_split_fif_bids_naming(tmp_path: Path, pick: str) -> None:
+    for n in ("01", "02"):
+        write(tmp_path / f"sub-01_task-rest_split-{n}_meg.fif", b"\x00" * 16)
+    detected = detect_format(tmp_path / f"sub-01_task-rest_split-{pick}_meg.fif")
+    assert [p.name for p in detected.files] == [
+        "sub-01_task-rest_split-01_meg.fif",
+        "sub-01_task-rest_split-02_meg.fif",
+    ]
+
+
+def test_fif_name_ending_in_a_number_is_not_a_part(tmp_path: Path) -> None:
+    path = write(tmp_path / "session-2.fif", b"\x00" * 16)
+    assert detect_format(path).files == (path,)
 
 
 def test_nihon_kohden_from_companion(tmp_path: Path) -> None:

@@ -11,8 +11,14 @@ pytest.importorskip("pooch")
 
 import mne
 import sample_data
+from pydantic import BaseModel
 
 from braino.io import RecordingReadError, read_raw
+from braino.tools import Risk, RunContext, ToolRegistry
+
+
+class Empty(BaseModel):
+    pass
 
 
 @pytest.mark.network
@@ -22,10 +28,29 @@ def test_reads_sample_recording(fmt: str) -> None:
     recording = read_raw(path)
     assert recording.format.id == fmt
     assert recording.path == path
-    assert recording.files[0] == path
-    assert all(p.exists() for p in recording.files)
+    if fmt != "egi_mff":  # an MFF recording lists the files inside its folder instead
+        assert recording.files[0] == path
+    assert all(p.is_file() for p in recording.files)
     assert isinstance(recording.raw, mne.io.BaseRaw)
     assert recording.raw.n_times > 0
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("fmt", sorted(sample_data.RECORDINGS))
+def test_recording_files_can_be_recorded_in_provenance(fmt: str) -> None:
+    recording = read_raw(sample_data.fetch_recording(fmt))
+    reg = ToolRegistry()
+
+    @reg.tool(name="test.record_inputs", risk=Risk.READ)
+    def record_inputs(params: Empty, ctx: RunContext) -> Empty:
+        """Record the recording's files as inputs."""
+        for path in recording.files:
+            ctx.record_input(path)
+        return Empty()
+
+    ctx = RunContext()
+    reg.get("test.record_inputs").run({}, ctx)
+    assert len(ctx.provenance.calls[0].inputs) == len(recording.files)
 
 
 @pytest.mark.network

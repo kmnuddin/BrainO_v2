@@ -64,7 +64,7 @@ plugins = ["pydantic.mypy"]
 files = ["src", "tests"]
 
 [[tool.mypy.overrides]]
-module = ["mne.*", "mne_bids.*", "pooch.*"]
+module = ["mne.*", "mne_bids.*", "pooch.*", "scipy.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
