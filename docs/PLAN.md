@@ -1,6 +1,6 @@
 # BrainO 2.0 — Platform Plan
 
-Status: **draft for discussion** · Last updated: 2026-10-03
+Status: **draft for discussion** · Last updated: 2026-10-08
 
 ## 1. Vision
 
@@ -308,6 +308,9 @@ Durations assume one developer working full-time; part-time roughly doubles them
 The detailed order of work within milestone 1. Near-term stages are specified in more detail than
 later ones; later stages will be refined as they come closer.
 
+**Progress (2026-10-08):** Stage A done (items 1–4), the Qwen spike done, item 5 done except XDF.
+Next: item 6.
+
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
 these, and they are cheapest to settle while only one tool exists.
 
@@ -326,11 +329,16 @@ these, and they are cheapest to settle while only one tool exists.
 *Optional spike (2–3 days):* serve a small Qwen model with llama.cpp on the RTX 2080 Ti and have
 it call `system.info` through `registry.schemas()`. This tests local tool calling end to end
 months before M1.3, while the tool contract is still cheap to change.
+*Result (2026-10-07, `spikes/llm_tool_call.py`):* Qwen3.5-9B Q4_K_M on llama.cpp (CUDA, `--jinja`,
+temperature 0) passed 9/9 cases: tool choice, arguments, chained calls, recovering from tool
+errors, a decision tool whose proposal was then approved, and no invented numbers. About 80
+tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
 
 **Stage B — M1.1 Import.**
 
 5. **Format detection and readers:** EDF/BDF, BrainVision, FIF and EEGLAB first; then CNT, MFF,
    GDF, Curry, Nihon Kohden and Persyst; XDF last (custom code on top of pyxdf).
+   *Done for all MNE-backed formats (`braino.io`); XDF remains.*
 6. **Normalised recordings:** channel types, montages, and events/annotations. Every format stores
    events differently, so this is expected to be the hardest part of import.
 7. **De-identification:** EDF patient fields, measurement info and file names, with tests that
