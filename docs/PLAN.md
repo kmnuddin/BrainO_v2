@@ -308,8 +308,8 @@ Durations assume one developer working full-time; part-time roughly doubles them
 The detailed order of work within milestone 1. Near-term stages are specified in more detail than
 later ones; later stages will be refined as they come closer.
 
-**Progress (2026-10-08):** Stage A done (items 1–4), the Qwen spike done, item 5 done except XDF.
-Next: item 6.
+**Progress (2026-10-08):** Stage A done (items 1–4), the Qwen spike done, items 5 (except XDF)
+and 6 done. Next: item 7.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
 these, and they are cheapest to settle while only one tool exists.
@@ -341,6 +341,9 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
    *Done for all MNE-backed formats (`braino.io`); XDF remains.*
 6. **Normalised recordings:** channel types, montages, and events/annotations. Every format stores
    events differently, so this is expected to be the hardest part of import.
+   *Done (`braino.io.normalise`): standard name spelling, types from names, positions from the
+   file or a template only when the names identify one, trigger channels to annotations, all
+   reported. Known gap: trigger codes with status bits set (e.g. BioSemi) are kept as recorded.*
 7. **De-identification:** EDF patient fields, measurement info and file names, with tests that
    check the personal data is gone.
 8. **BIDS conversion** with mne-bids. Subject, session and task labels come from CLI options or a

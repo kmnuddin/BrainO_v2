@@ -11,17 +11,21 @@ from braino.io.formats import (
     UnsupportedFormatError,
     detect_format,
 )
+from braino.io.normalise import ChannelRetype, NormalisationReport, normalise
 from braino.io.readers import CntDataFormat, Recording, RecordingReadError, read_raw
 
 __all__ = [
     "FORMATS",
+    "ChannelRetype",
     "CntDataFormat",
     "DetectedRecording",
     "FormatSpec",
     "MissingFileError",
+    "NormalisationReport",
     "Recording",
     "RecordingReadError",
     "UnsupportedFormatError",
     "detect_format",
+    "normalise",
     "read_raw",
 ]
