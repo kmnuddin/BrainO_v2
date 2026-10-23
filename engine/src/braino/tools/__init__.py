@@ -1,7 +1,11 @@
 """Typed, registered analysis tools."""
 
 from braino.context import NoDatasetError, RunContext
-from braino.tools import system as _system  # noqa: F401  (registers built-in tools)
+
+# Importing these modules registers the built-in tools.
+from braino.tools import dataset as _dataset  # noqa: F401
+from braino.tools import eeg as _eeg  # noqa: F401
+from braino.tools import system as _system  # noqa: F401
 from braino.tools.base import (
     MissingContextError,
     PendingProposal,

@@ -308,8 +308,8 @@ Durations assume one developer working full-time; part-time roughly doubles them
 The detailed order of work within milestone 1. Near-term stages are specified in more detail than
 later ones; later stages will be refined as they come closer.
 
-**Progress (2026-10-23):** Stage A done (items 1–4), the Qwen spike done, items 5 (except XDF),
-6, 7 and 8 done. Next: item 9.
+**Progress (2026-10-23):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
+done except the XDF reader. Next: Stage C, item 10.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
 these, and they are cheapest to settle while only one tool exists.
@@ -363,6 +363,12 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
    with `braino import`.*
 9. **`dataset.inspect` and `eeg.qc_report` tools**, with CLI commands `braino import`,
    `braino inspect` and `braino qc`.
+   *Done. Import is a command, not an agent tool (it reads identifiable originals); its
+   provenance keeps only the subject label, task/session/run, source hashes and outputs, with
+   error messages scrubbed. A CSV mapping file imports many recordings. QC screens flat and noisy
+   channels (robust z on 1–40 Hz data), line noise and artifact time, writes a per-channel table
+   to the derivatives and returns a compact summary (at most 10 channels per list). QC checks EEG
+   and iEEG channels; MEG checks come with MEG work.*
 
 **Stage C — M1.2 Pipeline → v0.1.**
 

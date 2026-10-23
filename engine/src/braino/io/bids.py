@@ -64,6 +64,7 @@ def write_bids(
     overwrite: bool = False,
     allow_identifiable: bool = False,
     template_positions: str | None = None,
+    manufacturer: str | None = None,
 ) -> ConversionReport:
     """Write ``recording`` (normalised and de-identified) to ``bids_root``.
 
@@ -76,6 +77,10 @@ def write_bids(
 
     ``template_positions`` names the template layout the electrode positions came from, if
     they were not measured; the coordinate-system sidecar then says so.
+
+    ``manufacturer`` is the maker of the recording system. MNE-BIDS fills in the maker of the
+    *output* format (BrainVision files say "Brain Products"), which is wrong for data recorded
+    on other systems, so it is replaced; ``"n/a"`` when the source format does not say.
     """
     mne = _import_mne()
     import mne_bids
@@ -139,6 +144,11 @@ def write_bids(
         for path in written:
             if path.name.endswith("_coordsystem.json"):
                 _set_template_note(path, _template_note(template_positions))
+    if manufacturer is not None:
+        sidecar = Path(data_file.copy().update(extension=".json").fpath)
+        data = json.loads(sidecar.read_text(encoding="utf-8"))
+        data["Manufacturer"] = manufacturer
+        sidecar.write_text(json.dumps(data, indent=4, ensure_ascii=False) + "\n", encoding="utf-8")
     return ConversionReport(
         bids_root=str(root),
         files=[p.relative_to(root).as_posix() for p in written],

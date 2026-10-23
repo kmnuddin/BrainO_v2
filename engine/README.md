@@ -20,6 +20,18 @@ works.
 ## Command line
 
 ```bash
+# Import recordings (any supported format) into a de-identified BIDS dataset. The key file links
+# subject labels to real IDs: keep it private and outside the dataset.
+braino import raw/patient_a.edf --subject-id "patient A" --task rest --dataset study_bids --key private/key.json
+braino import --mapping recordings.csv --dataset study_bids --key private/key.json
+#   recordings.csv columns: source,subject_id,task[,session,run,line_freq]
+
+braino inspect --dataset study_bids             # subjects, tasks, channels, events per recording
+braino qc --dataset study_bids                  # flat/noisy channels, line noise, artifacts
+braino qc --dataset study_bids --subject 001 --json
+```
+
+```bash
 braino version
 braino tools list                 # registered analysis tools and their risk level
 braino tools schema system.info   # JSON schema the AI agent sees for a tool

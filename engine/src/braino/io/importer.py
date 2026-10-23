@@ -20,6 +20,17 @@ from braino.io.deidentify import DeidentificationReport, SubjectKey, deidentify
 from braino.io.normalise import ChannelType, NormalisationReport, normalise
 from braino.io.readers import CntDataFormat, read_raw
 
+MANUFACTURERS = {
+    "bdf": "BioSemi",
+    "brainvision": "Brain Products",
+    "cnt": "Compumedics Neuroscan",
+    "curry": "Compumedics Neuroscan",
+    "egi_mff": "Electrical Geodesics (EGI)",
+    "nihon_kohden": "Nihon Kohden",
+}
+"""Makers of the recording systems whose formats say who made them. Other formats (EDF, GDF,
+EEGLAB, Persyst, EEG-only FIF) are written by many systems, so their maker is "n/a"."""
+
 
 class ImportReport(BaseModel):
     format: str
@@ -78,6 +89,9 @@ def import_recording(
         template_positions=normalisation.template
         if normalisation.positions == "template"
         else None,
+        # For MEG, MNE-BIDS reads the maker from the FIF file; other data are written as
+        # BrainVision, whose maker MNE-BIDS would otherwise claim.
+        manufacturer=None if datatype == "meg" else MANUFACTURERS.get(recording.format.id, "n/a"),
     )
     # Event counts as written: the ones taken before de-identification hold the original text.
     events = Counter(str(d) for d in recording.raw.annotations.description)
