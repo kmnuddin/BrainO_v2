@@ -32,8 +32,10 @@ eeg = [
     "mne>=1.13",
     "mne-bids>=0.20",
     "numpy>=2.1",
+    "pybv>=0.7",          # BrainVision writer, for BIDS conversion
 ]
 dev = [
+    "bids-validator>=1.14",
     "mypy>=1.10",
     "pooch>=1.8",
     "pytest>=8",

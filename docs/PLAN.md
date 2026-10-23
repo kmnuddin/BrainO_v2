@@ -309,7 +309,7 @@ The detailed order of work within milestone 1. Near-term stages are specified in
 later ones; later stages will be refined as they come closer.
 
 **Progress (2026-10-23):** Stage A done (items 1–4), the Qwen spike done, items 5 (except XDF),
-6 and 7 done. Next: item 8.
+6, 7 and 8 done. Next: item 9.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
 these, and they are cheapest to settle while only one tool exists.
@@ -355,6 +355,12 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
    arguments.*
 8. **BIDS conversion** with mne-bids. Subject, session and task labels come from CLI options or a
    mapping file; the result is checked with bids-validator.
+   *Done (`braino.io.bids`, `braino.io.import_recording`): the whole import pipeline; data always
+   written fresh (BrainVision for EEG/iEEG, FIF for MEG), never copied; line frequency from the
+   file or estimated from the data; template positions labelled as such; refuses data that are
+   not de-identified. All MNE-backed samples pass the official validator (v3.0.2, run in CI),
+   with only "recommended metadata" warnings. The CLI options and mapping file move to item 9,
+   with `braino import`.*
 9. **`dataset.inspect` and `eeg.qc_report` tools**, with CLI commands `braino import`,
    `braino inspect` and `braino qc`.
 

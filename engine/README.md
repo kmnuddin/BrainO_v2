@@ -128,6 +128,28 @@ def detect_bad_channels(params: DetectInput, ctx: RunContext) -> BadChannels:
 The AI agent can run decision tools, which only creates proposals; approving is never one of its
 tools.
 
+## Importing recordings
+
+`braino.io.import_recording` turns one recording, in any supported format, into a de-identified
+BIDS dataset entry: it detects the format, reads it, normalises channel names, types, positions
+and events, removes personal details, and writes new BIDS files (the originals are only read).
+
+```python
+from braino.io import SubjectKey, import_recording
+
+# The subject key links labels (sub-001, ...) to real identities. Keep it private, and outside
+# the dataset folder; BrainO refuses to put it inside.
+key = SubjectKey.open("private/subjects.json", dataset_root="study_bids")
+report = import_recording(
+    "raw/patient_a.edf", "study_bids", key=key, original_id="patient A", task="rest"
+)
+print(report.conversion.files)  # what was written, relative to the dataset
+print(report.deidentification.free_text_events)  # event text to check by hand
+```
+
+Each step is also available on its own: `detect_format`, `read_raw`, `normalise`, `deidentify`
+and `write_bids`.
+
 ## Test data
 
 Tests that need real recordings download small public sample files (one recording per supported
