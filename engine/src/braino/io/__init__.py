@@ -3,6 +3,13 @@
 Format detection works in the core install; reading needs the ``[eeg]`` extra.
 """
 
+from braino.io.deidentify import (
+    DeidentificationReport,
+    SubjectEntry,
+    SubjectKey,
+    SubjectKeyError,
+    deidentify,
+)
 from braino.io.formats import (
     FORMATS,
     DetectedRecording,
@@ -18,13 +25,18 @@ __all__ = [
     "FORMATS",
     "ChannelRetype",
     "CntDataFormat",
+    "DeidentificationReport",
     "DetectedRecording",
     "FormatSpec",
     "MissingFileError",
     "NormalisationReport",
     "Recording",
     "RecordingReadError",
+    "SubjectEntry",
+    "SubjectKey",
+    "SubjectKeyError",
     "UnsupportedFormatError",
+    "deidentify",
     "detect_format",
     "normalise",
     "read_raw",

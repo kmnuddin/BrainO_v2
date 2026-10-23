@@ -47,6 +47,10 @@ class RunContext:
 
     run_id: str = field(default_factory=new_run_id)
 
+    record_external_paths: bool = False
+    """Record the full paths of input files outside the dataset. Off by default, because the
+    names of original recordings often identify the person."""
+
     provenance: ProvenanceRecorder = field(init=False, repr=False, compare=False)
     """Records every tool call of the run; written under ``runs/<run_id>/`` if there is a
     dataset."""
@@ -64,6 +68,7 @@ class RunContext:
             run_id=self.run_id,
             dataset_root=self.dataset_root,
             run_dir=(lambda: self.output_dir(RUNS_DIR, self.run_id)) if self.dataset_root else None,
+            record_external_paths=self.record_external_paths,
         )
         object.__setattr__(self, "provenance", recorder)
         proposals = (

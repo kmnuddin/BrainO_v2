@@ -144,12 +144,23 @@ def test_run_without_calls_writes_nothing(dataset: Path) -> None:
     assert list_runs(ctx.derivatives_root) == []
 
 
-def test_files_outside_dataset_use_absolute_paths(
+def test_files_outside_dataset_are_recorded_without_their_names(
+    dataset: Path, tmp_path_factory: pytest.TempPathFactory
+) -> None:
+    outside = tmp_path_factory.mktemp("Jane_Doe_records") / "Jane.Doe.EDF"
+    outside.write_bytes(b"x")
+    ctx = RunContext(dataset_root=dataset)
+    reg.get("files.copy").run({"source": str(outside), "target": "ext.txt"}, ctx)
+    record = ctx.provenance.calls[0].inputs[0]
+    assert record.path == f"<outside-dataset>/{record.sha256[:12]}.edf"
+
+
+def test_full_external_paths_on_request(
     dataset: Path, tmp_path_factory: pytest.TempPathFactory
 ) -> None:
     outside = tmp_path_factory.mktemp("elsewhere") / "ext.txt"
     outside.write_bytes(b"x")
-    ctx = RunContext(dataset_root=dataset)
+    ctx = RunContext(dataset_root=dataset, record_external_paths=True)
     reg.get("files.copy").run({"source": str(outside), "target": "ext.txt"}, ctx)
     assert ctx.provenance.calls[0].inputs[0].path == outside.resolve().as_posix()
 

@@ -36,6 +36,9 @@ TRACKED_PACKAGES = (
 
 _HASH_CHUNK = 1 << 20
 
+EXTERNAL_PREFIX = "<outside-dataset>/"
+"""Path prefix under which files outside the dataset are recorded."""
+
 
 def installed_versions(packages: tuple[str, ...] = TRACKED_PACKAGES) -> dict[str, str]:
     versions = {}
@@ -71,6 +74,11 @@ class ProvenanceRecorder:
 
     ``run_dir`` creates and returns the run's folder; it is only called once the first tool
     call finishes, so runs that call no tools leave nothing behind.
+
+    Files outside the dataset (e.g. the original recordings an import reads) are recorded as
+    ``<outside-dataset>/<hash prefix><extension>`` rather than by their path, because original
+    file and folder names often identify the person. ``record_external_paths=True`` records
+    their full paths instead.
     """
 
     def __init__(
@@ -78,6 +86,8 @@ class ProvenanceRecorder:
         run_id: str,
         dataset_root: Path | None,
         run_dir: Callable[[], Path] | None = None,
+        *,
+        record_external_paths: bool = False,
     ) -> None:
         self.run = RunRecord(
             run_id=run_id,
@@ -90,6 +100,7 @@ class ProvenanceRecorder:
         )
         self.calls: list[ToolCallRecord] = []
         self._dataset_root = dataset_root
+        self._record_external_paths = record_external_paths
         self._run_dir_factory = run_dir
         self._run_dir: Path | None = None
         self._active: ActiveCall | None = None
@@ -175,12 +186,19 @@ class ProvenanceRecorder:
         if digest is None:
             digest = _sha256(resolved)
             self._hash_cache[key] = digest
-        return FileRecord(path=self._display_path(resolved), sha256=digest, size=stat.st_size)
+        return FileRecord(
+            path=self._display_path(resolved, digest), sha256=digest, size=stat.st_size
+        )
 
-    def _display_path(self, resolved: Path) -> str:
+    def _display_path(self, resolved: Path, digest: str) -> str:
         if self._dataset_root is not None and resolved.is_relative_to(self._dataset_root):
             return resolved.relative_to(self._dataset_root).as_posix()
-        return resolved.as_posix()
+        if self._dataset_root is None or self._record_external_paths:
+            return resolved.as_posix()  # without a dataset, records stay in memory
+        # Only the real extension: "Jane.Doe.edf" must not keep ".Doe".
+        name = resolved.name.lower()
+        extension = ".fif.gz" if name.endswith(".fif.gz") else resolved.suffix.lower()
+        return f"{EXTERNAL_PREFIX}{digest[:12]}{extension}"
 
 
 def _sha256(path: Path) -> str:

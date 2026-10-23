@@ -308,8 +308,8 @@ Durations assume one developer working full-time; part-time roughly doubles them
 The detailed order of work within milestone 1. Near-term stages are specified in more detail than
 later ones; later stages will be refined as they come closer.
 
-**Progress (2026-10-08):** Stage A done (items 1–4), the Qwen spike done, items 5 (except XDF)
-and 6 done. Next: item 7.
+**Progress (2026-10-23):** Stage A done (items 1–4), the Qwen spike done, items 5 (except XDF),
+6 and 7 done. Next: item 8.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
 these, and they are cheapest to settle while only one tool exists.
@@ -346,6 +346,13 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
    reported. Known gap: trigger codes with status bits set (e.g. BioSemi) are kept as recorded.*
 7. **De-identification:** EDF patient fields, measurement info and file names, with tests that
    check the personal data is gone.
+   *Done (`braino.io.deidentify`): header fields removed; dates shifted per subject into
+   1902–1924 (keeping age, time of day and intervals); identifiers, dates, e-mails and phone
+   numbers removed from event text, other free text listed for review; subject labels and
+   shifts kept only in a subject key file that must be outside the dataset; provenance records
+   files outside the dataset by hash, not path. For item 8: write converted files (never copy
+   originals, whose headers still hold the data), and keep source paths out of recorded tool
+   arguments.*
 8. **BIDS conversion** with mne-bids. Subject, session and task labels come from CLI options or a
    mapping file; the result is checked with bids-validator.
 9. **`dataset.inspect` and `eeg.qc_report` tools**, with CLI commands `braino import`,
