@@ -173,8 +173,10 @@ from braino.datasets import erpcore
 from braino.validation.erpcore import compare
 
 root = erpcore.fetch("P3", ["001", "002"])  # BIDS data, hash-checked, cached in ~/.cache/braino
-erpcore.references()["P3"]                   # what the authors measured and found
-report = compare("P3", {"001": 6.1, "002": 17.0, ...})  # BrainO's per-participant scores
+erpcore.references()["P3"]  # what the authors measured and found
+
+scores = {"001": 6.1, "002": 17.0, "003": 9.5}  # BrainO's per-participant P3 amplitudes, µV
+report = compare("P3", scores)  # group and participant-level checks
 ```
 
 The full download is large (P3 2.2 GB, N170 3.4 GB), so it is not part of CI; the test that
