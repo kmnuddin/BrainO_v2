@@ -1,0 +1,4424 @@
+{
+ "dataset": "ERP CORE",
+ "citation": "Kappenman, E. S., Farrens, J. L., Zhang, W., Stewart, A. X., & Luck, S. J. (2021). ERP CORE: An open resource for human event-related potential research. NeuroImage, 225, 117465. https://doi.org/10.1016/j.neuroimage.2020.117465",
+ "license": "CC-BY-4.0",
+ "source": "https://osf.io/thsqg/",
+ "tasks": {
+  "P3": {
+   "osf_node": "etdkz",
+   "folder": "P3 Raw Data BIDS-Compatible",
+   "files": [
+    {
+     "path": "CHANGES",
+     "url": "https://osf.io/download/mr8s5/",
+     "size": 76,
+     "sha256": "33950816e74d1ba4518f11e53b0c65600cd22e96a9a126fa900c07cc7399a618"
+    },
+    {
+     "path": "LICENSE",
+     "url": "https://osf.io/download/2pgds/",
+     "size": 705,
+     "sha256": "8616fd6d18aafc147b0027e72d9e95218562366a63c8bfb6b30f7179775f6678"
+    },
+    {
+     "path": "README.txt",
+     "url": "https://osf.io/download/6jupe/",
+     "size": 2612,
+     "sha256": "1b380dd7cd84138b97081634961ceca9674433d89b3bb19b2b0981830cb67185"
+    },
+    {
+     "path": "dataset_description.json",
+     "url": "https://osf.io/download/2qk8s/",
+     "size": 691,
+     "sha256": "2c9e559c6b118e90f8b3f3155aab8d2b0bf1a18e0b53302d7aa7629d2ed7d88f"
+    },
+    {
+     "path": "participants.json",
+     "url": "https://osf.io/download/mjrtq/",
+     "size": 282,
+     "sha256": "1ee3070a33188a330381ee3ed3b484c370da9fc69669cef05d2931842430ba3d"
+    },
+    {
+     "path": "participants.tsv",
+     "url": "https://osf.io/download/9syq2/",
+     "size": 792,
+     "sha256": "047b681e6f6434403629c85fc04f9ceeb61a30a5e46ad80ca6d93df7ab1bf67b"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-P3_channels.tsv",
+     "url": "https://osf.io/download/47vxm/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/9xjbd/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/cxz4j/",
+     "size": 63123456,
+     "sha256": "ada79544e26cef9331d6dd8490d13adc7c16b3f3311f0b9a3a188b203b4a6b43"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-P3_eeg.json",
+     "url": "https://osf.io/download/5mzr4/",
+     "size": 1651,
+     "sha256": "5aa78239eb9fcbb1f0349ef23729bd16f59c253667e03efe683ec86a26d22fee"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-P3_eeg.set",
+     "url": "https://osf.io/download/kz9vd/",
+     "size": 3957432,
+     "sha256": "1c1ee859ce73966f62f6f92e9375b46798c8c2a9c88855945807e85b24f37645"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/jfvyd/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-P3_events.tsv",
+     "url": "https://osf.io/download/tsv5p/",
+     "size": 14557,
+     "sha256": "88e62c87fff245c5375db4cbbe6d2129fbc95b7fd3e0f3d040d0f5c78d31a620"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-P3_channels.tsv",
+     "url": "https://osf.io/download/w3h9p/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/348a9/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/9wzt8/",
+     "size": 54743040,
+     "sha256": "d10892e1ac0cdfb6180f7be8661c4276087fcf87fe397bb002888724bd6309c2"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-P3_eeg.json",
+     "url": "https://osf.io/download/uw3t4/",
+     "size": 1651,
+     "sha256": "2ecc00cf269bc5e24abff8ff41d84a1717c2090061554aac411f1760fedf5aa9"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-P3_eeg.set",
+     "url": "https://osf.io/download/pfbvt/",
+     "size": 3448864,
+     "sha256": "f16a1094fc1e4a737eee8135d40a98f1b5605b134bad6fd4b96c992546df0feb"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/kcygt/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-P3_events.tsv",
+     "url": "https://osf.io/download/qycsk/",
+     "size": 14547,
+     "sha256": "eaf0fe7b14362f2f607d943572c4f2bd3a6ccc27ea794b4b9b60147dbbb71974"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-P3_channels.tsv",
+     "url": "https://osf.io/download/4v9w5/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fc850c4cba026ebcd228/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/shnjt/",
+     "size": 50958336,
+     "sha256": "ef70827a8657ea84308074e1230a6faf11ae8e070a80dc8c73d0b6ae74129f8f"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-P3_eeg.json",
+     "url": "https://osf.io/download/3gnwf/",
+     "size": 1651,
+     "sha256": "0974cefd5ed746ae901268d35f26695b04b732212d3e9cf6aacbe2fb86e71a60"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-P3_eeg.set",
+     "url": "https://osf.io/download/2n5pr/",
+     "size": 3219208,
+     "sha256": "c89361e6a55fd950a6677b5ffad4b6e284e140b495cd837a999235aa5506212c"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/zm5f3/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-P3_events.tsv",
+     "url": "https://osf.io/download/pcx26/",
+     "size": 14474,
+     "sha256": "f26cd21d097ada68bbe2bfc6de3f22ba3859ef1c2717cee1b561a720668c2996"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077c3686541a092914b8b6/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fc8cc7a976029a9ddea9/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077c3dba010908a7892c69/",
+     "size": 73531392,
+     "sha256": "13c7c97d6f7cba952ff34c73739473292d42ab620b2d1fab64b3e22de463733d"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077c40e80d3708eaa588b6/",
+     "size": 1651,
+     "sha256": "de0906b41a038dedd0cd034afe2cf49ad79f2a316138e8a1cdf86a398d3ad61d"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077c4286541a092914b8e1/",
+     "size": 4587664,
+     "sha256": "71e6defd4e65b46e66e8d703b6e6322a5e742647ecbcb89741aa3846ef7b72f0"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fc890c4cba026ebcd236/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077c45e80d3708eaa588c8/",
+     "size": 14561,
+     "sha256": "add13f5d93da0b394a7bf3abb1a4f1029286f1805c3ab90995b9521e9e82cb89"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077c47ba010908a48924dd/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fc94c7a976029a9ddec5/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077c4ee80d3708e2a575cb/",
+     "size": 51634176,
+     "sha256": "fdc000cbb5205bf992a4403b0cc7690545fc3280e012d6cf8bb41f7c9ce14eb6"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077c5186541a092914b917/",
+     "size": 1651,
+     "sha256": "7d536a99aa3661131ce20078c9815036e63832c5ed5133c801ff63b9ccc2f0f1"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077c54e80d3708eaa58909/",
+     "size": 3260168,
+     "sha256": "661fae8c029039ffe6301dddb97cba6eeed3580af8db438972e2e18f122686be"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fc90317620027c3809d8/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077c57ba010908a7892cde/",
+     "size": 14513,
+     "sha256": "271bc1daa016496a876d65c3251d465c3abc0e6817acf88b19f2101f7c59c435"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077c5bba010908a7892cee/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fc99c7a97602949de7be/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077c6086541a092c14dc05/",
+     "size": 44335104,
+     "sha256": "ccaa21b3e5d9b9847edaec6b780fb00d9f15b502b666a4685bd68eb483cb19be"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077c6286541a092914b940/",
+     "size": 1651,
+     "sha256": "94d39638264b04b47c6d6b5f0bffd187fc0ef52b7830c9b7ba2b48f87df53655"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077c65e80d3708eca59115/",
+     "size": 2818696,
+     "sha256": "dacd26416c6f74630fc63ac5c7e7cd7f20bd004a0cf956d3304f731ac5d3b5f9"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fc970c4cba026dbca29f/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077c6886541a092914b950/",
+     "size": 14347,
+     "sha256": "47fb183527fed8ace7c88dd41cb205a751d96247ff1afa74b27fe3c1283f8013"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077c6aba010908a4892526/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fca1317620027d382e8b/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077c6fba010908a7892d37/",
+     "size": 48119808,
+     "sha256": "5f99c4d2d13a566203f0f2e4097a2530f3cd929e1da377654eeb323c025ccb40"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077c72e80d3708eca59158/",
+     "size": 1651,
+     "sha256": "157d8430574e5bdc8a195b9cb8591b2ebb5c607b7c3f5275da1870f904d65957"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077c75ba010908a7892d51/",
+     "size": 3048240,
+     "sha256": "ea4387b576fe975e7579543f1f2d310f297c5cb557929ce10259ee5ddd31839f"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fc9d0c4cba0269bc8777/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077c7886541a092c14de01/",
+     "size": 14497,
+     "sha256": "8459a6e413e67065d157001e981d918215ad1c2c5b8b4cb2492a561c1d7a6bd9"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-P3_channels.tsv",
+     "url": "https://osf.io/download/wmtn7/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fca90c4cba0269bc877c/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/f27nt/",
+     "size": 62177280,
+     "sha256": "64a34705ac2c74bae5d652b4ce5b30a3f9b24ce3e49655d703880e07eb445f19"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-P3_eeg.json",
+     "url": "https://osf.io/download/5arxz/",
+     "size": 1651,
+     "sha256": "2cf0d2d15c5a2ae9e96840c574e472536e295b68cabfb135afb6dc325d300694"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-P3_eeg.set",
+     "url": "https://osf.io/download/25tra/",
+     "size": 3895672,
+     "sha256": "933442b29b7eec023f41876b2247873b7b0521b0dde0f118b87ae70e22602458"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/uqj8m/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077c89ba010908a4892576/",
+     "size": 13928,
+     "sha256": "cbdf21b86e91433dd77c7ff65911606d64e042ec11e50c9df4ae1d6bc9c097b6"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077c8ce80d3708eca591cd/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fcae0c4cba026ebcd28f/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077c9286541a092c14e014/",
+     "size": 47714304,
+     "sha256": "02841c7a89c77104face29414d11055924eced435e1a3387efd87ef7024fca07"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-P3_eeg.json",
+     "url": "https://osf.io/download/h43xb/",
+     "size": 1651,
+     "sha256": "f539052933d45accf2e730a35f44f17597a0f62a793f4bbfe9ce152431c3b7d9"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077c9886541a092614b590/",
+     "size": 3023496,
+     "sha256": "6c220778c33d9be8723307d96aa4003be028aea1c2f1192e10af33188e4bb9e1"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fcacc7a976029a9ddf21/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-P3_events.tsv",
+     "url": "https://osf.io/download/cdav5/",
+     "size": 14534,
+     "sha256": "6385063c9d32107cc8c6c2f22efea7953998c89695e0caa40b1b084773350eda"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-P3_channels.tsv",
+     "url": "https://osf.io/download/b3sx2/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fcb5c7a976029a9ddf3a/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077ca386541a092314b337/",
+     "size": 49606656,
+     "sha256": "8e61c4b08ca9ac92a500bc7bfc4d0a7fc3bba4e98cb3f094a55a4fc64e586285"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-P3_eeg.json",
+     "url": "https://osf.io/download/hrjte/",
+     "size": 1651,
+     "sha256": "a62302db4a0193c20cd03437864d7c3a58f5c3e67f879954472ec256ffe21ddc"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077caae80d3708eca59240/",
+     "size": 3141112,
+     "sha256": "d24dfc73b5399d1d62cfbc4053ed1d0e06873187b0debc2ac553197ce87d3786"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/qyhtp/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-P3_events.tsv",
+     "url": "https://osf.io/download/xz9ut/",
+     "size": 14439,
+     "sha256": "82d254f7311d321ea2dc718ff9df849e8f3e3920f16b6566263f7f70990e506d"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-P3_channels.tsv",
+     "url": "https://osf.io/download/w92xd/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/esg93/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/be5vc/",
+     "size": 49741824,
+     "sha256": "666676be3b98d78ebae3f5daf1b84d9113c457241eddb583a62fc63d429560c0"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077cb8e80d3708eca59279/",
+     "size": 1651,
+     "sha256": "dd6b64d643f27f33caabdae14f03f759c713e13274ff671668589558aa390dc1"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-P3_eeg.set",
+     "url": "https://osf.io/download/bkt3q/",
+     "size": 3146056,
+     "sha256": "016f8f5ca587196ff038fc773f28a3f6ed0a8eca45403aad92540a4c5e671018"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fcb9c7a976029b9dfabc/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-P3_events.tsv",
+     "url": "https://osf.io/download/e3b2d/",
+     "size": 14570,
+     "sha256": "b4e4cbe8329edbfa748ec4685997d993ed39a4b202981fe059909997acf0c665"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077cc0e80d3708e3a577f2/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fcc4317620027c380a39/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077cc5ba010908a2891e21/",
+     "size": 45551616,
+     "sha256": "fdd47026b47fa2226c47ce29dd53b3a384875fbd3e1c782a79345a79a06c99c2"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077cc986541a092314b35d/",
+     "size": 1651,
+     "sha256": "16e65413ffe43cee51bd89e0b03185b640cddc1719ada377bd6c9cdd28a3dfc2"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077ccbe80d3708eca592c8/",
+     "size": 2892328,
+     "sha256": "064014560d7335204da8ee7079b94691e4db00325b906d7cd01e96be1fc32c37"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fcc1317620027c380a2a/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077cceba010908a48925fb/",
+     "size": 14529,
+     "sha256": "e18eea2cdcf23089b09ac9da79b3e2ac1f4d7c4307fb5a9655fdb1a576f6a314"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077cd1e80d3708eaa58a4b/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fccf0c4cba026ebcd2e5/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077cd7ba010908a489261d/",
+     "size": 50958336,
+     "sha256": "d696395320938dbe9ccd964a1a347bc534c27406765434a4c1216164f2993917"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077cd986541a092c14e554/",
+     "size": 1651,
+     "sha256": "0974cefd5ed746ae901268d35f26695b04b732212d3e9cf6aacbe2fb86e71a60"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077cdce80d3708eaa58a67/",
+     "size": 3219448,
+     "sha256": "266e7c60c6e03229a2f224f193fdc9329f8fecfe348eb830a0da6b63e70c6998"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fccb0c4cba026abcb051/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077cdfe80d3708eca59322/",
+     "size": 14476,
+     "sha256": "d02d150fc4aa9174f66a908e7658beb43a0660bcc0185cfef04ab78eb1be6d94"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-P3_channels.tsv",
+     "url": "https://osf.io/download/znha7/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fcd8317620027d382f40/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077ce9ba010908a7892f1b/",
+     "size": 45821952,
+     "sha256": "6b2c56387c5eb7aa552d1e03347a8eec23ac9ee3160e4c02c6d0a6b75b61ee92"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077ced86541a092c14e6ca/",
+     "size": 1651,
+     "sha256": "75d29a8017a1c8ff3f975985106aa1b4203fa340a55d6212ad91ec80fb0a3cdc"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-P3_eeg.set",
+     "url": "https://osf.io/download/ufm83/",
+     "size": 2907928,
+     "sha256": "94b0d20b0ca5214db9099d3985781359c607d0570fb67c0ddf38bebeb5634a1a"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6uhqx/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077cf5ba0109089e891e8a/",
+     "size": 14440,
+     "sha256": "6556fcd19f7b01fad098b6bdfa07415818261c0c2df88aa0fd9767cd9314c207"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077cf986541a092c14e7bb/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6f9sj/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/wdqb8/",
+     "size": 49201152,
+     "sha256": "db29ba51256044deadaa3ec74073078719767c092e3b19bcadcd1bf9183f9f4f"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-P3_eeg.json",
+     "url": "https://osf.io/download/4nyxg/",
+     "size": 1651,
+     "sha256": "1167cf9b1d3a40a643226e0518f8857a8926f18fb986d5dc9a72afc35ea253ef"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-P3_eeg.set",
+     "url": "https://osf.io/download/vtd87/",
+     "size": 3113008,
+     "sha256": "1ca21844a6ba8b7ef6dfaf61a20bd49ea3d395ec756bc1db5d8ea94ff46a9c30"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fcdc0c4cba026ebcd31f/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077d07ba010908a2891e9f/",
+     "size": 14521,
+     "sha256": "225bc1977eb14a61be7c0c98ed1c08c06c66e83b960820bcf96865f95988b6a3"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077d0bba010908a48926b9/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fce90c4cba026dbca342/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077d12ba0109089b8917db/",
+     "size": 56094720,
+     "sha256": "377730850243cf5deb0958c88f91a31c68c375ab593a7118b852b15ea00f07d9"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077d14ba010908a7892fce/",
+     "size": 1651,
+     "sha256": "c2751979c4fa9457aa8aeffedbe1a139ae2a5bccec340e5f9bdd2f9ad0eaab5f"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077d1886541a092614b69d/",
+     "size": 3531080,
+     "sha256": "0087055f8dd47351826b5b9de6f41a2e5a1cc5c08286d6e9b75002d76dd3e0bd"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fce4c7a97602949de7f8/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077d1b86541a092114b3fb/",
+     "size": 14582,
+     "sha256": "46f86223846e025ea387e292f404f8bdb33d3c24de5181ace51ea811df294241"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077d1eba010908a48926e8/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fcf0c7a97602949de801/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/34ysb/",
+     "size": 52985856,
+     "sha256": "d19422d06fbe9beb14c2f1475b8d67bc2fae260a5fd719d3888d5b0b2a39289f"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-P3_eeg.json",
+     "url": "https://osf.io/download/rqxby/",
+     "size": 1651,
+     "sha256": "e8a6cbe319f4997952fe79ac1f9b80f78d02bca9d2add4e07edd293faa66e0a3"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077d2bba010908a7893019/",
+     "size": 3342384,
+     "sha256": "5da6b8fc5a2fea08c85d12b88e335bae07cd6bd0761273fa2c0d6f2cdcd94f65"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/9apv8/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-P3_events.tsv",
+     "url": "https://osf.io/download/e5fwa/",
+     "size": 14510,
+     "sha256": "790a88d4585ab98b196c4094f23cfb9f48ab47560daaf52cb419b5432e5640f4"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077d30ba0109089e891ec8/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fcf90c4cba026dbca367/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077d36e80d3708e3a57821/",
+     "size": 53661696,
+     "sha256": "57347b760d30cfef57e84e8fe423114f54491090eac228877a0e02fd7105f18e"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077d39e80d3708e7a581e9/",
+     "size": 1651,
+     "sha256": "4f98393c3ce6a021519cc26d86872c50d2273fc438a705a3d3aa450029cf005c"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077d3fba010908a4892738/",
+     "size": 3384072,
+     "sha256": "419285d4cf6b31c294144e146db0843c0075214ad3f84b4c2aa0ba18908f6b53"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fcf4317620027c380aa5/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077d4386541a092914bbde/",
+     "size": 14571,
+     "sha256": "35044329ffa7f7bf902910254159bd64dd55d668c93b47b8e58656661172e4b3"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077d48e80d3708eca5945a/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd000c4cba0269bc87b4/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077d4f86541a092314b3e2/",
+     "size": 49741824,
+     "sha256": "89dc48b99249e333096a0ac9f1394edda054743bff77538709d13f7054a71554"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077d51ba010908a78930a6/",
+     "size": 1651,
+     "sha256": "dd6b64d643f27f33caabdae14f03f759c713e13274ff671668589558aa390dc1"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077d56e80d3708eaa58b76/",
+     "size": 3145776,
+     "sha256": "f8f66409758abb4320eef7161db163cd72a47c5a0c023514191c380673061a67"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fcfdc7a976029a9ddfb7/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077d5a86541a092c14eeb4/",
+     "size": 14538,
+     "sha256": "5e594341958614f1710a92ca72d3f4b5fe0a00ac628704bd2b87cd358df32803"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077d5cba010908a78930c9/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd07c7a976029a9ddfdb/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077d63ba010908a2891f20/",
+     "size": 49741824,
+     "sha256": "cf95ab381989c60c235e98628e58ce3f5ab0b8f6de40e2fee711d74d84bb33ef"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077d67e80d3708eaa58b99/",
+     "size": 1651,
+     "sha256": "dd6b64d643f27f33caabdae14f03f759c713e13274ff671668589558aa390dc1"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077d6aba010908a2891f2e/",
+     "size": 3145776,
+     "sha256": "bcbc0c85930af0c2da8889c350350dc3d59c9949e1e334027549104189c359b3"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd04317620027d382ff9/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077d6ce80d3708eca594fe/",
+     "size": 14514,
+     "sha256": "cf8286c3ff49fd75225fa6c119055f6ace657b7949a8b938e67da915432d75ae"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077d6e86541a091614a7ea/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd0fc7a976029a9de004/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077d7486541a092614b744/",
+     "size": 52039680,
+     "sha256": "589fdea4eceb279685b6f445e879283427c3af47ff66ff5a7dc4b9099dcc2335"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-P3_eeg.json",
+     "url": "https://osf.io/download/swnj5/",
+     "size": 1651,
+     "sha256": "6897f4733abe2dd0d92be5f5af26f82516a9d91883eebc6069931c27d3b23e6f"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-P3_eeg.set",
+     "url": "https://osf.io/download/pc73d/",
+     "size": 3285712,
+     "sha256": "ffff41295cfd40ed6b16dba9f2752eaca653f0a5ada0173f032067f751334cc0"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd0cc7a976029a9ddff2/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-P3_events.tsv",
+     "url": "https://osf.io/download/xmqj8/",
+     "size": 14503,
+     "sha256": "c3b1c1225e886d8545d1d7e18d7b61f341c42870ce0f250d4f6ff3e82f281180"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077d87e80d3708eca59558/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd17c7a976029a9de023/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077d8dba010908a2891f78/",
+     "size": 51499008,
+     "sha256": "468c6dda18d1b0a673ca08540c3b0b3ec2a34e57eacb40172a89bcd864e2ce55"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077d9086541a091914a9a3/",
+     "size": 1651,
+     "sha256": "612b8867eb75d1ded1f546dfd1d77017e878a7be168f3fbb56804e2210f0142d"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077d9586541a092914bcbe/",
+     "size": 3251992,
+     "sha256": "ad076c3db69a54d53fde64ac6d55ae53e0a1321bf92f43915552aef3f0d0271a"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd140c4cba026dbca3c6/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077d9986541a092914bccf/",
+     "size": 14434,
+     "sha256": "4373a9b4a91b20231d77457c19b8d8866f66259ecb2cbf10de44a65da8b39ced"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077d9cba010908a78931a5/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd1e0c4cba026dbca3df/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077da7ba010908a2891f9a/",
+     "size": 47308800,
+     "sha256": "d6fe35844108401e7fcd6ba2f5388aa8edaa4d064963088c7f9704cc76477dfb"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077dadba0109089e891f35/",
+     "size": 1651,
+     "sha256": "170c15ca11d1e3ae0eb8d343cf44fcedb753ed72f71b3a3ce9f87c3d25ab934d"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077db3ba010908a2891fa4/",
+     "size": 2998040,
+     "sha256": "9e7153d25b5782bf103c0b2c53f1fa6e5bec0a4662c5a05f2d22251391032b19"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd1b317620027d38304a/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077db8ba010908a7893203/",
+     "size": 14466,
+     "sha256": "146be8e46a50f068d9f6afb9e8a20a1a00168ee4fab1c5b053364ae86cf83e30"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077dbbba010908a2891fb1/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/wrknj/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077dc1e80d3708e6a57c69/",
+     "size": 48525312,
+     "sha256": "b4d5fc36870a522b3fd86b4f442c1b8f41684a384a869e0685fe5f4bcff9fcba"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-P3_eeg.json",
+     "url": "https://osf.io/download/k9zwp/",
+     "size": 1651,
+     "sha256": "9d42525837cfa9d14ecba1f75e5fea03270cbb3775e35607f7930eee2b1c3473"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-P3_eeg.set",
+     "url": "https://osf.io/download/35pgv/",
+     "size": 3072160,
+     "sha256": "702cbf47cb524051df5aa48cc49473067558713feb5370ed48b56a45b4fb4174"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/srwfj/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-P3_events.tsv",
+     "url": "https://osf.io/download/qgt6r/",
+     "size": 14500,
+     "sha256": "3b66060f0f78b4665b400628dd269e6bd14b5305b82c91fb928afc926381a91c"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-P3_channels.tsv",
+     "url": "https://osf.io/download/9n74e/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/rq2df/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077dd7ba010908a2891fdf/",
+     "size": 51634176,
+     "sha256": "d03e644b5ce11e831076df7c9bb570feea6755472a0dcd0523a96cdb20735648"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-P3_eeg.json",
+     "url": "https://osf.io/download/8zvqj/",
+     "size": 1651,
+     "sha256": "7d536a99aa3661131ce20078c9815036e63832c5ed5133c801ff63b9ccc2f0f1"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077ddf86541a092c14f82b/",
+     "size": 3260576,
+     "sha256": "103fd98143cc57a7f777a2404bd82d50b55be8d6193a0110a88b039ea6248669"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/sx2rf/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-P3_events.tsv",
+     "url": "https://osf.io/download/kv6ej/",
+     "size": 14534,
+     "sha256": "680518bdbbfbbda021bba9e4e0f8b5192e7ac8d53ad8c9455a8936dad0b613be"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077de486541a092614b7ef/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd34c7a97602949de84e/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077de986541a092914bda0/",
+     "size": 48525312,
+     "sha256": "a4ac76e2b306070f3f6ddfbbdc2a9e35e16aa7ee60556ba96b0202d0cfd96314"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-P3_eeg.json",
+     "url": "https://osf.io/download/asrb2/",
+     "size": 1651,
+     "sha256": "9d42525837cfa9d14ecba1f75e5fea03270cbb3775e35607f7930eee2b1c3473"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077deee80d3708d7a56ff2/",
+     "size": 3072048,
+     "sha256": "3e51cc66e5deae0daf0bdc6d8e2b3933d25010e7b0d9ab821027e75c305ce075"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/kjbw6/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077df186541a092114b463/",
+     "size": 14499,
+     "sha256": "953d4764c86388a9be7b493183985ea90e886c18adcd7b8b12b9e0e503b71d6a"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077df5ba010908a78932b1/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/axjvq/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077dfee80d3708eca596dc/",
+     "size": 48390144,
+     "sha256": "a5731047f41705699b2f6d681f716e89f7185bbe622d7ea15b29a07d7e4571b9"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-P3_eeg.json",
+     "url": "https://osf.io/download/n7h5u/",
+     "size": 1651,
+     "sha256": "dd80939a3d5266595fd5c78b812df516dabf87345c47c071ac8425336d0e72dc"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077e05e80d3708eca596f7/",
+     "size": 3063744,
+     "sha256": "329ca73e80a187c9a8b6f4f809be1d44789542dc2bdedd983e1d235a6eb4bfee"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/4ta27/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-P3_events.tsv",
+     "url": "https://osf.io/download/rxet4/",
+     "size": 14428,
+     "sha256": "e894a28b87dcead9d3ad8aec1dd819f66a1d77265452694b94dda2475be02be9"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077e0c86541a092914be00/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/5bawj/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077e16e80d3708eca59730/",
+     "size": 53121024,
+     "sha256": "e84fdb0cda17a153d0399a7b0ac6ad92a44567fce505230790cd1350cce59ebc"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-P3_eeg.json",
+     "url": "https://osf.io/download/9zs2n/",
+     "size": 1651,
+     "sha256": "bafaa5ed11ce56ec713cfd43782c3c89138722c99653f45e3afceff297a3ab51"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-P3_eeg.set",
+     "url": "https://osf.io/download/5ygnk/",
+     "size": 3350408,
+     "sha256": "c18d8c2ccf32f21127da0ff00bdb8f3182e468873b21bfcb7a5e389f904b76ee"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd40c7a976029b9dfc2f/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077e1fe80d3708eca59753/",
+     "size": 14433,
+     "sha256": "cb255f60c54f90669f164245c8c01bceab2894147facb239351f715e162744b3"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-P3_channels.tsv",
+     "url": "https://osf.io/download/3wtuq/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd4a0c4cba026dbca440/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077e27ba010908a2892048/",
+     "size": 46768128,
+     "sha256": "96ce634352a36a56bff2eb114da61e3d3b9924c1df0b5b9e20ed772019a7f0c6"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-P3_eeg.json",
+     "url": "https://osf.io/download/za3vp/",
+     "size": 1651,
+     "sha256": "cd959d7ab2da7c45ba638138eb873b9bcc756475d1a6410535120453ecebb441"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077e2d86541a092c14fe48/",
+     "size": 2964096,
+     "sha256": "3593b1ce0718915601cdf22e910bd831a7ef7dcd35c970c3e61104aee9f79d31"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd46c7a97602949de85e/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-P3_events.tsv",
+     "url": "https://osf.io/download/mvjfb/",
+     "size": 14278,
+     "sha256": "14a98b90ca42a525b97e45d165bba5f5d0433c57b458be8f2fd1d82fea38c820"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-P3_channels.tsv",
+     "url": "https://osf.io/download/f9nqa/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/3ta8f/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/4d67s/",
+     "size": 51904512,
+     "sha256": "32e20d4024dcb0b6484897b6b5fb39e105060d7fc7f4f867452aa146a820a500"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-P3_eeg.json",
+     "url": "https://osf.io/download/ktnsh/",
+     "size": 1651,
+     "sha256": "dfeb3b52c4ee849ae02716a44dcdc4d7b76112b14997d06934ba2d3ad228d272"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-P3_eeg.set",
+     "url": "https://osf.io/download/exjfb/",
+     "size": 3276848,
+     "sha256": "b0f9cc799f4c26959a128ea3732020dc7e5b32a206d56e9a1aef248d389d7d91"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/srbda/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-P3_events.tsv",
+     "url": "https://osf.io/download/uyvz9/",
+     "size": 14559,
+     "sha256": "f84337363c34c99f560856e65ba8dc90fe29a16ebf53258e4c97439c41899e89"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077e48ba0109089e891fac/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd5c317620027d383117/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077e4e86541a092c1500d0/",
+     "size": 46632960,
+     "sha256": "206347e24d2391561d6ebc50bb9bea1c4d9e9e08e8b8e1a4c2066f10a81ad151"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077e52e80d3708eca59811/",
+     "size": 1651,
+     "sha256": "dbf125360f63172db8044eb814afd4bb9ade16c2697405e4bcccee66cfa8be44"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077e55e80d3708eaa58d8f/",
+     "size": 2957360,
+     "sha256": "14e3b67322f5fa9a50e56e899cff767ad062b2530f1712d7a6e069ad4c8c5ea8"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd590c4cba026ebcd505/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077e58e80d3708eca59837/",
+     "size": 14493,
+     "sha256": "3d12b236e7e04f8f25ff5e294e7bbb649ed1f53aa56abd62c53d28441869ec54"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-P3_channels.tsv",
+     "url": "https://osf.io/download/bpa5d/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/pjtf8/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/wuxb5/",
+     "size": 50012160,
+     "sha256": "f90f2db24d435697be317b9ca820a95f4178ca201c57f09543de8571289fc4b1"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-P3_eeg.json",
+     "url": "https://osf.io/download/9zbh3/",
+     "size": 1651,
+     "sha256": "6737ee828feb973aad9336795b537fb4843d5045cdac1a3b2b8a3742cb9e09a7"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-P3_eeg.set",
+     "url": "https://osf.io/download/5y3ja/",
+     "size": 3162160,
+     "sha256": "856b485fa417bb9f501bc00166948387e2b7f53a4243bf533da8175d73bae4b7"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd600c4cba026ebcd526/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-P3_events.tsv",
+     "url": "https://osf.io/download/hdyba/",
+     "size": 14498,
+     "sha256": "63d6cdafbfd14912051179d3658e0a3b4d8d2d9553532f101d150638b9c0a390"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-P3_channels.tsv",
+     "url": "https://osf.io/download/fecn2/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd6dc7a976029a9de0e4/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/nh29x/",
+     "size": 47038464,
+     "sha256": "7adc758a193a8842da0d4d410bddd7f2f580bc493b006b9d968d5e2d617cb0b4"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-P3_eeg.json",
+     "url": "https://osf.io/download/bawsx/",
+     "size": 1651,
+     "sha256": "14f97259d1d48cc1e8cbd5d794e4c5553e360c80920b590b73bd6f9f5b5ac6df"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077e8286541a092c1504e0/",
+     "size": 2982216,
+     "sha256": "7c2a2789ef573ac41be4e348c4d0a58ef02c06432d7240982a8b4dfed084fe71"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/hsy23/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-P3_events.tsv",
+     "url": "https://osf.io/download/wj24x/",
+     "size": 14536,
+     "sha256": "cbc3edb78630a3df9bb0cd538cb1edfad1e0c189cf65a338f38a9c89acb3e517"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077e8986541a092c150568/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd74317620027d38316f/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077e8ee80d3708eca5990c/",
+     "size": 47443968,
+     "sha256": "7207b5ed093754ecfb8a23cc0c991bb920d3a9c4be7a1af670208b4ad2d83db1"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077e9286541a092c150619/",
+     "size": 1651,
+     "sha256": "36028856dbeec16980365d385ae166cffac6afc142145802bef5dc0ed18c4681"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-P3_eeg.set",
+     "url": "https://osf.io/download/9gdq5/",
+     "size": 3006736,
+     "sha256": "decb2aa40b8cc6fa31ea8897424b4d875006f94f288cbefad530df835cc26a4c"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd72317620027d383163/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077e99e80d3708eca59941/",
+     "size": 14491,
+     "sha256": "afbe8c199909d79cdc7114a7a69fa60586c2285323dd07e8db23360a2b4ad8e5"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-P3_channels.tsv",
+     "url": "https://osf.io/download/vbqzt/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd7c317620027737e979/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/uht4j/",
+     "size": 62717952,
+     "sha256": "fd085f0d8ac6c49b3691a3492606d10875a4cec147da4a0e6a54c55328ef5800"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-P3_eeg.json",
+     "url": "https://osf.io/download/vm6nk/",
+     "size": 1651,
+     "sha256": "31059af1a7b94a57eec047367af7f159c2e921a0564c11025088be0e210863d1"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-P3_eeg.set",
+     "url": "https://osf.io/download/pvkfw/",
+     "size": 3932432,
+     "sha256": "b3bca810e5d435bd2f9a025fd68b137be6756b49115d8d9e50c1ef4517f74651"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd790c4cba026abcb126/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-P3_events.tsv",
+     "url": "https://osf.io/download/r5txn/",
+     "size": 14558,
+     "sha256": "c0593811ccdfb2d31f906dd3b8069fee5efb7ac012312b97aeeea4acd3051f74"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-P3_channels.tsv",
+     "url": "https://osf.io/download/xzbv3/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6e85j/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077eb586541a092914bfe3/",
+     "size": 48390144,
+     "sha256": "8f48d89de03e8cf6667af90bb60e428f5bf9dfc5eb747626871a9289644989ab"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-P3_eeg.json",
+     "url": "https://osf.io/download/hm7s2/",
+     "size": 1651,
+     "sha256": "dd80939a3d5266595fd5c78b812df516dabf87345c47c071ac8425336d0e72dc"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-P3_eeg.set",
+     "url": "https://osf.io/download/jktgm/",
+     "size": 3063296,
+     "sha256": "92c8ec58a7096ab26cf72fd646bc740be9da529912d880f55abefab7e6c076c4"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/hnpfm/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077ebde80d3708eca599c5/",
+     "size": 14447,
+     "sha256": "843b4736db689917b1d193790771673773b600ed4aed24d0e940e5c1585c27e0"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077ec1e80d3708dea57386/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/6101fd8c0c4cba026abcb144/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/zau7k/",
+     "size": 50688000,
+     "sha256": "69f3071ddf8b8066b829935d1e442f64d63a7fbda3b899f921ac721f35b7a2e2"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-P3_eeg.json",
+     "url": "https://osf.io/download/60077ec986541a091a14abda/",
+     "size": 1651,
+     "sha256": "583942610aaedc357234332690c0d0ff22f6689cc9eaf6d985930aeb72e4c2af"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-P3_eeg.set",
+     "url": "https://osf.io/download/60077ecce80d3708eca599f6/",
+     "size": 3203120,
+     "sha256": "b2a3616667482ff551b2f0ab11ce9e4608fc310cf064cbfbe7fdc4df36721b87"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/27q9u/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-P3_events.tsv",
+     "url": "https://osf.io/download/60077eceba01090897891096/",
+     "size": 14534,
+     "sha256": "a4e9d7d1bcc8fef56cc81123b4a04da85912b9830f8f0b8b915a32e9a9930478"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-P3_channels.tsv",
+     "url": "https://osf.io/download/60077ed1e80d3708eaa58ec2/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/7rtm8/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/k79vr/",
+     "size": 65961984,
+     "sha256": "69691e2b35edad6209e510c85664349af1ddffa1f891e3e9584c71ab91f7535a"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-P3_eeg.json",
+     "url": "https://osf.io/download/n5prh/",
+     "size": 1651,
+     "sha256": "d1f83af9283c72e7f7acfb0a46276ab8dd3748d8c55555905de3cf3c64106e1f"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-P3_eeg.set",
+     "url": "https://osf.io/download/qwujb/",
+     "size": 4128088,
+     "sha256": "d36149d4da2806afb0a0963e5ca2fb7c2cb3ab08ab357ef29b1a4d46995e403a"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/4z6b5/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-P3_events.tsv",
+     "url": "https://osf.io/download/5t3h8/",
+     "size": 14446,
+     "sha256": "dbddbf24a0a82c40d553a3960585aa584d5f220cda713f1f4f6f3473ed3654a1"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-P3_channels.tsv",
+     "url": "https://osf.io/download/28m7s/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/k5zcf/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/60077eeae80d3708eca59a76/",
+     "size": 53526528,
+     "sha256": "9a4d100b244b24da57d0241af64ebd5b05de6761467986d0c425eef7663eafac"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-P3_eeg.json",
+     "url": "https://osf.io/download/whaqt/",
+     "size": 1651,
+     "sha256": "0ab967d7de7026581278ed13281e93ff7b9dcb250b93fad61fa43f3381278543"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-P3_eeg.set",
+     "url": "https://osf.io/download/r53eb/",
+     "size": 3375264,
+     "sha256": "7e4ff01c66e4bad1ce9d0a18aedb00b98400346772f886e8f001d9dfa3a19c86"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/6101fd97c7a97602949de8bb/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-P3_events.tsv",
+     "url": "https://osf.io/download/79g3t/",
+     "size": 14546,
+     "sha256": "4e732970f78183d471ba1777ae7163c764e4cad79db823f78cd94d0dc251802d"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-P3_channels.tsv",
+     "url": "https://osf.io/download/h3jrb/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-P3_coordsystem.json",
+     "url": "https://osf.io/download/cm4qp/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-P3_eeg.fdt",
+     "url": "https://osf.io/download/3d5gx/",
+     "size": 54472704,
+     "sha256": "1c0468aa34ebabc727ce738981a4b304a59ce06010e7401afaf872c1e76bcc8b"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-P3_eeg.json",
+     "url": "https://osf.io/download/x3t6g/",
+     "size": 1651,
+     "sha256": "f2e2caee640918ddc7b33461b44564fb634bca858ff133be98ed58160e7ed770"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-P3_eeg.set",
+     "url": "https://osf.io/download/qcx5p/",
+     "size": 3432496,
+     "sha256": "d0cf8d163e28ba5dd579650158f743edaff81ea55a443d4f346f61ead9d36eca"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-P3_electrodes.tsv",
+     "url": "https://osf.io/download/3457k/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-P3_events.tsv",
+     "url": "https://osf.io/download/47yjp/",
+     "size": 14504,
+     "sha256": "bb87d0ecf7151683eee0e4041fffddedb34fb66b4f9698ebcc71c56b1d55401d"
+    },
+    {
+     "path": "task-P3_events.json",
+     "url": "https://osf.io/download/8mcps/",
+     "size": 1591,
+     "sha256": "873001daf325f481faf22ce08b1f57398c68105b469363a0314732aa8624d85d"
+    }
+   ]
+  },
+  "N170": {
+   "osf_node": "pfde9",
+   "folder": "N170 Raw Data BIDS-Compatible",
+   "files": [
+    {
+     "path": "CHANGES",
+     "url": "https://osf.io/download/zw8ah/",
+     "size": 76,
+     "sha256": "33950816e74d1ba4518f11e53b0c65600cd22e96a9a126fa900c07cc7399a618"
+    },
+    {
+     "path": "LICENSE",
+     "url": "https://osf.io/download/3na8h/",
+     "size": 705,
+     "sha256": "8616fd6d18aafc147b0027e72d9e95218562366a63c8bfb6b30f7179775f6678"
+    },
+    {
+     "path": "README.txt",
+     "url": "https://osf.io/download/n86qj/",
+     "size": 2600,
+     "sha256": "3ba791db540fc1db34707b43e89ca93ae0231a9d84085add8433a5b00b4d96ab"
+    },
+    {
+     "path": "dataset_description.json",
+     "url": "https://osf.io/download/ehjgp/",
+     "size": 697,
+     "sha256": "124f7ec744afe2b835d5261ac06adb5d9af551fdaeb8f9d90bac57cdb2de3ef9"
+    },
+    {
+     "path": "participants.json",
+     "url": "https://osf.io/download/bnaqe/",
+     "size": 282,
+     "sha256": "1ee3070a33188a330381ee3ed3b484c370da9fc69669cef05d2931842430ba3d"
+    },
+    {
+     "path": "participants.tsv",
+     "url": "https://osf.io/download/h2tja/",
+     "size": 792,
+     "sha256": "047b681e6f6434403629c85fc04f9ceeb61a30a5e46ad80ca6d93df7ab1bf67b"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V1.bmp",
+     "url": "https://osf.io/download/w4ra2/",
+     "size": 115974,
+     "sha256": "721dc0b3e990d222bfe8a1a5f549daf442dbd8c24c70229055bbee46ed31fd2f"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V10.bmp",
+     "url": "https://osf.io/download/4wmpa/",
+     "size": 115974,
+     "sha256": "7f166553a7a82ba3bbde718667658764aea2a27a82d4ee4a38321c5345925ee2"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V11.bmp",
+     "url": "https://osf.io/download/60061198ba010907d1892962/",
+     "size": 115974,
+     "sha256": "a0335395a74986979265b6afa392ac6c78d54b37edeabc69826f78a38a7c7d7e"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V12.bmp",
+     "url": "https://osf.io/download/6006119ad77bf1000e6767da/",
+     "size": 115974,
+     "sha256": "b680c8b73e0a4c40dc075772979a813384e215fda943da3c1e6b0939cf370779"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V13.bmp",
+     "url": "https://osf.io/download/6006119ce80d370812a5b657/",
+     "size": 115974,
+     "sha256": "faea8c587e49f33a734a8d35435d2ddddb8587fbd98fc0d80098b5c46a47dd8a"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V14.bmp",
+     "url": "https://osf.io/download/6006119fdf7ff00035477211/",
+     "size": 115974,
+     "sha256": "7cf107c81ab00860a34c3f9e87353765b73e4884ecccf7b4cd15dd716dd6ac7e"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V15.bmp",
+     "url": "https://osf.io/download/600611a1ba010907d08946ba/",
+     "size": 115974,
+     "sha256": "6b77b51e53564928bf2aad81a5cffd61021cd7ae26e07ceb7e417b6f1f587dfa"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V16.bmp",
+     "url": "https://osf.io/download/600611a3ba010907d08946c3/",
+     "size": 115974,
+     "sha256": "781e3b700332396b874cb8f63127eb239d8fe8f2e0c8775932abe556031ddeba"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V17.bmp",
+     "url": "https://osf.io/download/600611a5e80d370811a59331/",
+     "size": 115974,
+     "sha256": "f7c459ea25a8a1766c74cbcc929a5af6105a94d895c94bf8696df88e5ccfd92b"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V18.bmp",
+     "url": "https://osf.io/download/600611a8df7ff00036479111/",
+     "size": 115974,
+     "sha256": "ff94aed067baff193677a4e8203ad5fb49defbb045c82193ff455277af04fc90"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V19.bmp",
+     "url": "https://osf.io/download/8c9dt/",
+     "size": 115974,
+     "sha256": "fb06254258e86c153a0ccce0e92282379a2c1735ca9a8cd8297a6b1144d5cacb"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V2.bmp",
+     "url": "https://osf.io/download/600611ad86541a084814d36e/",
+     "size": 115974,
+     "sha256": "f6c69e5f3cca750b484f5f10b7fa50df9339ffd68cd8d594d9ce5ad5d2e348c8"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V20.bmp",
+     "url": "https://osf.io/download/600611b0ba010907d1892984/",
+     "size": 115974,
+     "sha256": "e7395f426290de0abbd634df0f868247b13ce9cf0c1bb44bc50152d3b5425990"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V21.bmp",
+     "url": "https://osf.io/download/600611b286541a084214b08d/",
+     "size": 115974,
+     "sha256": "c3cddbd12bc6e640261a18280c6e01b7c9210ef0fe72d77dbf785b6d8c88ffcb"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V22.bmp",
+     "url": "https://osf.io/download/600611b5df7ff00035477237/",
+     "size": 115974,
+     "sha256": "207fb57739fdee4919aa80c7c8830d4621611ad94af4380a21e3fd10871d397a"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V23.bmp",
+     "url": "https://osf.io/download/600611b8ba010907d08946f2/",
+     "size": 115974,
+     "sha256": "987591e6d61d6ff4cc43f658d7a7cef4e02336f18009716dd605f8716e9cb94d"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V24.bmp",
+     "url": "https://osf.io/download/600611bae80d37080ea57d85/",
+     "size": 115974,
+     "sha256": "74a8195803dc76943ce5be74e57d08bed0cce7312b7199ed3a2ec26a76a4dd2a"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V25.bmp",
+     "url": "https://osf.io/download/600611bdba010907d08946fb/",
+     "size": 115974,
+     "sha256": "1d3caf390903cdbe12f3a1216fb0e56bbc1b435d3750f04ac1ae416737a28d13"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V26.bmp",
+     "url": "https://osf.io/download/600611bfba010907cd891b57/",
+     "size": 115974,
+     "sha256": "2d8020a87dbb3f3867e1b57ba1fcae57e59d6ba909e21a742366b24d7b0e7ce9"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V27.bmp",
+     "url": "https://osf.io/download/600611c1d77bf1000e6767f2/",
+     "size": 115974,
+     "sha256": "e5b8461cc0d160e664791914463e7139ff09ec7b0bc975148102d3b997d27cb6"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V28.bmp",
+     "url": "https://osf.io/download/600611c2ba010907d089470e/",
+     "size": 115974,
+     "sha256": "9ff42d38e97092ca727e02b00ccb5460d03ace3e319b699d4df59b796b1cca59"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V29.bmp",
+     "url": "https://osf.io/download/600611c5d77bf1000c677c47/",
+     "size": 115974,
+     "sha256": "f2f87cc5e33619baa0e3251d1e86be7f5b49fa3ade71373cc741d8c631bbf9d3"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V3.bmp",
+     "url": "https://osf.io/download/600611c7ba010907d0894717/",
+     "size": 115974,
+     "sha256": "e4bf8dbee005da616421bdcdf4ead258eadb403c0e3099745570fd7cc533387d"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V30.bmp",
+     "url": "https://osf.io/download/600611c9e80d370812a5b6c0/",
+     "size": 115974,
+     "sha256": "6f674c7e4a8b0b0e2922d3f0f2eee763ba2573dd3ffec35e15afea1110db8d84"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V31.bmp",
+     "url": "https://osf.io/download/600611cb86541a084814d3b9/",
+     "size": 115974,
+     "sha256": "20e1171a1a762f5021131cb041151a81a59ff56a9b6e16c0a10bf716feaccd80"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V32.bmp",
+     "url": "https://osf.io/download/600611cee80d370811a5936e/",
+     "size": 115974,
+     "sha256": "2c5db0bda1ba9947d8e38973f177ccb0d9e548c7803e25e14702f980631753b8"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V33.bmp",
+     "url": "https://osf.io/download/600611ded77bf1000967a15f/",
+     "size": 115974,
+     "sha256": "f40e375f47bba1a98742f338f6fc2563a48478961e9b5c0b1170b01924e7ae83"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V34.bmp",
+     "url": "https://osf.io/download/72x6m/",
+     "size": 115974,
+     "sha256": "33cd8e781daf651ce9f6a7e764c2e00c93679ba6ac1e921fcc56c355ac3da25d"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V35.bmp",
+     "url": "https://osf.io/download/600611e2d77bf1000967a169/",
+     "size": 115974,
+     "sha256": "afdec1fcb8199a47ef389c59cdab477f3ef2d5afc42b54e408a3c8df7e91a9e3"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V36.bmp",
+     "url": "https://osf.io/download/600611e5e80d370812a5b702/",
+     "size": 115974,
+     "sha256": "3f258d0027dfefb03c673b04fe2799becd07b1166c09cdacd8934959c5912467"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V37.bmp",
+     "url": "https://osf.io/download/600611e7df7ff00035477291/",
+     "size": 115974,
+     "sha256": "ccd75d08399c0ef8a0ecadb5aed9d9989becaac5f4dbc14d9b72e356b4636073"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V38.bmp",
+     "url": "https://osf.io/download/600611e9e80d370812a5b713/",
+     "size": 115974,
+     "sha256": "76e9e8abca749bd9eed81ea1e822ea1e5b06d585d30c3253aa06f75012e5b33c"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V39.bmp",
+     "url": "https://osf.io/download/600611ebd77bf1000967a188/",
+     "size": 115974,
+     "sha256": "260ff1d15fe3be0d85465aa340408b3c591239ccf20663001b00518f6ef964bd"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V4.bmp",
+     "url": "https://osf.io/download/600611edd77bf1000967a191/",
+     "size": 115974,
+     "sha256": "a5fe959ced0230d5a51ce174cf0cd14ad7149ff486389a592eca0fd6d3c2388c"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V40.bmp",
+     "url": "https://osf.io/download/600611efd77bf1000967a196/",
+     "size": 115974,
+     "sha256": "64a9bd3ce4209da428da21e9e5b880773a9766ff406d78dfef472fa4215539bf"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V5.bmp",
+     "url": "https://osf.io/download/600611f1d77bf1000967a1a4/",
+     "size": 115974,
+     "sha256": "1361e074c3d8b47ff756689e25a11bddb26603cfe902e100c038ed38714bef06"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V6.bmp",
+     "url": "https://osf.io/download/600611f386541a084814d400/",
+     "size": 115974,
+     "sha256": "8db0b9ef02137608352e35a8f8e952520063279b447b13bd0c55afbd7eef7240"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V7.bmp",
+     "url": "https://osf.io/download/60075b84e80d3708c7a57ed9/",
+     "size": 115974,
+     "sha256": "5cd53fb5a5ac0d0c5e439f6716b498ac3a2d999efe41425296d79353e3a7524a"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V8.bmp",
+     "url": "https://osf.io/download/60075b8686541a090014b91a/",
+     "size": 115974,
+     "sha256": "2bbf047c38c92ffe221c51e8d7b73a75ba798a8e0cb956e9f41d46fae34440d7"
+    },
+    {
+     "path": "stimuli/cars scrambled/S_back_V9.bmp",
+     "url": "https://osf.io/download/60075b88e80d3708c7a57eea/",
+     "size": 115974,
+     "sha256": "519ead70444b96b2c60ffea3bac59ec6c2a4a24e06a79d9927af3e58b67d0e6e"
+    },
+    {
+     "path": "stimuli/cars/back_V1.bmp",
+     "url": "https://osf.io/download/sa3qg/",
+     "size": 115974,
+     "sha256": "b97a2617faf399297315b55c8d40babcbe080610aa0b7f046d1e79c79197ed53"
+    },
+    {
+     "path": "stimuli/cars/back_V10.bmp",
+     "url": "https://osf.io/download/xktb3/",
+     "size": 115974,
+     "sha256": "0873909c1f53d701c068969c2e72c78c3acbbb738a6a031598130d3df1bb3baa"
+    },
+    {
+     "path": "stimuli/cars/back_V11.bmp",
+     "url": "https://osf.io/download/dgx38/",
+     "size": 115974,
+     "sha256": "61c50b8c8ded507c9d3047571c64a56282cf9df38f49c2ea9729bb954a40ceb8"
+    },
+    {
+     "path": "stimuli/cars/back_V12.bmp",
+     "url": "https://osf.io/download/zahyt/",
+     "size": 115974,
+     "sha256": "b775efdcaab9c0beeea1ac9862ef732d7bd2802f9eb20533135f455663629aeb"
+    },
+    {
+     "path": "stimuli/cars/back_V13.bmp",
+     "url": "https://osf.io/download/a4tqx/",
+     "size": 115974,
+     "sha256": "ee3e1371adc03e7d4a73bbb7bdd1714987de4cfca17fc9070af126a289a600fc"
+    },
+    {
+     "path": "stimuli/cars/back_V14.bmp",
+     "url": "https://osf.io/download/uvqft/",
+     "size": 115974,
+     "sha256": "d31b28c9c6e0dcf82a99c2b27b594729c9b2d998e416f978bec0ad18679dcf4b"
+    },
+    {
+     "path": "stimuli/cars/back_V15.bmp",
+     "url": "https://osf.io/download/sd4ra/",
+     "size": 115974,
+     "sha256": "1aa5dab56c609d4df78cb859d7eb259e1d4919dbc798eabcf8ff8d14f3c13a2c"
+    },
+    {
+     "path": "stimuli/cars/back_V16.bmp",
+     "url": "https://osf.io/download/2g7br/",
+     "size": 115974,
+     "sha256": "2b6d72b708e2c7ae45db09d9b50c28cb30e757b8eef4ceb67f615f5b610dc9bf"
+    },
+    {
+     "path": "stimuli/cars/back_V17.bmp",
+     "url": "https://osf.io/download/7qhkg/",
+     "size": 115974,
+     "sha256": "74ef0980812f33e4b4aa09a40e1986e226578baaf82c465da7d1a54e5cb46db3"
+    },
+    {
+     "path": "stimuli/cars/back_V18.bmp",
+     "url": "https://osf.io/download/dwveb/",
+     "size": 115974,
+     "sha256": "585bb805a9cff13679d842ad7b5cbbc8f12a9a3b5b33daf9ff1a363949996086"
+    },
+    {
+     "path": "stimuli/cars/back_V19.bmp",
+     "url": "https://osf.io/download/6006114ddf7ff0003547716f/",
+     "size": 115974,
+     "sha256": "c059a5d810303f2acce182f69a3f255a800c06c80fc7fd8ffc6c7b401090bd0c"
+    },
+    {
+     "path": "stimuli/cars/back_V2.bmp",
+     "url": "https://osf.io/download/6006114fdf7ff00035477178/",
+     "size": 115974,
+     "sha256": "36f9b9ff9624a118e6474d79465d55254e3654676aeceadd5749691299de1696"
+    },
+    {
+     "path": "stimuli/cars/back_V20.bmp",
+     "url": "https://osf.io/download/60061151ba010907d0894607/",
+     "size": 115974,
+     "sha256": "fbc68ed0e2df3e95a9485b10a1316d80f59960b4c45f625510ddb4c23b2daf89"
+    },
+    {
+     "path": "stimuli/cars/back_V21.bmp",
+     "url": "https://osf.io/download/60061153d77bf1000e6767a3/",
+     "size": 115974,
+     "sha256": "71687e6f2230f604216fdd528660845c37c038ae8f8035db9dfec10caad45e94"
+    },
+    {
+     "path": "stimuli/cars/back_V22.bmp",
+     "url": "https://osf.io/download/60061155d77bf1000c677ba7/",
+     "size": 115974,
+     "sha256": "2e6ec377acd4f1dda8c3a376965b3f8eeaeabe43f511d9f9249a87f33aa89792"
+    },
+    {
+     "path": "stimuli/cars/back_V23.bmp",
+     "url": "https://osf.io/download/60061158e80d37080ea57d31/",
+     "size": 115974,
+     "sha256": "2e7f5df2f471a9f67d4ac0645a6a558d4eac0d780e2b507a3bb3c2e4d2e915ab"
+    },
+    {
+     "path": "stimuli/cars/back_V24.bmp",
+     "url": "https://osf.io/download/6006115ae80d370812a5b5a2/",
+     "size": 115974,
+     "sha256": "8896f0f59517e4ab2e5a8674db116917cc0377939b40ef60e24c59f970311aa5"
+    },
+    {
+     "path": "stimuli/cars/back_V25.bmp",
+     "url": "https://osf.io/download/6006115bdf7ff00035477193/",
+     "size": 115974,
+     "sha256": "44a66d70d1dccb0b34b6bc2bed66d9f2a924a585d328f9d2b908ed4f6b2cfb9c"
+    },
+    {
+     "path": "stimuli/cars/back_V26.bmp",
+     "url": "https://osf.io/download/6006115ed77bf1000c677bb7/",
+     "size": 115974,
+     "sha256": "efbc7711cb1a8c97b469d6f3331b59943520281e687b0308ea6532a32ec454d1"
+    },
+    {
+     "path": "stimuli/cars/back_V27.bmp",
+     "url": "https://osf.io/download/60061161df7ff0003647904f/",
+     "size": 115974,
+     "sha256": "9aca0cc3b72835c96510536aa53c8949509cad74f5e1bf0fcef0327854d65024"
+    },
+    {
+     "path": "stimuli/cars/back_V28.bmp",
+     "url": "https://osf.io/download/60061163ba010907d0894626/",
+     "size": 115974,
+     "sha256": "c3bd2c84b343d066e32fa690d4ff4e63d572452fd95d966bda214eb7698b8b6b"
+    },
+    {
+     "path": "stimuli/cars/back_V29.bmp",
+     "url": "https://osf.io/download/60061165e80d370812a5b5b6/",
+     "size": 115974,
+     "sha256": "a9d6743b11fa4f5fd4c0af2d96d5c8e8b09547be8633475304bfc3173f6196de"
+    },
+    {
+     "path": "stimuli/cars/back_V3.bmp",
+     "url": "https://osf.io/download/60061167ba010907cd891afe/",
+     "size": 115974,
+     "sha256": "21ed67b2642dc78978f2710fad6c22408bb17351371c95cbb758720ad9aa8eeb"
+    },
+    {
+     "path": "stimuli/cars/back_V30.bmp",
+     "url": "https://osf.io/download/6006116adf7ff000314746bc/",
+     "size": 115974,
+     "sha256": "f68f7f0699efad83ddaa7a72a83647c3e9c279e601872b7ef19af3d10ea1051b"
+    },
+    {
+     "path": "stimuli/cars/back_V31.bmp",
+     "url": "https://osf.io/download/6006116cba010907d0894643/",
+     "size": 115974,
+     "sha256": "037fa3d72ff8256d846e9cf2ff7f8562376c9a5d31df0042fb748ae6eb1e2a04"
+    },
+    {
+     "path": "stimuli/cars/back_V32.bmp",
+     "url": "https://osf.io/download/6006116fe80d370812a5b5d0/",
+     "size": 115974,
+     "sha256": "8350846af2072bd54a00278e043ac2fcd1415406346366ed77f96139b870260b"
+    },
+    {
+     "path": "stimuli/cars/back_V33.bmp",
+     "url": "https://osf.io/download/60061171d77bf1000c677be1/",
+     "size": 115974,
+     "sha256": "df9cf19a083714481831a94327ff64b06ab961ee2e88c89731eb75b537689d45"
+    },
+    {
+     "path": "stimuli/cars/back_V34.bmp",
+     "url": "https://osf.io/download/60061173df7ff00036479091/",
+     "size": 115974,
+     "sha256": "78f2bae6ebabeaebb1aaf1bb502464f0646a61d7452039170e356296d3898f97"
+    },
+    {
+     "path": "stimuli/cars/back_V35.bmp",
+     "url": "https://osf.io/download/60061175df7ff000354771c7/",
+     "size": 115974,
+     "sha256": "be00b2ca2828e97af6ab15f3ff4d50d28681ea13897e33b6c72b9bcc51ca3b2c"
+    },
+    {
+     "path": "stimuli/cars/back_V36.bmp",
+     "url": "https://osf.io/download/60061178d77bf1000967a041/",
+     "size": 115974,
+     "sha256": "10a001b5c236f5235c580bf2ac7ae7550afe7e844d5766417040f9a83ae4d630"
+    },
+    {
+     "path": "stimuli/cars/back_V37.bmp",
+     "url": "https://osf.io/download/6006117b86541a084814d2f7/",
+     "size": 115974,
+     "sha256": "190b28b5cb37b013977bde884b821c6010c81ae28349b56959b5bcca678fc4cb"
+    },
+    {
+     "path": "stimuli/cars/back_V38.bmp",
+     "url": "https://osf.io/download/6006117de80d370811a592dd/",
+     "size": 115974,
+     "sha256": "1838abf24332a0c6774103c39588904cdf9b55a5984e7920470d542a17e1130c"
+    },
+    {
+     "path": "stimuli/cars/back_V39.bmp",
+     "url": "https://osf.io/download/60061180df7ff000364790ba/",
+     "size": 115974,
+     "sha256": "bc5350301db404203577c6530890591af6e017ac90b8118786423b9a417bd4e6"
+    },
+    {
+     "path": "stimuli/cars/back_V4.bmp",
+     "url": "https://osf.io/download/60061182d77bf1000967a076/",
+     "size": 115974,
+     "sha256": "a3d3ae79555e1a288db17968a6699723c26711e6eb159974969e0e56b3376f45"
+    },
+    {
+     "path": "stimuli/cars/back_V40.bmp",
+     "url": "https://osf.io/download/6006118586541a084314c2e7/",
+     "size": 115974,
+     "sha256": "618d538f903908163e01bbeea803c84a97d2a5f4ae02ffe29bf80c58dc5ecfd4"
+    },
+    {
+     "path": "stimuli/cars/back_V5.bmp",
+     "url": "https://osf.io/download/6006118786541a084914bad6/",
+     "size": 115974,
+     "sha256": "93ee0c98778bc14e3a42206891375b6093c760a56a2d09744caa3f22b2717712"
+    },
+    {
+     "path": "stimuli/cars/back_V6.bmp",
+     "url": "https://osf.io/download/60061189d77bf1000967a096/",
+     "size": 115974,
+     "sha256": "e066414dfec6ec72779973f85138b8ce1c87cb9d4dddb83449091364bf1f306d"
+    },
+    {
+     "path": "stimuli/cars/back_V7.bmp",
+     "url": "https://osf.io/download/6006118ce80d370811a59300/",
+     "size": 115974,
+     "sha256": "f6beb372e4a6511ba73e1be2b740265f15409c09532b372f56527fcd4c6c3637"
+    },
+    {
+     "path": "stimuli/cars/back_V8.bmp",
+     "url": "https://osf.io/download/6006118f86541a084914bae6/",
+     "size": 115974,
+     "sha256": "9d17097ac87d3c53aadf107181e47c8a8d797ba51b542eee674ff94966cdd837"
+    },
+    {
+     "path": "stimuli/cars/back_V9.bmp",
+     "url": "https://osf.io/download/60061191e80d370811a5930b/",
+     "size": 115974,
+     "sha256": "e5e25b264c0b8c24f081f17c432b0375f090934f25e243ae326f47b86884d916"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_1.bmp",
+     "url": "https://osf.io/download/6htvk/",
+     "size": 115974,
+     "sha256": "70a379abb6816c5ab43f544c6f1aca2eaf06a1fea4e92c15b4903ada930472f8"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_10.bmp",
+     "url": "https://osf.io/download/4h6ws/",
+     "size": 115974,
+     "sha256": "a836f47a0fc629ae878846ff3ba07b122013cd756b74203e24ce878d08c4ad55"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_11.bmp",
+     "url": "https://osf.io/download/sc5rv/",
+     "size": 115974,
+     "sha256": "031ee0fb9214e7ccee38afcd673c04fa9a340b4690efba3659479f020b02c834"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_12.bmp",
+     "url": "https://osf.io/download/60075bedba01090873890059/",
+     "size": 115974,
+     "sha256": "ae18874439902a01e22eab7d6037bb023eb4ac39ed6c2f66f49e7ae1b3aef9c0"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_13.bmp",
+     "url": "https://osf.io/download/60075bef86541a090014ba33/",
+     "size": 115974,
+     "sha256": "373ca6f233db7544b18f081f0eaf49df940474cf18be73d3eb77ab9ab5c5d52a"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_15.bmp",
+     "url": "https://osf.io/download/60075bf186541a090014ba39/",
+     "size": 115974,
+     "sha256": "06c3b5d30d823f2415c7a826f6ae1aad6ebc2d6f2aa6428a103cf40e3c318d6f"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_2.bmp",
+     "url": "https://osf.io/download/60075bf2ba0109087e8915b9/",
+     "size": 115974,
+     "sha256": "ecf39589e280213a60f89f5617a480a8559f4a4627827a18f614b8af067a32df"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_22.bmp",
+     "url": "https://osf.io/download/6ft2u/",
+     "size": 115974,
+     "sha256": "1684c77a0a5715f7fec526ad07491b8a76c3cc9acfa5e7bf1474143af7e9a03a"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_25.bmp",
+     "url": "https://osf.io/download/nu9s8/",
+     "size": 115974,
+     "sha256": "e6d38511374b3d8c0c86cbac603c18e47e6dea1b919d72517b0d25126711e6c9"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_26.bmp",
+     "url": "https://osf.io/download/bs4j2/",
+     "size": 115974,
+     "sha256": "d52a4560fe4199d6a9935d1286c0afa117c0ccf1857bc96fcb8245e9cecd4f86"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_28.bmp",
+     "url": "https://osf.io/download/60075bfc86541a08f914aac7/",
+     "size": 115974,
+     "sha256": "1fec03a037a396c032525dbbb8ac8fd7efc72d24326ee451ad22022133332276"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_30.bmp",
+     "url": "https://osf.io/download/60075bffba0109087e8915d6/",
+     "size": 115974,
+     "sha256": "3ddae9769375efcb198c03f3f4590c11cc71e7875da0899da99e560e80a84f25"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_31.bmp",
+     "url": "https://osf.io/download/60075c02e80d3708c7a57fab/",
+     "size": 115974,
+     "sha256": "a83b7dd8625273dd599dd145b0ea4648e06e65c6a216d7353c05d764c0a86ae5"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_32.bmp",
+     "url": "https://osf.io/download/60075c06e80d3708c7a57fbe/",
+     "size": 115974,
+     "sha256": "d4fc9bf23b733e28fa35c6e0be02a0a13f3caff2349a5b8f51811790d5bb993b"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_33.bmp",
+     "url": "https://osf.io/download/60075c09e80d3708caa581ef/",
+     "size": 115974,
+     "sha256": "6177645f17cf0009b2938344c008a7c3b7a5b37f54eec66a317418cb8786bb40"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_34.bmp",
+     "url": "https://osf.io/download/60075c0b86541a08f5149f9f/",
+     "size": 115974,
+     "sha256": "b415c336085bc43ccc1efb07079204eff053b977c224c6997b34a3e8376db3c2"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_35.bmp",
+     "url": "https://osf.io/download/60075c0ee80d3708caa581f8/",
+     "size": 115974,
+     "sha256": "05fa467178e8bbd3391693e011e2d9dfa368e3771c8628c2c88057c990e091bd"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_36.bmp",
+     "url": "https://osf.io/download/60075c10e80d3708c7a57fd2/",
+     "size": 115974,
+     "sha256": "ea2afeeb200369a9a01eda0d1c8a48fbdd1e6bb169405775faa54c92d0ad9947"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_37.bmp",
+     "url": "https://osf.io/download/7xwne/",
+     "size": 115974,
+     "sha256": "7861028b75016bbd35a154e22319972e2583d52cf9024a34396e9989b991bb4e"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_39.bmp",
+     "url": "https://osf.io/download/g8v3t/",
+     "size": 115974,
+     "sha256": "b9cf68acb271eb8df4b43d47092d4be199420688c47c8e23834ef1d78a1074d0"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_4.bmp",
+     "url": "https://osf.io/download/60075c1786541a08fc14b7b9/",
+     "size": 115974,
+     "sha256": "0ed1d5dd2ab1a90264294b88cdb3eef1a783dbc57344a1607d008e9b1bf27bc0"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_41.bmp",
+     "url": "https://osf.io/download/5k4xe/",
+     "size": 115974,
+     "sha256": "c0f369674d09b4271a2bf7cdbe7aec0123df2921382747c20fc5cb48e69e27d7"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_43.bmp",
+     "url": "https://osf.io/download/60075c1ae80d3708c3a56bc0/",
+     "size": 115974,
+     "sha256": "bc79718e47cffed5c068e378fd20d7c9dcfca239db11b3d53a48755cd7002635"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_47.bmp",
+     "url": "https://osf.io/download/60075c1c86541a090014baf0/",
+     "size": 115974,
+     "sha256": "7c6671aaf978dac73a375160ae9457c262e2177809494a5da0799f9daa330748"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_48.bmp",
+     "url": "https://osf.io/download/60075c1ee80d3708caa58224/",
+     "size": 115974,
+     "sha256": "8c39ac0d6277e857e0aab50e7061750cd2fd6c218e6696a276253ae59bd6c63a"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_49.bmp",
+     "url": "https://osf.io/download/js439/",
+     "size": 115974,
+     "sha256": "3b1a22aa470b7b5e376d76b98c8fbc1a9ff4e28f2fa16520f3a6cbc67c4a7459"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_5.bmp",
+     "url": "https://osf.io/download/60075c22e80d3708caa5822c/",
+     "size": 115974,
+     "sha256": "acfe8a649b85005b471127ca20d011042fc795a58be5ece41b301d2b87009e48"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_50.bmp",
+     "url": "https://osf.io/download/60075c2586541a08f814a3a4/",
+     "size": 115974,
+     "sha256": "a66bd4cab9ba02477dec5dec60f0139d9b4f668e13ac94d612a52cd9b2bb6bac"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_51.bmp",
+     "url": "https://osf.io/download/60075c27ba0109087e891640/",
+     "size": 115974,
+     "sha256": "6081984fb3ffc586f2c9f0766d471095fce107c56179b17796924fa1ac35b6ee"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_52.bmp",
+     "url": "https://osf.io/download/60075c29e80d3708c7a58006/",
+     "size": 115974,
+     "sha256": "85d6b88e433564448c53e2b39efa0fd9a6873caa72f17b770b78d2b4929294db"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_53.bmp",
+     "url": "https://osf.io/download/60075c2be80d3708c1a5692c/",
+     "size": 115974,
+     "sha256": "f1855c6e070f2757ed99c6121ea9449556c1af4fbbf86d150954bbacea3d2f91"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_54.bmp",
+     "url": "https://osf.io/download/60075c2dba0109087e89164d/",
+     "size": 115974,
+     "sha256": "817106a2c67af4a97994e3b309760acee5f87325a4ec0d65310fdc52a8c978cd"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_55.bmp",
+     "url": "https://osf.io/download/60075c2fe80d3708caa5824c/",
+     "size": 115974,
+     "sha256": "80a8058eda58f1c1853478858a7cb1636373acc0fdf2b4188b71999416f04016"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_56.bmp",
+     "url": "https://osf.io/download/60075c31e80d3708caa58256/",
+     "size": 115974,
+     "sha256": "86dff44ba40f773fd047bf696ac081f6845c47ae4c4c6ad6979568364283425a"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_57.bmp",
+     "url": "https://osf.io/download/q67as/",
+     "size": 115974,
+     "sha256": "97645dcc22295c1b69777b12b3a8656fdad9c39de74ee2d4c33b9339b9b86a0c"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_58.bmp",
+     "url": "https://osf.io/download/60075c3786541a08fc14b7f2/",
+     "size": 115974,
+     "sha256": "df1eead54bb9d158c4dd59418b72136b232ac6b7ffcd8a61f496e876af9da530"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_6.bmp",
+     "url": "https://osf.io/download/60075c3986541a08f914ab1b/",
+     "size": 115974,
+     "sha256": "32f713de4942a08f0fcbe851ed39a682097cd6e1cf7e3f24de62dbd7b2e5a03c"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_7.bmp",
+     "url": "https://osf.io/download/60075c3bba0109087e891681/",
+     "size": 115974,
+     "sha256": "5d2f1c2725b3f0b58df164853e8db5c20442b96d608b2148b4b4955fae4e17d5"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_8.bmp",
+     "url": "https://osf.io/download/60075c3eba0109087e891689/",
+     "size": 115974,
+     "sha256": "d8ef6edbe756c985c60b228b7cc999f32f0a8675222a2f56c4f4b845e1c7ec84"
+    },
+    {
+     "path": "stimuli/faces scrambled/S_back_9.bmp",
+     "url": "https://osf.io/download/k8e3h/",
+     "size": 115974,
+     "sha256": "e368f4a92650d17ff66a5601f9a5568de5620fc1bf62bfe3132788cb0870a5a2"
+    },
+    {
+     "path": "stimuli/faces/back_1.bmp",
+     "url": "https://osf.io/download/yuqv8/",
+     "size": 115974,
+     "sha256": "21e25f941fc29fb9aa7072170568fd4608922f14a7e83d3e0f2d0f6474e2f8ad"
+    },
+    {
+     "path": "stimuli/faces/back_10.bmp",
+     "url": "https://osf.io/download/uxzkj/",
+     "size": 115974,
+     "sha256": "9156a8d00b0f6a79f5f01488ccbe7bb49059d2e0681647e406429a45541fbbd4"
+    },
+    {
+     "path": "stimuli/faces/back_11.bmp",
+     "url": "https://osf.io/download/5hjgt/",
+     "size": 115974,
+     "sha256": "3c5341df0c43f5c9315e7e518f224972d3ca61a960bad52f993be864b3666e78"
+    },
+    {
+     "path": "stimuli/faces/back_12.bmp",
+     "url": "https://osf.io/download/ajf8u/",
+     "size": 115974,
+     "sha256": "f371a979387e0eb04117935acb498dcb1d361e946fad2e0734f9a7364bf5ebdc"
+    },
+    {
+     "path": "stimuli/faces/back_13.bmp",
+     "url": "https://osf.io/download/nju53/",
+     "size": 115974,
+     "sha256": "ed6bf70b41acdb29323770f8318dbf82d336ebe266af22396a4be7839438a72c"
+    },
+    {
+     "path": "stimuli/faces/back_15.bmp",
+     "url": "https://osf.io/download/ez2d7/",
+     "size": 115974,
+     "sha256": "cbdcd7f2caddac520d8a3eb055e7140f5734f1340c55eec25270391e9959c1df"
+    },
+    {
+     "path": "stimuli/faces/back_2.bmp",
+     "url": "https://osf.io/download/fhd3s/",
+     "size": 115974,
+     "sha256": "f4a9d84f4696c7b83c63671b831f8e5b32d5332bae33e588065511103b8f325b"
+    },
+    {
+     "path": "stimuli/faces/back_22.bmp",
+     "url": "https://osf.io/download/v7hca/",
+     "size": 115974,
+     "sha256": "8908f3f27dfa723028cf96f33a7e72b52bed59056ab8bbde22ce3af5da245ff6"
+    },
+    {
+     "path": "stimuli/faces/back_25.bmp",
+     "url": "https://osf.io/download/kc4zu/",
+     "size": 115974,
+     "sha256": "a5071d57a4c528bf22bf1a4d7d9a3c8d694f3e170ad44387e7a9b2578a3b4e2d"
+    },
+    {
+     "path": "stimuli/faces/back_26.bmp",
+     "url": "https://osf.io/download/dbk8g/",
+     "size": 115974,
+     "sha256": "4899745d785e09ac681c6405270a0bd62b1c5f7e7f643bccc0fbd7f2467f40c0"
+    },
+    {
+     "path": "stimuli/faces/back_28.bmp",
+     "url": "https://osf.io/download/b8jhz/",
+     "size": 115974,
+     "sha256": "be7caf38fe857e77af917c15806f5ce6b56d7e3a783810841dd3e989dabac067"
+    },
+    {
+     "path": "stimuli/faces/back_30.bmp",
+     "url": "https://osf.io/download/fu5s4/",
+     "size": 115974,
+     "sha256": "a83fa139b93441367c703466eff8870031ef7177bb8f5c6b3221bcae94d8a206"
+    },
+    {
+     "path": "stimuli/faces/back_31.bmp",
+     "url": "https://osf.io/download/q6nxp/",
+     "size": 115974,
+     "sha256": "aaf94369850b472f9cb8ac600e7528e5c449e9f0c98b996847a014db97f69447"
+    },
+    {
+     "path": "stimuli/faces/back_32.bmp",
+     "url": "https://osf.io/download/u24nx/",
+     "size": 115974,
+     "sha256": "f7f1d5877b8134e185209bfe955b0eb1234fda3870f0e383eeafcda552b1107b"
+    },
+    {
+     "path": "stimuli/faces/back_33.bmp",
+     "url": "https://osf.io/download/60075bacba0109087e8914e5/",
+     "size": 115974,
+     "sha256": "b7a9c0ca1283fd6739b484c46351adf7b3264f9b6b5e7964ecb8ef043770422e"
+    },
+    {
+     "path": "stimuli/faces/back_34.bmp",
+     "url": "https://osf.io/download/tyc2g/",
+     "size": 115974,
+     "sha256": "032f434a99c6926a8b81ba887b114f7a61412b1c6b9c0e1aa735eb23f4238c1d"
+    },
+    {
+     "path": "stimuli/faces/back_35.bmp",
+     "url": "https://osf.io/download/thmj3/",
+     "size": 115974,
+     "sha256": "8d7342352d2502fd97ae2a1844e34618d36040ee1890b6f0067d4902b9c1bc8f"
+    },
+    {
+     "path": "stimuli/faces/back_36.bmp",
+     "url": "https://osf.io/download/d6zae/",
+     "size": 115974,
+     "sha256": "65c086f9c4c865e9ccf3e78d8b38e1bc3baaa61dc1edb6ace333998aea65eeb3"
+    },
+    {
+     "path": "stimuli/faces/back_37.bmp",
+     "url": "https://osf.io/download/g9tuj/",
+     "size": 115974,
+     "sha256": "fd5e02d7af60e7afaab681f963b2a8d6b66adeb182566df1b51fbdf668ebf259"
+    },
+    {
+     "path": "stimuli/faces/back_39.bmp",
+     "url": "https://osf.io/download/9mru8/",
+     "size": 115974,
+     "sha256": "d145043eda597fe2272b74a4af67a98e842b453d1625a48de40186dfc364d1ac"
+    },
+    {
+     "path": "stimuli/faces/back_4.bmp",
+     "url": "https://osf.io/download/67x9b/",
+     "size": 115974,
+     "sha256": "1868d74757d8bf67db68991aa83b67357d2d5577ab31b15cf5f043e648539708"
+    },
+    {
+     "path": "stimuli/faces/back_41.bmp",
+     "url": "https://osf.io/download/txdkb/",
+     "size": 115974,
+     "sha256": "df2dcd25703041d12a0001a3bfb6128628067039a2941b5e2d051bc295b55049"
+    },
+    {
+     "path": "stimuli/faces/back_43.bmp",
+     "url": "https://osf.io/download/60075bbeba0109087389003e/",
+     "size": 115974,
+     "sha256": "64edd07e12cba49a34e465ccb647fca8be4dab5634a9b2c96d29b20bb4763098"
+    },
+    {
+     "path": "stimuli/faces/back_47.bmp",
+     "url": "https://osf.io/download/60075bc1ba0109087a8914a5/",
+     "size": 115974,
+     "sha256": "2b3c50db35bcdaddc4f000c57463ecbe0d4a0469a5fa01613b4d49698a12459a"
+    },
+    {
+     "path": "stimuli/faces/back_48.bmp",
+     "url": "https://osf.io/download/60075bc2ba0109087e89152f/",
+     "size": 115974,
+     "sha256": "9fe547d6a20f62bb8c9f4c8f800503589c28e4a862eb2365a436dd778c0e9d6b"
+    },
+    {
+     "path": "stimuli/faces/back_49.bmp",
+     "url": "https://osf.io/download/60075bc486541a090014b9c2/",
+     "size": 115974,
+     "sha256": "40bc4c4cee682e7abee86cd9b086ddd8d30128914a1447b57118b44265bd571d"
+    },
+    {
+     "path": "stimuli/faces/back_5.bmp",
+     "url": "https://osf.io/download/8jtqa/",
+     "size": 115974,
+     "sha256": "5dac68a75099f1d67934d35c32ba5b958b1865cc92ff35943a71f065f0b33999"
+    },
+    {
+     "path": "stimuli/faces/back_50.bmp",
+     "url": "https://osf.io/download/60075bc9e80d3708c5a573f9/",
+     "size": 115974,
+     "sha256": "3a90760c9060c35e82debd5b02e01012d87fef411d9344c42c1d040b226c213c"
+    },
+    {
+     "path": "stimuli/faces/back_51.bmp",
+     "url": "https://osf.io/download/60075bcb86541a08f914aaad/",
+     "size": 115974,
+     "sha256": "87ed15d8a55e642894ad7504ca156df8775bfea267f97049ee6cc97ed2f4be08"
+    },
+    {
+     "path": "stimuli/faces/back_52.bmp",
+     "url": "https://osf.io/download/ewb4x/",
+     "size": 115974,
+     "sha256": "fea579abff621baad1de6735fc6cd6d0b62e38fb1dfb6101e0e9da0f866d69d2"
+    },
+    {
+     "path": "stimuli/faces/back_53.bmp",
+     "url": "https://osf.io/download/60075bd0ba01090876890426/",
+     "size": 115974,
+     "sha256": "b918c5c265ef141f72a15cb32cf1a671dcb5c27287033fa22ab5f6f6daaea923"
+    },
+    {
+     "path": "stimuli/faces/back_54.bmp",
+     "url": "https://osf.io/download/60075bd2ba0109087e891559/",
+     "size": 115974,
+     "sha256": "cdec76481e12f684e0a2fbab3aea2388acfff0a6c1ba17405290d33a516ac4a8"
+    },
+    {
+     "path": "stimuli/faces/back_55.bmp",
+     "url": "https://osf.io/download/h38zm/",
+     "size": 115974,
+     "sha256": "1dfa89497a8049611ee57979384e442a816de13886167d757a70112f2d7fff58"
+    },
+    {
+     "path": "stimuli/faces/back_56.bmp",
+     "url": "https://osf.io/download/fbj8w/",
+     "size": 115974,
+     "sha256": "364060842f19a56461c15b6f5732a45ac4797e12dc02fa010e4234325eeecfd5"
+    },
+    {
+     "path": "stimuli/faces/back_57.bmp",
+     "url": "https://osf.io/download/nhvdk/",
+     "size": 115974,
+     "sha256": "e68b2d3df93bd3784406854ff9d0a126f7e0e32574d7b428c46e29ecdf187817"
+    },
+    {
+     "path": "stimuli/faces/back_58.bmp",
+     "url": "https://osf.io/download/xvfmb/",
+     "size": 115974,
+     "sha256": "dac70077a31474b4b316864dbf5f217f3c03300307421331c8e952bf8e068e88"
+    },
+    {
+     "path": "stimuli/faces/back_6.bmp",
+     "url": "https://osf.io/download/m9zjw/",
+     "size": 115974,
+     "sha256": "2aab45fdbb5cd24ec60ed17419afd72c44734c7c4c48c7062801b5d3d61af357"
+    },
+    {
+     "path": "stimuli/faces/back_7.bmp",
+     "url": "https://osf.io/download/y7j9g/",
+     "size": 115974,
+     "sha256": "9783bd8fa23bb8804fc42054b497a2a8b87c7f9a29b1b8bad4227faea4a6179a"
+    },
+    {
+     "path": "stimuli/faces/back_8.bmp",
+     "url": "https://osf.io/download/ceu3h/",
+     "size": 115974,
+     "sha256": "01482d4e8d307a629f3126f690563671bda85c4797913fb90502eafdf796eb3e"
+    },
+    {
+     "path": "stimuli/faces/back_9.bmp",
+     "url": "https://osf.io/download/d82r6/",
+     "size": 115974,
+     "sha256": "5d138929e6b8fd44ec98a6cb8b46066832d1a863e271723cd989782b880ee13b"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-N170_channels.tsv",
+     "url": "https://osf.io/download/xktva/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/b2whc/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/ch843/",
+     "size": 92319744,
+     "sha256": "08406f3c6b4a869dc8f67c9acc233a91993bae1b04b7dee5bc0521677ed8949b"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-N170_eeg.json",
+     "url": "https://osf.io/download/9dyzp/",
+     "size": 1331,
+     "sha256": "88b1e3134860a0debf929e71a72fb5df8d2bc187c51a0a00271e88e7668a5b1d"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-N170_eeg.set",
+     "url": "https://osf.io/download/jsebx/",
+     "size": 5794400,
+     "sha256": "c0b08be25dfa4618eb128423b5bc5c611d19ada5f00f32beae482da2ff0ad058"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/vtsh3/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-001/eeg/sub-001_task-N170_events.tsv",
+     "url": "https://osf.io/download/6hzc2/",
+     "size": 23385,
+     "sha256": "c33204bcbe3e67c02a200c0d6d1c9b8ebd6a3b16578aaa67596f9f2ae6766828"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-N170_channels.tsv",
+     "url": "https://osf.io/download/ty6q3/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/610215310c4cba026abcd4ee/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60075c5c86541a08f814a3b7/",
+     "size": 90157056,
+     "sha256": "9384ffd985d2a7afc70a0342f2ad270d864dba60ad458cd5218aa4ff7c4b3cde"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-N170_eeg.json",
+     "url": "https://osf.io/download/60075c5fe80d3708caa582c7/",
+     "size": 1331,
+     "sha256": "77cceb1bc4f03336aa9d0b1a79215067b4c447131e5965d4c0c2d3ae7cd3be47"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-N170_eeg.set",
+     "url": "https://osf.io/download/3sqtd/",
+     "size": 5663104,
+     "sha256": "613337d013319a4cb2ba62e8326b04c76461d7ada94b58bd97869d29451091bb"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/6102152d0c4cba026dbce4e7/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-002/eeg/sub-002_task-N170_events.tsv",
+     "url": "https://osf.io/download/ca7ws/",
+     "size": 23461,
+     "sha256": "b92ce7272708e366c3a68cdf4578d97e325deb279e108034c62d6aa0189a0e5a"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-N170_channels.tsv",
+     "url": "https://osf.io/download/pxr2d/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/ps9w7/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60075c6dba0109087e8916f0/",
+     "size": 76505088,
+     "sha256": "8d15d3e22c30a30b67ffac2f7c5fb3780c933292e9e2b7d933b86c306a429256"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-N170_eeg.json",
+     "url": "https://osf.io/download/60075c6fba01090873890087/",
+     "size": 1331,
+     "sha256": "addb19c015d65fa33fa452897e1aa4a75271217fc5c5f2e3f8cc524a156f8039"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-N170_eeg.set",
+     "url": "https://osf.io/download/60075c72e80d3708c7a58090/",
+     "size": 4835712,
+     "sha256": "fe7bca885cc68c297fd393a56686f7b34b3fe5136c5cef0e8e98b4424f7beb8c"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/61021537317620027d389014/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-003/eeg/sub-003_task-N170_events.tsv",
+     "url": "https://osf.io/download/60075c7486541a090014bbec/",
+     "size": 23391,
+     "sha256": "fbc6554f4c08ef4855fc99d3e8363d7063215eead8b62c64d1597366f0457f29"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-N170_channels.tsv",
+     "url": "https://osf.io/download/q4nj5/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/z3qhu/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/zjerq/",
+     "size": 85696512,
+     "sha256": "4bbd3b855fae9fbafbaabaa5c29353b8263b08ded4befd2f7f6915bc0feb5030"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-N170_eeg.json",
+     "url": "https://osf.io/download/5xdfu/",
+     "size": 1331,
+     "sha256": "5439efea5e6ec01620f3200a4131f37b42e247c2626364d461c1cb3d91a9637e"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-N170_eeg.set",
+     "url": "https://osf.io/download/39ye4/",
+     "size": 5394840,
+     "sha256": "61120cb8edc93070ca7b1a7b08d5107e79a703d658bfff8d0740b66e650cad9f"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/jx7wv/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-004/eeg/sub-004_task-N170_events.tsv",
+     "url": "https://osf.io/download/fvdnu/",
+     "size": 23355,
+     "sha256": "ecfc707271b3932163a106d30982bd71f5607ed71e2f92076b33fa9a56ab1fe0"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-N170_channels.tsv",
+     "url": "https://osf.io/download/9ya78/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/qhd53/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60075c9086541a08fc14b889/",
+     "size": 79613952,
+     "sha256": "6f574b01b0c23353d85dcd947440df5af8fcf456996bd4faf6e706c10e89ecf1"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-N170_eeg.json",
+     "url": "https://osf.io/download/v6awu/",
+     "size": 1331,
+     "sha256": "1daeb2da9172ed63ab33bfa12148af1670d7d2c1079f4449016f5065aa31f2be"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-N170_eeg.set",
+     "url": "https://osf.io/download/zvkrw/",
+     "size": 5024128,
+     "sha256": "3a0c4f5fdf74081e9f6111277837697ec17d5f4bee4aca903328f794ffda724c"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/2y6bh/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-005/eeg/sub-005_task-N170_events.tsv",
+     "url": "https://osf.io/download/z6aqx/",
+     "size": 23408,
+     "sha256": "5a1a19fa5f4c8b066ab4285ef3a2e4e60d6a04a2a0424fe2df10d5ba5e4bbb7f"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-N170_channels.tsv",
+     "url": "https://osf.io/download/nwg4p/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/zmqwt/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/kzbac/",
+     "size": 69881856,
+     "sha256": "53847bd193cc4f45888e1c73080dd24e68935a72df4102edc644d6256c14e339"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-N170_eeg.json",
+     "url": "https://osf.io/download/b2c3q/",
+     "size": 1331,
+     "sha256": "01e38cd7f1822f24153d623163573a71105bd921bda012450b044b47f04b1944"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-N170_eeg.set",
+     "url": "https://osf.io/download/k8tfy/",
+     "size": 4436040,
+     "sha256": "349ffa5280897eafb09b86bfdcb56fa62a7296ca9d729ab545a1203a7fd0f878"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/ak4ft/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-006/eeg/sub-006_task-N170_events.tsv",
+     "url": "https://osf.io/download/w7zbj/",
+     "size": 23341,
+     "sha256": "8a7fa53b50c15bd6f4ea7242c41142be54ed10cf0918780d72620c94257154c4"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-N170_channels.tsv",
+     "url": "https://osf.io/download/9sevc/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/prmu5/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/e86u4/",
+     "size": 77856768,
+     "sha256": "f72e79a303298e9c473570ff07c69a9b619c2427bc0ae2feff9fd1e875d25687"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-N170_eeg.json",
+     "url": "https://osf.io/download/jbxda/",
+     "size": 1331,
+     "sha256": "74b7b3c26bcb89d6f66d2e7e65276705a58a535ca67745cd3617f514dcc639db"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-N170_eeg.set",
+     "url": "https://osf.io/download/azngy/",
+     "size": 4919200,
+     "sha256": "6bccaedcc3d620d0dedf65c0da83e35f16caf53618a74a3a980f1988ce640191"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/5c8ag/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-007/eeg/sub-007_task-N170_events.tsv",
+     "url": "https://osf.io/download/9yc6g/",
+     "size": 23405,
+     "sha256": "3d7d7f36670781c362efa7bcb06a0dc5542c7f684c92ae598b20279b40f1d7ed"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-N170_channels.tsv",
+     "url": "https://osf.io/download/xv37r/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/uqvt2/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/rw7p4/",
+     "size": 106242048,
+     "sha256": "9b5868e20c1fb685c36c79e21787facc8891bc53ec69fa9fc5100202d510f832"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-N170_eeg.json",
+     "url": "https://osf.io/download/qtd5u/",
+     "size": 1331,
+     "sha256": "55c21a764339d02e66f61d3bfbb78f9b6db3df4e2575bbdb7a0821a29225a2bf"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-N170_eeg.set",
+     "url": "https://osf.io/download/psx5q/",
+     "size": 6639016,
+     "sha256": "4422bbf02b06577d61384178e6f9473c530dde6bc47e745dab499199996d7539"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/aqtvn/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-008/eeg/sub-008_task-N170_events.tsv",
+     "url": "https://osf.io/download/6tz89/",
+     "size": 23418,
+     "sha256": "ae84c0a56cec4ba19bbae82b24e8e1b054119b1e350a58e7ac82f70484725c84"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-N170_channels.tsv",
+     "url": "https://osf.io/download/4cqk2/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/w2tqk/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/395m7/",
+     "size": 73801728,
+     "sha256": "750a09e17938911073bc47b007f6ebaccee9ace99cb51dbfe63a78673d656f4c"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-N170_eeg.json",
+     "url": "https://osf.io/download/pdjgm/",
+     "size": 1331,
+     "sha256": "752a11ba6576df14f5d372567256036ea42abea3633b759fa856af9309872069"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-N170_eeg.set",
+     "url": "https://osf.io/download/hz2ty/",
+     "size": 4672936,
+     "sha256": "f2718e079b7fd60e71e40ad3f2ba691db4eb3b716b390002acf2b0c74d5b74e4"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/32dvy/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-009/eeg/sub-009_task-N170_events.tsv",
+     "url": "https://osf.io/download/rp6tv/",
+     "size": 23412,
+     "sha256": "9d33332493456d3b9a3fef8d671dd8e23e930c1886246234a22a4f9f59f32b4f"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-N170_channels.tsv",
+     "url": "https://osf.io/download/6u9ja/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/g9xdj/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/54tjc/",
+     "size": 73396224,
+     "sha256": "76b1646922d9c69aa6dbacab990d9a24e463bfcdafe0ee5b8c53ddba78251fd6"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-N170_eeg.json",
+     "url": "https://osf.io/download/b9adf/",
+     "size": 1331,
+     "sha256": "029e26155e183afb47469155fede69b5603821ceb4727830c6ef5014bdf1f95f"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-N170_eeg.set",
+     "url": "https://osf.io/download/w6ytj/",
+     "size": 4648976,
+     "sha256": "c760f6a1833d37c97e4caed307556e56e5bd867e5fddf5fb95df9455dd223304"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/pu6ry/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-010/eeg/sub-010_task-N170_events.tsv",
+     "url": "https://osf.io/download/zb9xp/",
+     "size": 23387,
+     "sha256": "a618878e8f1bb639c01def3caa89ceb7d7cda37eba2befb590c4adcebdb5d23c"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60075cf286541a08f5149fc7/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/6102158b0c4cba0277bc7bf4/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60075cf9ba0109087e891858/",
+     "size": 76910592,
+     "sha256": "2b076606f7fb550472384213c9774b989ad194a4e55fdd0552f0d56864143b60"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-N170_eeg.json",
+     "url": "https://osf.io/download/60075cfce80d3708c7a58198/",
+     "size": 1331,
+     "sha256": "bc0f8558cf728d7c8429455d1dc855588b1b9639fe0f678531c7b53597d83bbd"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-N170_eeg.set",
+     "url": "https://osf.io/download/g7y6u/",
+     "size": 4860568,
+     "sha256": "939fd924e2dd72c0e6fd4b051eea31f32f3e69d6c92b76cb2fbae28b25c20267"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/610215860c4cba0277bc7bda/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-011/eeg/sub-011_task-N170_events.tsv",
+     "url": "https://osf.io/download/60075cffe80d3708c7a581a4/",
+     "size": 23448,
+     "sha256": "9620f9cfbac3f096e5d4c64ab32fd1eb62a4ad87e4e6bf6a5339b622a4468cc1"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-N170_channels.tsv",
+     "url": "https://osf.io/download/mxt5n/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/fzja9/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/qygnx/",
+     "size": 70963200,
+     "sha256": "09f2e206b1ccdfc046dab26d86c99000cecfaf856431b08aabedb7fe95623eaa"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-N170_eeg.json",
+     "url": "https://osf.io/download/6uxd7/",
+     "size": 1331,
+     "sha256": "c2e86f55f654ef24e46c0d22cce61087080355080ed7bb57b6505f89c72a7140"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-N170_eeg.set",
+     "url": "https://osf.io/download/60075d0cba010908768904da/",
+     "size": 4501184,
+     "sha256": "810d4413e7c559d6d8af9656d9fdf4f8f54f44395df967c217f4311163c6bf6f"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/z2kse/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-012/eeg/sub-012_task-N170_events.tsv",
+     "url": "https://osf.io/download/acyzd/",
+     "size": 23392,
+     "sha256": "a4d261bf16dd9d01010652376c68c92089097be58c40012fa776c3042e65f2a5"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-N170_channels.tsv",
+     "url": "https://osf.io/download/3f7ve/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/610215bc317620027d389105/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60075d1986541a090014bdb6/",
+     "size": 79343616,
+     "sha256": "71e8e36c9f93b6dcd20b611b5f85bbbb8dc4e2ad40ddd9c4bdf4b2798f162640"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-N170_eeg.json",
+     "url": "https://osf.io/download/60075d1cba0109087a8916e3/",
+     "size": 1331,
+     "sha256": "be9d4160ebbecd6a504a603119272d4c0690e919451758a2047111d2d5e51043"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-N170_eeg.set",
+     "url": "https://osf.io/download/60075d1f86541a090014bdc8/",
+     "size": 5007968,
+     "sha256": "526f6ab9190243a38f74b0d72fe9174d2517dacf0fe3f8d1da78d5e9193ad046"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/610215b8317620027d3890f9/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-013/eeg/sub-013_task-N170_events.tsv",
+     "url": "https://osf.io/download/60075d2186541a090014bdd8/",
+     "size": 23404,
+     "sha256": "ba7dead466a8dd2d79636d96d738a92b4c4bb17cb01927a563ab9a30a6ecc6b8"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-N170_channels.tsv",
+     "url": "https://osf.io/download/dnqte/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/610215c7317620028737d714/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60075d2be80d3708c7a581f2/",
+     "size": 74747904,
+     "sha256": "fda0fa6eb523af83c1760fb55e10201c31151100c587e2d3a7af82bc9e6b8cee"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-N170_eeg.json",
+     "url": "https://osf.io/download/60075d2dba010908738900c9/",
+     "size": 1331,
+     "sha256": "8f62dec8747feee06360a797ebd691fc5f063d993eed62aaa4312e837eef2412"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-N170_eeg.set",
+     "url": "https://osf.io/download/60075d30ba0109087e891910/",
+     "size": 4729216,
+     "sha256": "b76bba01b0ab0bf41d657b9ce2819fec0f9f9bce868395f397558888ff0b886a"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/610215c2c7a97602949e0c04/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-014/eeg/sub-014_task-N170_events.tsv",
+     "url": "https://osf.io/download/60075d36ba010908768904fc/",
+     "size": 23433,
+     "sha256": "abb20db91a39041ffa33feae22aa6c7d685209d7eea3746607d67dd0595c925f"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-N170_channels.tsv",
+     "url": "https://osf.io/download/4e7t5/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/869mt/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/a7g9d/",
+     "size": 77856768,
+     "sha256": "7a6b07498ad6e933abd2b06ceb319f31fe1bf08f118bb12f81e63f4ec670e1fa"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-N170_eeg.json",
+     "url": "https://osf.io/download/69frb/",
+     "size": 1331,
+     "sha256": "74b7b3c26bcb89d6f66d2e7e65276705a58a535ca67745cd3617f514dcc639db"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-N170_eeg.set",
+     "url": "https://osf.io/download/w6uax/",
+     "size": 4917856,
+     "sha256": "6bcb59ff507eefab826374491dc1cb3f0d4b1756d2c29e30b455ca4077c2a1f3"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/8en2r/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-015/eeg/sub-015_task-N170_events.tsv",
+     "url": "https://osf.io/download/7cdt9/",
+     "size": 23356,
+     "sha256": "b2481a0d9dcb02f24b8d6fbc7b8a99d1861f19590444c91fc2c92696ef4c798f"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60075d5386541a09081499fc/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/610215e0c7a976029a9e222b/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60075d5de80d3708caa5856d/",
+     "size": 85291008,
+     "sha256": "2ea7061f14f0f3a6e896e271aa9623f3c04896f6104ec052c16a57eef0b6eba7"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-N170_eeg.json",
+     "url": "https://osf.io/download/60075d61e80d3708cea5631e/",
+     "size": 1331,
+     "sha256": "96ae7fc2837a82af6700514c1440d162915290b01d9303066726d9f04b7036af"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-N170_eeg.set",
+     "url": "https://osf.io/download/60075d64e80d3708c1a56987/",
+     "size": 5347360,
+     "sha256": "d567b6d520f7ed6ddbf1d5c5ce0211c008c5df87a09ba5b0f5acf94d5b27341e"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/610215dd0c4cba0277bc7d98/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-016/eeg/sub-016_task-N170_events.tsv",
+     "url": "https://osf.io/download/60075d6986541a08f514a009/",
+     "size": 20702,
+     "sha256": "a9e790b07fec26774a6d9a7fc70ec6b07ef16f19405a894f47acdc35034ad73f"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60075de686541a091d149a1a/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/610215ea0c4cba026dbce761/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60075e0ee80d3708d3a5632e/",
+     "size": 80424960,
+     "sha256": "4e42ddd5786478b430584ee72bbc005ae73d8e2376593c1683e119e24e8d701a"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-N170_eeg.json",
+     "url": "https://osf.io/download/60075e67e80d3708eaa5641e/",
+     "size": 1331,
+     "sha256": "2dfca3ca9838d12a367306727dda7dc8878e0fae7811dab1e094f9c66780f0ed"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-N170_eeg.set",
+     "url": "https://osf.io/download/60075e80ba0109087a89176a/",
+     "size": 5073280,
+     "sha256": "07a66ce6b23e9cd2245de6e8efbea7f30aafa17222417b68e31c0974f6ae5d15"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/610215e60c4cba026abcd66d/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-017/eeg/sub-017_task-N170_events.tsv",
+     "url": "https://osf.io/download/60075e9886541a091a149aca/",
+     "size": 23415,
+     "sha256": "874f8dd1349aee8120599b50102511c5eacf4a265fdc2e48119c8045c0a0c38e"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60075ea3ba0109089e88fbf0/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/610215f40c4cba026dbce784/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60075ec286541a091d149afd/",
+     "size": 82182144,
+     "sha256": "a102112c553e84f555cb690a301d9e05b515645c69d3430c72061ed8676ba3d6"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-N170_eeg.json",
+     "url": "https://osf.io/download/60075edde80d3708eaa564ef/",
+     "size": 1331,
+     "sha256": "6c673f4f4366bd99ae4e3fc039b0622405021e66c87dc234f4679ff88d55ef17"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-N170_eeg.set",
+     "url": "https://osf.io/download/60075f04e80d3708e2a56370/",
+     "size": 5180336,
+     "sha256": "402a5ae3b408b0b55571942f743f103ee34451354682107abcd5cf97f366f5f5"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/610215f0317620028737d78f/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-018/eeg/sub-018_task-N170_events.tsv",
+     "url": "https://osf.io/download/60075f25e80d3708e7a564d5/",
+     "size": 23412,
+     "sha256": "1a2cfbc48bccb6af0dfdd82cc98d48c564f2002a459bc000f0b74234873c096f"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-N170_channels.tsv",
+     "url": "https://osf.io/download/6007790886541a092614b0d7/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/610215ffc7a97602949e0c9a/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/6007790fba010908a4891e02/",
+     "size": 70692864,
+     "sha256": "2499ee001047a76651092a581dc0f34073bb200a66d9f8a0e043a27cc162dce7"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077912e80d3708eca585c2/",
+     "size": 1331,
+     "sha256": "736eff2d92ffb4ab09935074e7e0de89c3c206327c850a26490d7566090cd241"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-N170_eeg.set",
+     "url": "https://osf.io/download/6007791786541a092c14b4ad/",
+     "size": 4483456,
+     "sha256": "13334e2b940e9fa7af72fdeab9d94e747a7faf6b96865db7cdc0aca10cf0e656"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/610215fbc7a976029b9e5f03/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-019/eeg/sub-019_task-N170_events.tsv",
+     "url": "https://osf.io/download/6007791a86541a090e14a521/",
+     "size": 23404,
+     "sha256": "cd25da33570843fe299cb0f85adaae343b7a821d031b24bd73765433d5d7110c"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-N170_channels.tsv",
+     "url": "https://osf.io/download/juawh/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/t86qf/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/x3cv6/",
+     "size": 79073280,
+     "sha256": "e8e8bd00f2e2b0983c3c57c330ed11479b62eed50a9d60acc4eec4dbec2f961e"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-N170_eeg.json",
+     "url": "https://osf.io/download/87yv5/",
+     "size": 1331,
+     "sha256": "333fb531c5c497f9fa612fb46d40feef59e82e977f3f27771ddfb72d14dcef42"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-N170_eeg.set",
+     "url": "https://osf.io/download/sfpd6/",
+     "size": 4991472,
+     "sha256": "7d6413f0e5f13e1bbbcc92a5c9d7b7b7782154e4689244504a313f82ecefcb14"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/g8z9n/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-020/eeg/sub-020_task-N170_events.tsv",
+     "url": "https://osf.io/download/5bjhu/",
+     "size": 23420,
+     "sha256": "5dc1f07fd88a5fc64a753a7dc781a4cd5f91008d33e6460fc6784631b1daff1d"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-N170_channels.tsv",
+     "url": "https://osf.io/download/fc9kp/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/c6k5j/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/bckvu/",
+     "size": 75288576,
+     "sha256": "b8e622acda5a53635fa7c3717eb1ce0edf64b8aec6250763cc2c96b101033492"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-N170_eeg.json",
+     "url": "https://osf.io/download/t8e6w/",
+     "size": 1331,
+     "sha256": "02e0a60a82b57219a7eaaf4c9dbe1b287f49e9ee3ff62e5a5e51ef9d20c0a064"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-N170_eeg.set",
+     "url": "https://osf.io/download/hf5my/",
+     "size": 4764392,
+     "sha256": "dece26e5e8bcae6c63dcfc499e48d5b2f8957e54e4f5bf3fab12f4ba9e985e84"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/pe8kf/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-021/eeg/sub-021_task-N170_events.tsv",
+     "url": "https://osf.io/download/axsz2/",
+     "size": 23435,
+     "sha256": "ad98262ade39a9ce1d115b6e1f70a8c9cfb691869c42e28e4a50194c383f0bb9"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60077947ba010908a789230a/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/6102161fc7a976029a9e22fd/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/6007794f86541a092914b31d/",
+     "size": 78127104,
+     "sha256": "38616041b29c0e6ffa9dacfe2482176b912f0c58febd6a8f97e1a31e90bd7a14"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077956e80d3708eca58677/",
+     "size": 1331,
+     "sha256": "2ef75fea89222af35905eb7a3ea1b26dfd6f7baac10a90014c62799757c65c19"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-N170_eeg.set",
+     "url": "https://osf.io/download/6007795aba0109089e891b41/",
+     "size": 4934240,
+     "sha256": "1572a8b079381bdb6617471bff617f4bff9d2793b01260b6a69bb2b840017fb7"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/61021619c7a97602949e0cc5/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-022/eeg/sub-022_task-N170_events.tsv",
+     "url": "https://osf.io/download/6007795fba0109089e891b47/",
+     "size": 23415,
+     "sha256": "401b4a9730302d634c120acc283d4ff6f58b90eabdc1ef0fc902738a94da61b5"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-N170_channels.tsv",
+     "url": "https://osf.io/download/67p2c/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/xn74y/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/6007796fba0109089a891242/",
+     "size": 74477568,
+     "sha256": "00b8301937adcb97d427d156d8114825ef7259924b99dd592bc827f67517099c"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-N170_eeg.json",
+     "url": "https://osf.io/download/j3fh7/",
+     "size": 1331,
+     "sha256": "634b513ea7113da92cfe343dc7e030606bab6e3364b63a2c40d0c2b0e652ec53"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-N170_eeg.set",
+     "url": "https://osf.io/download/b2438/",
+     "size": 4712440,
+     "sha256": "2219cb16c43ec9b1884c67b92195c3b2a1013a1790af54f983d969b67a71c688"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/d5mcf/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-023/eeg/sub-023_task-N170_events.tsv",
+     "url": "https://osf.io/download/tdze5/",
+     "size": 23379,
+     "sha256": "cb780f09472818f7dfb67fd7b6dfcf26a20c3e4da260dae2e1a4f096d1ad98d3"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-N170_channels.tsv",
+     "url": "https://osf.io/download/6007797e86541a092914b36c/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/61021632317620028737d896/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/6007798686541a092c14b611/",
+     "size": 76640256,
+     "sha256": "8e060f438187ea2bbad9084ef415f110bffb09927efa87ae265e9b3902bb0ba5"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-N170_eeg.json",
+     "url": "https://osf.io/download/6007798a86541a092314b12e/",
+     "size": 1331,
+     "sha256": "25691f9cb6531b518d7f00504ae6aecfca214424d26fa5c08a4f4d574b936236"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-N170_eeg.set",
+     "url": "https://osf.io/download/6007798fba010908a78923c2/",
+     "size": 4843904,
+     "sha256": "9973be5fcfd618fef9ddadd73ca9ac92881c56e0c854f652205a333013524772"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/6102162d0c4cba0277bc7eec/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-024/eeg/sub-024_task-N170_events.tsv",
+     "url": "https://osf.io/download/60077992e80d3708e6a57923/",
+     "size": 23406,
+     "sha256": "9fc3a678876dfd91cef4c1e77522e3b35c0e50da8fdf0a462eb7ecff920cba5a"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-N170_channels.tsv",
+     "url": "https://osf.io/download/m26us/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/c2n8q/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/62tsf/",
+     "size": 78127104,
+     "sha256": "84ac3fa2c332f298892c7f5b4c451bf9f29f42dd6b85d654f0dc76fa72f26267"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-N170_eeg.json",
+     "url": "https://osf.io/download/6u5xf/",
+     "size": 1331,
+     "sha256": "2ef75fea89222af35905eb7a3ea1b26dfd6f7baac10a90014c62799757c65c19"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-N170_eeg.set",
+     "url": "https://osf.io/download/3gyzj/",
+     "size": 4934296,
+     "sha256": "edcc472cd7b14e66553d177ef1e7453bb36556c35f17b8313c60b2febd549655"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/rfk9v/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-025/eeg/sub-025_task-N170_events.tsv",
+     "url": "https://osf.io/download/eydb8/",
+     "size": 23446,
+     "sha256": "07a3ea75f190689d8800144a9fa5da543566239c6921bb01aa9b6059d415fe53"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-N170_channels.tsv",
+     "url": "https://osf.io/download/p9zth/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/4hbzq/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/caj4f/",
+     "size": 75018240,
+     "sha256": "8c83d74f3064fef247f1781ba31faac753dc82a8c763634a8d9e9e84998c6858"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-N170_eeg.json",
+     "url": "https://osf.io/download/ab386/",
+     "size": 1331,
+     "sha256": "4df6464edae2a4b3978b6844c258ef08f305109454f6f760b9f0e0bc2079a228"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-N170_eeg.set",
+     "url": "https://osf.io/download/d4jxu/",
+     "size": 4746048,
+     "sha256": "bed655f3370a8be81874d8da42c47fe00d7fafa47f6c055f5fd8ffe85527b95b"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/bp6sh/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-026/eeg/sub-026_task-N170_events.tsv",
+     "url": "https://osf.io/download/vh8ue/",
+     "size": 23417,
+     "sha256": "e3870bbf154b934c85ea7850158417290897920ae5d9b26dd9d36d814d2bf3bd"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-N170_channels.tsv",
+     "url": "https://osf.io/download/xek8u/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/zyf5p/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/tgns8/",
+     "size": 76369920,
+     "sha256": "53aff8d773bd8516fd5d570d4b5b048ccedf084090b7a8ecc95ade988ae25dc8"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-N170_eeg.json",
+     "url": "https://osf.io/download/8q7ra/",
+     "size": 1331,
+     "sha256": "4bad73e2157f1d8b0bd8c21f99035c9f510e79bad819026729c5ba2b966c15f1"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-N170_eeg.set",
+     "url": "https://osf.io/download/v3q2e/",
+     "size": 4829480,
+     "sha256": "20149a3cf06af839aff5d03187041ecc256d58568abd32a442b84de8efa73d7f"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/3k42d/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-027/eeg/sub-027_task-N170_events.tsv",
+     "url": "https://osf.io/download/kxh4z/",
+     "size": 23382,
+     "sha256": "47ce80442063bf41a4765f9a6e0fcd13d2b38ea81bb2892f6e037275a5b03693"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-N170_channels.tsv",
+     "url": "https://osf.io/download/600779d7e80d3708e2a574ea/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/61021661c7a976029b9e6086/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/600779dfe80d3708eca587ce/",
+     "size": 75558912,
+     "sha256": "eef035c2838769c0a3806a6db2999ae603846daab5df9eb0bc4639b21b1b5c82"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-N170_eeg.json",
+     "url": "https://osf.io/download/600779e3ba0109089e891ba8/",
+     "size": 1331,
+     "sha256": "08272ad832509e709e69415b5e20db51e63dc48f110004aa4cbf884618d3f61c"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-N170_eeg.set",
+     "url": "https://osf.io/download/600779e9ba010908a789248d/",
+     "size": 4778088,
+     "sha256": "13f47a572f0ba308f992311bc6e2ec69045a1d476f008b85e997fe063190563b"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/6102165e317620028737d950/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-028/eeg/sub-028_task-N170_events.tsv",
+     "url": "https://osf.io/download/600779ef86541a092c14b74e/",
+     "size": 23322,
+     "sha256": "b61a509ba78b87bde7a688713c0fa465fd55a2ad587f492e36740ed4c3758205"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-N170_channels.tsv",
+     "url": "https://osf.io/download/600779f3ba0109089a891273/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/6102166a317620028637d7b1/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/600779fc86541a092614b223/",
+     "size": 79749120,
+     "sha256": "2b43cf82042f7d22015f51f19aa3b87600848276dda2a4e1474ab41024cd07fc"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077a02ba0109089a89128c/",
+     "size": 1331,
+     "sha256": "abab40f09bce35a46e5de2793e059e8d0532a3ba50471b488b15fa021e6dd7a2"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-N170_eeg.set",
+     "url": "https://osf.io/download/60077a0686541a092314b19d/",
+     "size": 5032096,
+     "sha256": "1b7211d09ca2b969125803afc6b3e0b11384b6bc68db39cfcac07d1b6d48c623"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/61021665c7a976029b9e6097/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-029/eeg/sub-029_task-N170_events.tsv",
+     "url": "https://osf.io/download/60077a0b86541a092914b462/",
+     "size": 23326,
+     "sha256": "f765ebdb093dba8b8d9fd6ec9483bc1b966e0e2094fb124ecdb0d167701f9b6d"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60077a0f86541a092614b24b/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/61021674317620028b37d359/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60077a1886541a092c14b7c3/",
+     "size": 75829248,
+     "sha256": "562af9cc453d1e4a0c0241974329650a74c5d29c3c822d18f17abee6501294e3"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077a1be80d3708eaa58387/",
+     "size": 1331,
+     "sha256": "493be5445251d5df686c73fc697101c68b968889f8fd944fdf035e30fcfc3818"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-N170_eeg.set",
+     "url": "https://osf.io/download/60077a20e80d3708e7a57db4/",
+     "size": 4794976,
+     "sha256": "322e3a0fb85d3c2f3ad252ed66440001ae55257eee3e846f196f9abef5986562"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/61021670317620028b37d339/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-030/eeg/sub-030_task-N170_events.tsv",
+     "url": "https://osf.io/download/60077a24ba0109089e891bec/",
+     "size": 23415,
+     "sha256": "03ba1a7249c4fd54bfd23911c604ba82a8291cecd1f6f31cbe8b4a4bfaee52f6"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-N170_channels.tsv",
+     "url": "https://osf.io/download/tr9zf/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/6102167f317620028637d7e6/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60077a3086541a092914b4ac/",
+     "size": 76099584,
+     "sha256": "b10f15e3c4f088c44ad4c9ab066e2aca99410f9277d0f37e27b21ef740995912"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077a33e80d3708eca588ae/",
+     "size": 1331,
+     "sha256": "1e5d9261d73a5e247d1a195233732c3c32577feb50953c816e4f234d5537e949"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-N170_eeg.set",
+     "url": "https://osf.io/download/60077a3686541a092c14b80d/",
+     "size": 4811360,
+     "sha256": "00a4de0c9ac53b228ed93b5131863b5f90e3b8b3ed0f3b223700805661858bf6"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/5vsn4/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-031/eeg/sub-031_task-N170_events.tsv",
+     "url": "https://osf.io/download/60077a3886541a092c14b816/",
+     "size": 23413,
+     "sha256": "668082e7c9c4f0bf2b8e9fc04dbf90cb67cf082c11e1a32c6c7854f62ac85997"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60077a3cba010908a4892064/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/61021689c7a97602939de646/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60077a49e80d3708e7a57dda/",
+     "size": 76369920,
+     "sha256": "b844bad4895603c0fd2f4d5f86f289153217b6f0b318ec2b48f07b3af47e18e3"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077a4cba010908a78925ae/",
+     "size": 1331,
+     "sha256": "4bad73e2157f1d8b0bd8c21f99035c9f510e79bad819026729c5ba2b966c15f1"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-N170_eeg.set",
+     "url": "https://osf.io/download/60077a51ba0109089e891c20/",
+     "size": 4826792,
+     "sha256": "51ebcf88be281eeeede2b4fadbf440fd3ff527d49877e78c9ba4c6391aaa153a"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/61021684317620028737d9ec/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-032/eeg/sub-032_task-N170_events.tsv",
+     "url": "https://osf.io/download/60077a54ba01090897890fe2/",
+     "size": 23305,
+     "sha256": "5d798149d0d94eab156152983487cc761dc2418b6e7432de373ba5680a6bda3a"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-N170_channels.tsv",
+     "url": "https://osf.io/download/gq2dx/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/g4beh/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/sfe5g/",
+     "size": 75288576,
+     "sha256": "f0f75164e62dd09135283936375d0a0701a8f60e2e9a06619cca810723f75fbf"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-N170_eeg.json",
+     "url": "https://osf.io/download/cwsxu/",
+     "size": 1331,
+     "sha256": "02e0a60a82b57219a7eaaf4c9dbe1b287f49e9ee3ff62e5a5e51ef9d20c0a064"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-N170_eeg.set",
+     "url": "https://osf.io/download/a27r4/",
+     "size": 4762096,
+     "sha256": "307680cb2274a1f14e885c7a4b977bcb8ae3a70819bd63c026f427df24ae67de"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/5f3gb/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-033/eeg/sub-033_task-N170_events.tsv",
+     "url": "https://osf.io/download/n9jsf/",
+     "size": 23438,
+     "sha256": "3fddbe5568a21be70eaa64fff4b1fe8db7e2e6312f8e87164a86c62f4d177452"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60077a70e80d3708e6a579c3/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/6102169fc7a976029b9e618b/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60077a78ba010908a7892633/",
+     "size": 72314880,
+     "sha256": "677e4b0a39ffd6490e00b7cc9ff7e02315c2d6bc369792b5ce257ca70ba02fab"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077a7b86541a092914b51a/",
+     "size": 1331,
+     "sha256": "ef8948f13a01db7246adf12be5ef84bb27a2b46d91c06109cd94e74317f24b13"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-N170_eeg.set",
+     "url": "https://osf.io/download/60077a7ee80d3708eaa5844a/",
+     "size": 4581592,
+     "sha256": "3ea31a4da01e076e055313be223a37eea686cd85dd417745f71f64d0011a89df"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/61021699317620028737da24/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-034/eeg/sub-034_task-N170_events.tsv",
+     "url": "https://osf.io/download/60077a8086541a092114b31b/",
+     "size": 23353,
+     "sha256": "776f417874236c9d8e8ca9b6df596316fd90dc640a3e6b645e6f23231143bd6f"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60077a83e80d3708d7a56fdd/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/610216a7c7a976029a9e247a/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60077a8c86541a092c14ba71/",
+     "size": 81911808,
+     "sha256": "12c263470daf605c03c0aef48a31d0ecac341130d9308e67dea4cd2adf2ecf65"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077a8fba010908a2891ae6/",
+     "size": 1331,
+     "sha256": "e661b13a65e9c6d3732b5281cff4ec74d800f732d38640712543c25c09d5f9e6"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-N170_eeg.set",
+     "url": "https://osf.io/download/60077a96e80d3708eca589d0/",
+     "size": 5162552,
+     "sha256": "759ef8e05aaf2726178487a5b2c126c498ad8c603fb4dcd16cece8a6d6fdb4bf"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/610216a4317620028b37d43a/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-035/eeg/sub-035_task-N170_events.tsv",
+     "url": "https://osf.io/download/60077a9986541a092914b549/",
+     "size": 23178,
+     "sha256": "65b26938eb910dbbb82107ab534ae52eabdf3c0e3ab1fee03d79f88ac6697a11"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-N170_channels.tsv",
+     "url": "https://osf.io/download/tkyn9/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/ehafp/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/zu9jf/",
+     "size": 71639040,
+     "sha256": "dced280dc4e54dffcc27ae7ef9b4e98a42514e0c04a4807b22710543a56e78a4"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-N170_eeg.json",
+     "url": "https://osf.io/download/tyd8m/",
+     "size": 1331,
+     "sha256": "b6137fa38ae0ecc7918254cbb093d474988061db5b877c0748fff6f1fbe3bf85"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-N170_eeg.set",
+     "url": "https://osf.io/download/2yfnd/",
+     "size": 4539624,
+     "sha256": "e1d74f5134a8f5d86d2ebee891d8bb5ef46292352287ab36576fce68e5a7ce72"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/m9r7w/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-036/eeg/sub-036_task-N170_events.tsv",
+     "url": "https://osf.io/download/5rsbn/",
+     "size": 23221,
+     "sha256": "1ee7eb3460d5a60e64db5f5d4b0d89386444e133a7c79a526166b199335d03b7"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60077ab0e80d3708eaa584a5/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/610216be317620028b37d4a8/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60077ab8ba010908a4892150/",
+     "size": 78667776,
+     "sha256": "a894d3d38bb3a62a380e06843374e62e939cd14a65c51e9f49f9f421c8ad1218"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077abce80d3708e6a579f0/",
+     "size": 1331,
+     "sha256": "590163921ca2c09d28776843013aca5f19a72a8bbbbeb613e650079c4d0c420c"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-N170_eeg.set",
+     "url": "https://osf.io/download/60077abeba010908a2891b26/",
+     "size": 4966896,
+     "sha256": "140bbd1f0762cbc2f5fca82db2f87a2bc8bcc5b69b08df764938bb48babf6fce"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/610216b9317620028b37d48d/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-037/eeg/sub-037_task-N170_events.tsv",
+     "url": "https://osf.io/download/tbcz5/",
+     "size": 23422,
+     "sha256": "6da7c8e02158dbb5784ed8ae1786e6e2587f4b2eb6015fce1dbdbe2d652f7036"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60077ac3e80d3708eca58a54/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/u4sja/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/60077ace86541a092914b5a3/",
+     "size": 112594944,
+     "sha256": "7d21a86b26034c3a1a961b8a095ad11d9f46b2c1cafe50b09695621f9d1308b6"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077ad186541a092c14beac/",
+     "size": 1331,
+     "sha256": "38e092a5164248e13b89d504d0e559ca7814108b3ef98361667a845cd5c7aad8"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-N170_eeg.set",
+     "url": "https://osf.io/download/60077ad4e80d3708eca58a82/",
+     "size": 7022752,
+     "sha256": "b08693ac148c7f88df58e491af2987b050ce7e7721e7aec21c2d009b48522d9c"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/ath4j/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-038/eeg/sub-038_task-N170_events.tsv",
+     "url": "https://osf.io/download/60077ad7ba010908a2891b44/",
+     "size": 23387,
+     "sha256": "7376e7ffe0db68d11943b2f69f0ab1131cf0ea2769b0e7c13f1e39c3aafa369e"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-N170_channels.tsv",
+     "url": "https://osf.io/download/60077adae80d3708eaa584ff/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/610216cec7a976029b9e6270/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/nbmgt/",
+     "size": 86237184,
+     "sha256": "c51289fc6a6a79099af7400b2d10e814df228edba47a2b19db32ccfc6b5eb426"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-N170_eeg.json",
+     "url": "https://osf.io/download/60077ae5ba010908a789276b/",
+     "size": 1331,
+     "sha256": "ac55cebaadae3d291d24e788f04cba525352f95621fa8cb4659d2de72d32fab3"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-N170_eeg.set",
+     "url": "https://osf.io/download/60077ae8ba010908a7892777/",
+     "size": 5425648,
+     "sha256": "844c92a584f8f7c60535e93aaffe6705714493dae82745f8eca8eb009caaf869"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/jfwqb/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-039/eeg/sub-039_task-N170_events.tsv",
+     "url": "https://osf.io/download/7g25u/",
+     "size": 23470,
+     "sha256": "c3ba120c2c5bfc3f12b74568a1dea338a45bc037df6e25d8ea5f4fbb6b590ce1"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-N170_channels.tsv",
+     "url": "https://osf.io/download/798jn/",
+     "size": 512,
+     "sha256": "19c4ca3fa445da3b823ae69c9ff9cd7fc3003c85a7142092cfd2f45411d8c000"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-N170_coordsystem.json",
+     "url": "https://osf.io/download/9uv7e/",
+     "size": 55,
+     "sha256": "4e2275735fa8696b6d91461d9c067c252f34e947da273558dc9257ff3947992a"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-N170_eeg.fdt",
+     "url": "https://osf.io/download/eyfp4/",
+     "size": 92454912,
+     "sha256": "34c4f5718174219fb52ead5cb4e12259d72d64305db3f2a3a3d80cb52dfbf4e4"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-N170_eeg.json",
+     "url": "https://osf.io/download/hv7rc/",
+     "size": 1331,
+     "sha256": "38c1c73920a3d9020510eacad1da048d6d2fd90eefe756feac0661a07c6922da"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-N170_eeg.set",
+     "url": "https://osf.io/download/2crq6/",
+     "size": 5802032,
+     "sha256": "ee1c5fff80b3b747ff48cc3079e68024a36a8d340e56b3df4038d9b4592e22c8"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-N170_electrodes.tsv",
+     "url": "https://osf.io/download/vbsw4/",
+     "size": 924,
+     "sha256": "1bb1399d516d3a9f41eb45b0d909361685b92c3893107ff013b8f26cf447b316"
+    },
+    {
+     "path": "sub-040/eeg/sub-040_task-N170_events.tsv",
+     "url": "https://osf.io/download/289p3/",
+     "size": 23383,
+     "sha256": "ad9fc9379faa23b39831217a9a74aa0676c184269cb09d807d1a490e5af7c009"
+    },
+    {
+     "path": "task-N170_events.json",
+     "url": "https://osf.io/download/szbf8/",
+     "size": 299,
+     "sha256": "84b7b7f4ae603260683280150e849046af5894053d44e99ffe6e13fdee5f6095"
+    }
+   ]
+  }
+ }
+}

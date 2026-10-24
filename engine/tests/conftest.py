@@ -9,15 +9,19 @@ if TYPE_CHECKING:
     import mne
 
 SKIP_NETWORK_ENV = "BRAINO_SKIP_NETWORK"
+LARGE_DOWNLOADS_ENV = "BRAINO_LARGE_DOWNLOADS"
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
-    if os.environ.get(SKIP_NETWORK_ENV) != "1":
-        return
-    skip = pytest.mark.skip(reason=f"needs downloaded test data ({SKIP_NETWORK_ENV}=1)")
+    offline = os.environ.get(SKIP_NETWORK_ENV) == "1"
+    large = os.environ.get(LARGE_DOWNLOADS_ENV) == "1"
+    skip_network = pytest.mark.skip(reason=f"needs downloaded test data ({SKIP_NETWORK_ENV}=1)")
+    skip_large = pytest.mark.skip(reason=f"large download; set {LARGE_DOWNLOADS_ENV}=1 to run")
     for item in items:
-        if "network" in item.keywords:
-            item.add_marker(skip)
+        if "large_download" in item.keywords and (offline or not large):
+            item.add_marker(skip_large)
+        elif "network" in item.keywords and offline:
+            item.add_marker(skip_network)
 
 
 @pytest.fixture

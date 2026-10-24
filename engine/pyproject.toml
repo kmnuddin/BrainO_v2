@@ -74,4 +74,5 @@ testpaths = ["tests"]
 addopts = "-ra --strict-markers"
 markers = [
     "network: downloads sample data (cached); skipped when BRAINO_SKIP_NETWORK=1",
+    "large_download: downloads over 50 MB (e.g. ERP CORE); runs only when BRAINO_LARGE_DOWNLOADS=1",
 ]

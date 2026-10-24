@@ -162,6 +162,24 @@ print(report.deidentification.free_text_events)  # event text to check by hand
 Each step is also available on its own: `detect_format`, `read_raw`, `normalise`, `deidentify`
 and `write_bids`.
 
+## Validation against published results
+
+BrainO's analysis pipeline is checked against ERP CORE (Kappenman et al., 2021, *NeuroImage*
+225:117465; CC-BY-4.0): it must reproduce the published P3 and N170 effects, participant by
+participant.
+
+```python
+from braino.datasets import erpcore
+from braino.validation.erpcore import compare
+
+root = erpcore.fetch("P3", ["001", "002"])  # BIDS data, hash-checked, cached in ~/.cache/braino
+erpcore.references()["P3"]                   # what the authors measured and found
+report = compare("P3", {"001": 6.1, "002": 17.0, ...})  # BrainO's per-participant scores
+```
+
+The full download is large (P3 2.2 GB, N170 3.4 GB), so it is not part of CI; the test that
+downloads one participant runs with `BRAINO_LARGE_DOWNLOADS=1`.
+
 ## Test data
 
 Tests that need real recordings download small public sample files (one recording per supported

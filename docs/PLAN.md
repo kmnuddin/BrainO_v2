@@ -308,8 +308,8 @@ Durations assume one developer working full-time; part-time roughly doubles them
 The detailed order of work within milestone 1. Near-term stages are specified in more detail than
 later ones; later stages will be refined as they come closer.
 
-**Progress (2026-10-23):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
-done except the XDF reader. Next: Stage C, item 10.
+**Progress (2026-10-24):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
+done except the XDF reader, item 10 done. Next: item 11.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
 these, and they are cheapest to settle while only one tool exists.
@@ -374,6 +374,20 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
 
 10. **Choose the validation dataset first** (ERP CORE is a candidate), so the pipeline is built
     against the published effect it must reproduce.
+    *Done: ERP CORE (Kappenman et al., 2021, NeuroImage 225:117465; CC-BY-4.0; 40 adults,
+    BioSemi, 30 scalp channels). Targets, from the authors' per-participant scores:*
+
+    | Component | Effect | Site, window | Published |
+    |---|---|---|---|
+    | P3 (first) | rare − frequent | Pz, 300–600 ms | +6.29 µV (SD 3.39, dz 1.86, n = 34) |
+    | N170 (second) | faces − cars | PO8, 110–150 ms | −3.37 µV (SD 2.71, dz 1.24, n = 37) |
+
+    *Reproduced means: (1) BrainO's 95% CI includes the published mean and the effect is
+    significant (p < .001) in the published direction; (2) per-participant scores correlate
+    with the published ones at r ≥ 0.9 (provisional, to confirm after the first full run).
+    Exclusions are compared but not pass/fail. `braino.datasets.erpcore` fetches the BIDS data
+    (P3 2.2 GB, N170 3.4 GB) with pinned SHA-256 hashes; `braino.validation.erpcore.compare`
+    applies the criteria. The full run is an on-demand validation, not part of CI.*
 11. **Tools, in dependency order:** `eeg.preprocess` → `eeg.detect_bad_channels` (decision) →
     `eeg.ica_clean` (decision) → `eeg.epoch` with autoreject → `eeg.erp`, `eeg.spectral`,
     `eeg.tfr` → `stats.mass_univariate`, `stats.cluster_permutation`.
