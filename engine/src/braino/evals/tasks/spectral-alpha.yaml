@@ -1,0 +1,13 @@
+id: spectral-alpha
+category: spectral
+description: Find a planted 10 Hz alpha rhythm.
+request: What is the peak alpha frequency of subject 01's EEG?
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - {kind: tool_called, tool: eeg.spectral}
+  - {kind: answer_number, min: 9.3, max: 10.7, description: about 10 Hz}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
+  - {id: spec, tool: eeg.spectral, args: {subject: "01", source: continuous}}
+answer: "Subject 01's peak alpha frequency is {spec.conditions.continuous.peak_alpha_hz:g} Hz."

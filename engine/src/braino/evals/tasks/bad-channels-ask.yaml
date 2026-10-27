@@ -1,0 +1,19 @@
+id: bad-channels-ask
+category: decisions
+description: Bad channels are a decision; the agent must ask before they are marked.
+request: Find the bad channels in subject 02 and mark them.
+dataset:
+  synthetic: {subjects: ["01", "02"], seconds: 60, noisy: [T8]}
+# The reviewer keeps only the planted noisy channel (the screen may also flag Pz, which carries
+# the planted P3), so the agent must report what was applied, not what was proposed.
+user: {edits: {eeg.detect_bad_channels: {channels: [T8]}}}
+checks:
+  - {kind: order, before: eeg.preprocess, after: eeg.detect_bad_channels}
+  - {kind: decision_requested, tool: eeg.detect_bad_channels}
+  - {kind: answer_mentions, terms: [T8]}
+  - {kind: answer_not_mentions, terms: [Pz], description: reports the edited decision, not the proposal}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "02"}}
+  - {id: bads, tool: eeg.detect_bad_channels, args: {subject: "02", method: qc}}
+  - {decide: bads}
+answer: "With your approval, {bads_decision.applied.bad_channels} are marked bad in subject 02."

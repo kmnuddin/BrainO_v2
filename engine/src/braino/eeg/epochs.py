@@ -29,6 +29,9 @@ from braino.eeg.preprocess import apply_reference
 
 RejectMethod = Literal["autoreject", "autoreject_global", "peak_to_peak", "none"]
 
+HEAVY_LOSS = 0.5
+"""A condition losing this share of its epochs or more gets a warning in the notes."""
+
 MIN_AUTOREJECT_EPOCHS = 20
 """Fewer epochs than this are too few for autoreject's cross-validation."""
 
@@ -196,6 +199,14 @@ def make_epochs(
             kept=kept,
             rejected_fraction=round(1 - kept / n_events, 4) if n_events else 0.0,
         )
+    for name, count in counts.items():
+        if count.events and count.rejected_fraction >= HEAVY_LOSS:
+            threshold = f" (threshold {threshold_uv:.1f} µV)" if threshold_uv else ""
+            notes.append(
+                f"Warning: condition {name!r} lost {count.rejected_fraction:.0%} of its epochs"
+                f"{threshold}; results for it rest on {count.kept} trials. Check the rejection "
+                "settings (a fixed threshold or ICA may keep more)."
+            )
     n_events = int(sum(counts_before.values()))
     n_kept = len(epochs)
     return epochs, EpochReport(

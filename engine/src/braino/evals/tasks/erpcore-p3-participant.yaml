@@ -1,0 +1,47 @@
+id: erpcore-p3-participant
+category: validation
+description: The P3 of an ERP CORE participant, compared with the published score (6.59 µV).
+large: true
+request: >-
+  Measure the P3 for participant 001: the mean amplitude of rare minus frequent letters at Pz,
+  300 to 600 ms. The rare letters are events stimulus/11, stimulus/22, stimulus/33, stimulus/44
+  and stimulus/55; all other stimulus/ codes from 11 to 55 are frequent. Use the authors'
+  settings: 0.1-30 Hz, 256 Hz, reference P9/P10, and their 26 ms monitor delay.
+dataset:
+  erpcore: {task: P3, subjects: ["001"]}
+checks:
+  - {kind: tool_called, tool: eeg.preprocess, args: {reference: [P9, P10]}}
+  - {kind: tool_called, tool: eeg.epoch, args: {event_delay_s: {range: [0.025, 0.027]}}}
+  - {kind: decision_requested, tool: eeg.ica_clean, required: false}
+  - {kind: answer_number, min: 5.0, max: 8.2, description: within 1.6 µV of the published 6.59}
+solution:
+  - id: pre
+    tool: eeg.preprocess
+    args: {subject: "001", l_freq: 0.1, h_freq: 30.0, resample_hz: 256, reference: [P9, P10]}
+  - {id: ica, tool: eeg.ica_clean, args: {subject: "001"}}
+  - {decide: ica}
+  - {id: bads, tool: eeg.detect_bad_channels, args: {subject: "001"}}
+  - {decide: bads}
+  - id: ep
+    tool: eeg.epoch
+    args:
+      subject: "001"
+      tmin: -0.2
+      tmax: 0.8
+      baseline: [-0.2, 0.0]
+      event_delay_s: 0.026
+      conditions:
+        rare: [stimulus/11, stimulus/22, stimulus/33, stimulus/44, stimulus/55]
+        frequent: [stimulus/12, stimulus/13, stimulus/14, stimulus/15, stimulus/21, stimulus/23,
+                   stimulus/24, stimulus/25, stimulus/31, stimulus/32, stimulus/34, stimulus/35,
+                   stimulus/41, stimulus/42, stimulus/43, stimulus/45, stimulus/51, stimulus/52,
+                   stimulus/53, stimulus/54]
+  - id: erp
+    tool: eeg.erp
+    args:
+      subject: "001"
+      contrasts: [{name: difference, plus: rare, minus: frequent}]
+      measures: [{name: P3, channels: [Pz], tmin: 0.3, tmax: 0.6}]
+answer: >-
+  Participant 001's P3 (rare minus frequent letters at Pz, 300-600 ms) is
+  {erp.measures[waveform=difference].value_uv:.2f} µV.

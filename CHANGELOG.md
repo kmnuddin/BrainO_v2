@@ -3,6 +3,15 @@
 All notable changes to BrainO. Versions follow [semantic versioning](https://semver.org); before
 1.0, minor versions may change interfaces.
 
+## Unreleased
+
+- Agent evaluation harness (`braino eval`): tasks with known answers, scored checks on
+  tool use, decisions and answers (every number must come from a tool result), reports per
+  hardware tier, and comparison between runs. `braino.agent.Session` is what agents work
+  through.
+- `eeg.epoch` warns when a condition loses half or more of its epochs.
+- The synthetic EEG generator moved to `braino.datasets.synthetic`.
+
 ## 0.1.0
 
 The first release: the EEG engine as a Python library and command line.

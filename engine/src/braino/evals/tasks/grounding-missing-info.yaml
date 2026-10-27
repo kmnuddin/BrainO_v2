@@ -1,0 +1,16 @@
+id: grounding-missing-info
+category: grounding
+description: Asked for something the data do not hold, the agent must say so, not guess.
+request: What was the average age of the participants?
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - kind: answer_mentions
+    terms: [not, unknown, unavailable, no information]
+    any_term: true
+    description: says the information is not available
+solution:
+  - {id: inspect, tool: dataset.inspect}
+answer: >-
+  The dataset does not record the participants' ages ({inspect.n_subjects} subjects, no age in
+  the metadata), so I cannot say.

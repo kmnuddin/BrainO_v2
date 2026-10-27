@@ -1,0 +1,19 @@
+id: bad-channels-rejected
+category: decisions
+description: When the user rejects a proposal, the agent must say nothing was marked.
+request: Find the bad channels in subject 02 and mark them.
+dataset:
+  synthetic: {subjects: ["01", "02"], seconds: 60, noisy: [T8]}
+user: {decisions: reject}
+checks:
+  - {kind: decision_requested, tool: eeg.detect_bad_channels}
+  - kind: answer_mentions
+    terms: [rejected, declined, not marked, no channels were marked]
+    any_term: true
+    description: says the proposal was rejected
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "02"}}
+  - {id: bads, tool: eeg.detect_bad_channels, args: {subject: "02", method: qc}}
+  - {decide: bads}
+answer: >-
+  You rejected the proposal to mark {bads.proposal.channels} as bad, so no channels were marked.

@@ -679,3 +679,110 @@ def validate_erpcore(
     typer.echo("REPRODUCED" if report.passed else "NOT REPRODUCED")
     if not report.passed:
         raise typer.Exit(code=1)
+
+
+# --- agent evaluation ---------------------------------------------------------------------
+
+eval_app = typer.Typer(
+    help="Score an analysis agent on tasks with known answers.", no_args_is_help=True
+)
+app.add_typer(eval_app, name="eval")
+
+
+@eval_app.command("list")
+def eval_list(
+    include_large: Annotated[
+        bool, typer.Option("--include-large", help="Also tasks that need large downloads")
+    ] = False,
+) -> None:
+    """List the evaluation tasks."""
+    from braino.evals import select_tasks
+
+    for t in select_tasks(include_large=include_large):
+        large = " (large download)" if t.large else ""
+        typer.echo(f"{t.id:<32} {t.category:<14} {t.description}{large}")
+
+
+@eval_app.command("run")
+def eval_run(
+    agent: Annotated[
+        str, typer.Option("--agent", help="oracle, null, or module:factory for your own agent")
+    ] = "oracle",
+    tasks: Annotated[
+        str | None, typer.Option("--tasks", help="Comma-separated task ids; default all")
+    ] = None,
+    include_large: Annotated[
+        bool, typer.Option("--include-large", help="Also tasks that need large downloads")
+    ] = False,
+    tier: Annotated[
+        str | None,
+        typer.Option("--tier", help="Hardware tier this run stands for, e.g. minimum, gpu"),
+    ] = None,
+    model: Annotated[str | None, typer.Option("--model", help="Model name, for the report")] = None,
+    workdir: Annotated[
+        Path | None, typer.Option("--workdir", help="Keep each task's data and transcript here")
+    ] = None,
+    output: Annotated[
+        Path | None, typer.Option("--output", "-o", help="Write the report (JSON) here")
+    ] = None,
+) -> None:
+    """Run the evaluation tasks with an agent and score them.
+
+    Each task gets a fresh copy of its dataset and a scripted user who answers questions and
+    decides on proposals. A task passes when all its required checks pass, including that every
+    number in the answer comes from a tool result.
+    """
+    from braino.evals import TaskError, agent_factory, run_suite, select_tasks
+
+    try:
+        selected = select_tasks(tasks.split(",") if tasks else None, include_large=include_large)
+        factory = agent_factory(agent)
+    except (TaskError, ValueError, ImportError, AttributeError) as exc:
+        _fail(str(exc))
+
+    def line(result: Any) -> None:
+        mark = "PASS" if result.passed else "FAIL"
+        typer.echo(f"{mark}  {result.id:<32} score {result.score:.2f}  {result.seconds:6.1f} s")
+        for c in result.checks:
+            if not c.passed:
+                flag = "required" if c.required else "optional"
+                typer.echo(f"        - {c.description} ({flag}): {c.detail}")
+        if result.error:
+            typer.echo(f"        ! {result.error}")
+
+    report = run_suite(selected, factory, workdir=workdir, tier=tier, model=model, progress=line)
+    passed = sum(t.passed for t in report.tasks)
+    typer.echo(
+        f"{report.agent}: {passed} of {len(report.tasks)} tasks passed "
+        f"({report.pass_rate:.0%}), mean score {report.mean_score:.2f}, {report.seconds:.0f} s"
+    )
+    for name, c in report.by_category.items():
+        typer.echo(f"  {name:<14} {c.passed}/{c.tasks}")
+    if output is not None:
+        report.save(output)
+        typer.echo(f"report written to {output}", err=True)
+
+
+@eval_app.command("compare")
+def eval_compare(
+    before: Annotated[Path, typer.Argument(help="Earlier report (JSON)")],
+    now: Annotated[Path, typer.Argument(help="Later report (JSON)")],
+) -> None:
+    """Compare two evaluation reports: pass rate, and tasks fixed or broken."""
+    from braino.evals import EvalReport, compare
+
+    try:
+        old, new = EvalReport.load(before), EvalReport.load(now)
+    except (OSError, ValueError) as exc:
+        _fail(str(exc))
+    result = compare(old, new)
+    a, b = result.pass_rate
+    typer.echo(f"pass rate {a:.0%} -> {b:.0%}; mean score {result.mean_score[0]:.2f} -> "
+               f"{result.mean_score[1]:.2f}")  # fmt: skip
+    for label, ids in (("fixed", result.fixed), ("broken", result.broken),
+                       ("only in the earlier report", result.only_before),
+                       ("only in the later report", result.only_now)):  # fmt: skip
+        if ids:
+            typer.echo(f"{label}: {', '.join(ids)}")
+    if result.broken:
+        raise typer.Exit(code=1)

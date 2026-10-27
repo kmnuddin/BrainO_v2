@@ -8,8 +8,8 @@ pytest.importorskip("mne")
 
 import mne
 import numpy as np
-from synthetic_eeg import EEG, P3_UV, P3_WINDOW, SFREQ, blink_weights, make_raw
 
+from braino.datasets.synthetic import EEG, P3_UV, P3_WINDOW, SFREQ, blink_weights, make_raw
 from braino.eeg.epochs import EpochParams, make_epochs
 from braino.eeg.erp import Contrast, Measure, condition_averages, measure
 from braino.eeg.ica import fit_ica, remove_components
@@ -89,7 +89,7 @@ def test_epochs_and_the_known_p3(recording: mne.io.BaseRaw) -> None:
     spec = Measure(name="P3", channels=["Pz"], tmin=P3_WINDOW[0], tmax=P3_WINDOW[1])
     value = measure(evokeds["difference"], spec, "difference")
     # The average reference takes the mean of all channels' P3 off Pz.
-    from synthetic_eeg import p3_weights
+    from braino.datasets.synthetic import p3_weights
 
     expected = P3_UV * (1 - p3_weights().mean())
     assert value.value_uv == pytest.approx(expected, rel=0.15)

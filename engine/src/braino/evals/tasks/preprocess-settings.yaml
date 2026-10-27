@@ -1,0 +1,20 @@
+id: preprocess-settings
+category: preprocessing
+description: Turn a request in words into the right preprocessing settings.
+request: >-
+  Preprocess subject 01: band-pass filter from 1 to 40 Hz, notch out the power-line noise, and
+  use the average reference.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - kind: tool_called
+    tool: eeg.preprocess
+    args: {subject: "01", l_freq: 1.0, h_freq: 40.0, notch_line_noise: true, reference: average}
+  - {kind: max_calls, count: 3, required: false}
+solution:
+  - id: pre
+    tool: eeg.preprocess
+    args: {subject: "01", l_freq: 1.0, h_freq: 40.0, notch_line_noise: true, reference: average}
+answer: >-
+  Subject 01 is preprocessed: band-passed 1-40 Hz, notch-filtered at the line frequency and
+  average-referenced ({pre.duration_s} s at {pre.sfreq_hz:g} Hz).

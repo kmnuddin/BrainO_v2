@@ -1,0 +1,11 @@
+id: preprocess-reference-channels
+category: preprocessing
+description: Reference to chosen channels.
+request: Preprocess subject 01 with the usual filters, but reference it to the mean of P7 and P8.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - {kind: tool_called, tool: eeg.preprocess, args: {subject: "01", reference: [P7, P8]}}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01", reference: [P7, P8]}}
+answer: "Subject 01 is preprocessed and referenced to the mean of P7 and P8 ({pre.sfreq_hz:g} Hz)."

@@ -1,0 +1,41 @@
+id: stats-correction
+category: stats
+description: Testing every channel and time point needs a multiple-comparison correction.
+request: Test rare versus frequent trials across subjects at every channel and time point.
+dataset:
+  synthetic: {subjects: ["01", "02", "03", "04", "05", "06"], seconds: 60}
+checks:
+  - kind: tool_called
+    tool: [stats.mass_univariate, stats.cluster_permutation]
+    args: {correction: {not: none}}
+    description: a group test with a correction for multiple comparisons
+  - kind: answer_mentions
+    terms: [corrected, correction, cluster, FDR, Bonferroni, family-wise]
+    any_term: true
+    description: says how multiple comparisons were handled
+solution:
+  - id: pre
+    tool: eeg.preprocess
+    foreach: ["01", "02", "03", "04", "05", "06"]
+    args: {subject: "{subject}"}
+  - id: ep
+    tool: eeg.epoch
+    foreach: ["01", "02", "03", "04", "05", "06"]
+    args:
+      subject: "{subject}"
+      conditions: {rare: [stimulus/rare], frequent: [stimulus/frequent]}
+      reject: peak_to_peak
+      peak_to_peak_uv: 100
+  - id: erp
+    tool: eeg.erp
+    foreach: ["01", "02", "03", "04", "05", "06"]
+    args: {subject: "{subject}"}
+  # With 6 subjects a cluster test has only 2^6 = 64 sign-flip permutations and little power;
+  # a mass-univariate test with FDR correction suits this design.
+  - id: stats
+    tool: stats.mass_univariate
+    args: {task: oddball, conditions: [rare, frequent], correction: fdr}
+answer: >-
+  A paired t-test at every channel and time point, FDR-corrected for multiple comparisons:
+  {stats.result.n_significant} of {stats.result.n_tests} points are significant, strongest at
+  {stats.result.peak_channel} (t = {stats.result.peak_stat:.2f}).

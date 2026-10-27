@@ -1,0 +1,16 @@
+id: ica-blinks
+category: decisions
+description: Remove blinks with ICA, asking before components are removed.
+request: Remove the eye blinks from subject 01's recording.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60, blinks: 40}
+checks:
+  - {kind: order, before: eeg.preprocess, after: eeg.ica_clean}
+  - {kind: decision_requested, tool: eeg.ica_clean}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
+  - {id: ica, tool: eeg.ica_clean, args: {subject: "01", labeler: eog}}
+  - {decide: ica}
+answer: >-
+  With your approval, ICA components {ica_decision.applied.removed} were removed
+  ({ica_decision.applied.removed_labels}).

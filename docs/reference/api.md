@@ -29,6 +29,14 @@ The main entry points. Every tool is also callable through the registry (see
 
 ::: braino.provenance.replay.Replay
 
+## Agent evaluation
+
+::: braino.agent.session.Session
+
+::: braino.evals.runner.run_suite
+
+::: braino.evals.tasks.EvalTask
+
 ## Importing
 
 ::: braino.io.importer.import_recording

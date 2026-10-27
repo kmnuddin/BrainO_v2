@@ -469,6 +469,17 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
 
 15. **Eval harness first** (tasks with expected outputs), so every agent change is scored, per
     hardware tier.
+    *Done (`braino.evals`, `braino eval list|run|compare`; agents work through
+    `braino.agent.Session`: tool calls, questions, decision requests). 14 tasks in YAML (13 on
+    synthetic data with planted answers, 1 on ERP CORE): inspection, QC, preprocessing settings,
+    decisions (ask, rejection, edited approval, ICA), ERP, group statistics and correction,
+    spectra, refusing to guess. Checks score tool use and arguments, step order, decisions
+    requested, answer values and terms, and grounding: every number in the answer must come
+    from a tool result. A scripted user answers and decides. Reports record agent, model, tier
+    and hardware; `compare` lists fixed and broken tasks. The oracle agent (reference solutions)
+    passes 14/14 and the null agent 0/14, and the oracle run is part of the test suite, so a
+    tool change that breaks a task fails CI. Building the tasks found that global autoreject
+    can reject a whole condition on short recordings; `eeg.epoch` now warns.*
 16. **Local model runtime:** BrainO starts and stops llama.cpp itself, detects RAM and GPU
     memory, proposes a model tier, and downloads the chosen model once (checked against a pinned
     hash). A short benchmark tells the user how fast the agent will be on their computer.

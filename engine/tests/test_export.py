@@ -33,7 +33,7 @@ def dataset(tmp_path: Path) -> Path:
     pytest.importorskip("mne_bids")
     pytest.importorskip("pybv")
     pytest.importorskip("picard")
-    from synthetic_eeg import write_dataset
+    from braino.datasets.synthetic import write_dataset
 
     return write_dataset(tmp_path / "bids", ["01", "02", "03"], task="oddball", seconds=30.0)
 

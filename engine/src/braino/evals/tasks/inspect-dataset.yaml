@@ -1,0 +1,15 @@
+id: inspect-dataset
+category: inspect
+description: Describe a dataset from its metadata.
+request: How many subjects are in this dataset, and which tasks were recorded?
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - {kind: tool_called, tool: dataset.inspect}
+  - {kind: answer_number, min: 3, max: 3, description: says there are 3 subjects}
+  - {kind: answer_mentions, terms: [oddball]}
+  - {kind: no_decision_requested}
+  - {kind: max_calls, count: 3, required: false}
+solution:
+  - {id: inspect, tool: dataset.inspect}
+answer: "The dataset has {inspect.n_subjects} subjects and one task, {inspect.tasks[0]}."

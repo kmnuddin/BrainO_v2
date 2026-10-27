@@ -1,0 +1,15 @@
+id: qc-line-noise
+category: qc
+description: Report planted 50 Hz power-line noise.
+request: Is there power-line noise in subject 01's recording, and at what frequency?
+dataset:
+  synthetic: {subjects: ["01"], seconds: 30, line_noise_uv: 20}
+checks:
+  - {kind: tool_called, tool: eeg.qc_report}
+  - {kind: answer_number, min: 49.5, max: 50.5, description: gives the line frequency, 50 Hz}
+solution:
+  - {id: qc, tool: eeg.qc_report, args: {subject: "01"}}
+answer: >-
+  Yes. The power-line frequency is {qc.line_freq_hz:g} Hz, and {qc.n_strong_line_noise} channels
+  have strong line noise (median ratio {qc.line_noise_median_ratio} over the neighbouring
+  frequencies).

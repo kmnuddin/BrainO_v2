@@ -1,0 +1,36 @@
+id: erp-group-test
+category: stats
+description: Run the per-subject chain for every subject, then a group test.
+request: >-
+  Across all subjects, is the P3 at Pz (rare minus frequent trials, 300 to 500 ms) significant?
+dataset:
+  synthetic: {subjects: ["01", "02", "03", "04", "05", "06"], seconds: 60}
+checks:
+  - {kind: tool_called, tool: eeg.erp}
+  - {kind: tool_called, tool: [stats.mass_univariate, stats.cluster_permutation]}
+  - {kind: answer_mentions, terms: [significant]}
+  - {kind: answer_not_mentions, terms: [not significant, no significant]}
+solution:
+  - id: pre
+    tool: eeg.preprocess
+    foreach: ["01", "02", "03", "04", "05", "06"]
+    args: {subject: "{subject}"}
+  - id: ep
+    tool: eeg.epoch
+    foreach: ["01", "02", "03", "04", "05", "06"]
+    args:
+      subject: "{subject}"
+      conditions: {rare: [stimulus/rare], frequent: [stimulus/frequent]}
+      reject: peak_to_peak
+      peak_to_peak_uv: 100
+  - id: erp
+    tool: eeg.erp
+    foreach: ["01", "02", "03", "04", "05", "06"]
+    args: {subject: "{subject}", contrasts: [{name: difference, plus: rare, minus: frequent}]}
+  - id: stats
+    tool: stats.mass_univariate
+    args: {task: oddball, conditions: [difference], channels: [Pz], tmin: 0.3, tmax: 0.5}
+answer: >-
+  Yes, it is significant: across {stats.result.n_subjects} subjects the difference at Pz has a
+  peak t of {stats.result.peak_stat:.2f}, with a smallest FDR-corrected p of
+  {stats.result.min_p:.4f}.

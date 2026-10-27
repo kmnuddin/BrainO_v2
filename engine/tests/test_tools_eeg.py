@@ -14,10 +14,10 @@ pytest.importorskip("mne_bids")
 pytest.importorskip("pybv")
 pytest.importorskip("picard")
 
-from synthetic_eeg import P3_WINDOW, write_dataset
 from typer.testing import CliRunner
 
 from braino.cli import app
+from braino.datasets.synthetic import P3_WINDOW, write_dataset
 from braino.provenance import list_runs, load_run
 from braino.tools import PendingProposal, RunContext, decide, registry
 from braino.tools.eeg import MissingStepError, StaleStepError

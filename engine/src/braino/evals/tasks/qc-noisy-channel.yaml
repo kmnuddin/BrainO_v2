@@ -1,0 +1,16 @@
+id: qc-noisy-channel
+category: qc
+description: Find a channel with planted broadband noise (T8) with the quality screen.
+request: Check the data quality of subject 02. Are any channels noisy?
+dataset:
+  synthetic: {subjects: ["01", "02"], seconds: 60, noisy: [T8]}
+checks:
+  - {kind: tool_called, tool: eeg.qc_report, args: {subject: "02"}}
+  - {kind: answer_mentions, terms: [T8]}
+  - kind: no_decision_requested
+    description: a quality screen changes nothing, so the agent asks for no decision
+solution:
+  - {id: qc, tool: eeg.qc_report, args: {subject: "02"}}
+answer: >-
+  Subject 02 has {qc.n_noisy} noisy channel(s); the noisiest is {qc.noisy[0].channel}
+  ({qc.noisy[0].reason}, robust z = {qc.noisy[0].z}).

@@ -8,8 +8,8 @@ pytest.importorskip("mne")
 
 import mne
 import numpy as np
-from synthetic_eeg import EEG, SFREQ, make_raw
 
+from braino.datasets.synthetic import EEG, SFREQ, make_raw
 from braino.eeg.bad_channels import find_bad_channels
 from braino.eeg.preprocess import PreprocessParams, apply_reference, preprocess
 

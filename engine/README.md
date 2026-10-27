@@ -56,6 +56,8 @@ braino pipeline run p3.yaml --dataset path/to/bids --from epochs   # redo from a
 braino pipeline status p3.yaml --dataset path/to/bids
 braino pipeline export p3.yaml --dataset path/to/bids -o p3.py
 braino validate erpcore P3 [--subjects 001,002,003]    # reproduce the published P3
+braino eval list                                       # agent evaluation tasks
+braino eval run --agent oracle -o report.json          # score an agent (see the docs)
 ```
 
 ## Tools
