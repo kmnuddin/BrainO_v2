@@ -1,6 +1,6 @@
 # BrainO 2.0 — Platform Plan
 
-Status: **draft for discussion** · Last updated: 2026-10-08
+Status: **draft for discussion** · Last updated: 2026-10-27
 
 ## 1. Vision
 
@@ -20,9 +20,11 @@ BrainO is an open-source **EEG and fMRI analysis platform** with:
 |---|---|
 | Project model | **Open source**, developed by a single developer (contributors welcome later) |
 | Users | Research first, with a path to clinical use (design for PHI handling and audit from day one) |
-| AI | **Own local AI built on open-weight Qwen models** — no Claude or other hosted LLM API. Runs on the user's machine; fine-tuned for BrainO's tools |
-| Compute | Local engine on the user's machine or lab server; heavy jobs can be offloaded to cloud/HPC |
-| Main application | React + TypeScript web UI, packaged as a desktop app (Electron); can also be served to a browser later |
+| Product | **A desktop application** that runs entirely on the user's own computer (Windows, macOS, Linux) and uses its resources. There is no BrainO server, cloud service or paid GPU, for users or for the project |
+| AI | **Own local AI built on open-weight Qwen models** — no Claude or other hosted LLM API. Runs on the user's computer, on the CPU by default and on a GPU if there is one; fine-tuned for BrainO's tools |
+| Compute | Everything runs locally. **Minimum computer: no GPU, 16 GB RAM**, on which the engine, the app and the agent must all work (the agent with a small model, more slowly). A consumer GPU or more RAM only makes the agent faster or allows a larger model |
+| Development resources | The office RTX 2080 Ti and the University of Memphis HPC (free) are used **only for development**: fine-tuning and large evaluation runs. Users never need them |
+| Main application | React + TypeScript UI in an Electron desktop app that starts the engine and the model runtime on the user's computer; one installer per operating system |
 | 3D viewer | Unity 6 LTS, **visualisation only**, built for WebGL and embedded as a panel in the main UI |
 | VR/AR | **Out of scope** |
 | First milestone | EEG pipeline + agent, with results shown in 3D |
@@ -47,7 +49,7 @@ BrainO is an open-source **EEG and fMRI analysis platform** with:
            │ REST +       │ HTTP (binary meshes/arrays,
            │ WebSocket    │ fetched directly by the viewer)
 ┌──────────┴──────────────┴────────────────────────────────────────┐
-│ Engine server (Python, FastAPI) — runs as a local sidecar         │
+│ Engine (Python, FastAPI on localhost) — started by the app        │
 │  ┌────────────┐  ┌──────────────┐  ┌──────────────────────────┐   │
 │  │ Agent      │→ │ Tool registry│→ │ Analysis modules          │   │
 │  │ (local     │  │ typed tools, │  │ io · eeg · fmri · stats · │   │
@@ -55,10 +57,10 @@ BrainO is an open-source **EEG and fMRI analysis platform** with:
 │  └─────▲──────┘  └──────────────┘  └──────────────────────────┘   │
 │        │ OpenAI-compatible API (localhost)                        │
 │  ┌─────┴──────────────────────────┐                               │
-│  │ LLM server: Ollama / llama.cpp │  + knowledge base (RAG over   │
-│  │ / vLLM serving a Qwen model    │    MNE/nilearn docs, methods) │
+│  │ llama.cpp (bundled): a Qwen    │  + knowledge base (RAG over   │
+│  │ GGUF model on the CPU or GPU   │    MNE/nilearn docs, methods) │
 │  └────────────────────────────────┘                               │
-│  Job runner (local processes; optional cloud/HPC backend)         │
+│  Job runner (local processes, sized to the machine's CPU and RAM) │
 │  Provenance store · Scene service (meshes/arrays for the viewer)  │
 └──────────▲────────────────────────────────────────────────────────┘
            │
@@ -79,6 +81,12 @@ Principles:
    record (inputs, hashes, parameters, library versions).
 5. **The engine works without the agent.** All tools can also be used from the UI and a Python API,
    so the platform is useful without AI and can be tested on its own.
+6. **Runs on the user's computer, within its limits.** No server to run, no account, no network
+   needed after installation and the one-time model download. The job runner uses the cores and
+   memory available (it runs as many jobs at once as fit, shows progress and can cancel), results
+   are cached so nothing is computed twice, and every feature must work on the minimum computer
+   (no GPU, 16 GB RAM). For scale: the full 40-participant ERP CORE validation runs in about an
+   hour on one desktop CPU.
 
 ### Why Electron rather than Tauri
 Tauri renders with the operating system's webview, which differs between platforms (WebView2 on
@@ -131,24 +139,32 @@ It produces a QC summary that both the UI and the agent read.
 Training a language model from scratch is not realistic for one developer. "Our own AI" is built
 in four layers on top of Qwen:
 
-1. **Base model** — an open-weight Qwen instruct model with tool calling, served locally through an
-   OpenAI-compatible API (Ollama or llama.cpp for desktops, vLLM for lab servers). The engine talks
-   only to that API, so any compatible model can be swapped in.
-2. **Model tiers by hardware** (4-bit quantised, approximate):
+1. **Base model** — an open-weight Qwen instruct model with tool calling, run by llama.cpp,
+   which the desktop app bundles and starts, through its OpenAI-compatible API on localhost. The
+   engine talks only to that API, so any compatible runtime (e.g. an Ollama the user already has)
+   or model can be swapped in. Models are downloaded once, on first use, not bundled.
+2. **Model tiers by the user's hardware** (4-bit GGUF, approximate; the app detects RAM and GPU
+   memory, proposes a tier, and the user can change it):
 
-   | Tier | Example Qwen size | GPU memory | Use |
+   | Tier | User's computer | Example Qwen model | Expectation |
    |---|---|---|---|
-   | Laptop | ~4–8B dense | 6–8 GB (or CPU, slowly) | Explanations, simple pipelines |
-   | Workstation (default) | ~30B MoE or ~32B dense | 20–24 GB | Full agent |
-   | Lab server | Largest Qwen that fits | 48–80 GB+ | Best quality, multi-user |
+   | **Minimum (default)** | No GPU, 16 GB RAM | ~4B dense (~3 GB) | Full agent on the CPU; slower answers. The design target |
+   | More RAM | No GPU, 32 GB+ RAM | ~30B mixture-of-experts with ~3B active (~18 GB) | Better planning; MoE keeps CPU speed close to a small model |
+   | Consumer GPU | 6–12 GB VRAM | ~8B dense on the GPU, or the ~30B MoE partly offloaded | Faster, and a larger model |
 
-   **Development hardware available:**
+   The agent is designed and evaluated for the minimum tier: larger models make it better, but
+   nothing may depend on them. On a CPU, reading the prompt is the slow part, so the agent sends
+   only the tool schemas a step needs, keeps tool results short, and reuses llama.cpp's prompt
+   cache between turns.
+
+   **Development hardware (not needed by users):**
    - *Office workstation, RTX 2080 Ti (11 GB):* runs the laptop tier (~8B, 4-bit) fully on the GPU
      for day-to-day development. A ~30B mixture-of-experts model also runs, with experts partly
      offloaded to CPU RAM by llama.cpp; it is slower but fine for testing the workstation tier.
    - *University of Memphis HPC, V100 GPUs:* fine-tuning (QLoRA) and large evaluation runs, submitted
-     as batch jobs. Model serving for evals uses llama.cpp, which supports this GPU generation;
-     check vLLM's current GPU support before relying on it there.
+     as batch jobs. Model serving for evals uses llama.cpp, which supports this GPU generation.
+     Evaluations of the minimum tier run on the CPU (CPU nodes, or the office machine with the GPU
+     unused), so the scores reflect what users get.
    - Both GPUs are pre-Ampere: **no bfloat16 and no FlashAttention 2**. Training uses fp16 mixed
      precision with loss scaling; inference uses quantised GGUF models.
 
@@ -158,6 +174,9 @@ in four layers on top of Qwen:
 4. **Fine-tuning (LoRA/QLoRA)** — teach the model BrainO's tools and analysis conventions using
    tool-call examples: synthetic analysis sessions generated from validated pipeline templates on
    public datasets, then checked by running them. This specialises the model; it does not replace it.
+   Training happens on the HPC; the result is merged and quantised to GGUF, so users download a
+   ready model and never train anything. The small default model comes first, since it is the
+   one most users run and the one with the most to gain.
 
 Before fine-tuning anything, the agent is measured with the base model + RAG on the eval set
 (M1.7). We fine-tune only where the evaluation shows gaps.
@@ -167,7 +186,7 @@ Local models are weaker planners than the largest hosted models, so reliability 
 system design, not the model alone:
 
 - **Constrained output:** tool calls are forced to match their JSON schema (grammar-constrained
-  decoding in llama.cpp, structured outputs in vLLM). Invalid calls are impossible, not just unlikely.
+  decoding in llama.cpp). Invalid calls are impossible, not just unlikely.
 - **Validated pipeline templates:** for common analyses (ERP comparison, spectral comparison,
   resting-state connectivity) the agent fills in a tested template rather than inventing a
   pipeline from scratch. Free-form planning is reserved for unusual requests.
@@ -260,13 +279,13 @@ BrainO/
 │   ├── braino/ml/
 │   ├── braino/provenance/
 │   ├── braino/agent/       # orchestrator, tool registry, templates, plan checks
-│   ├── braino/llm/         # client for the local OpenAI-compatible LLM server, RAG index
+│   ├── braino/llm/         # local model runtime (llama.cpp), hardware tiers, client, RAG index
 │   ├── braino/scene/       # mesh/array export for the 3D viewer
-│   ├── braino/server/      # FastAPI REST + WebSocket
+│   ├── braino/server/      # FastAPI REST + WebSocket on localhost, for the desktop app
 │   ├── braino/cli.py       # command-line interface
 │   └── tests/
 ├── training/               # dataset generation, LoRA fine-tuning scripts, agent evals
-├── app/                    # React + TypeScript UI and Electron shell
+├── app/                    # React + TypeScript UI, Electron shell, installers
 ├── viewer/                 # Unity 6 project (WebGL build), added in M1.6
 ├── docs/
 └── examples/               # public sample datasets + notebooks
@@ -295,12 +314,12 @@ Durations assume one developer working full-time; part-time roughly doubles them
 | M1.1 Import | EEG readers → BIDS, de-identification, `dataset.inspect`, QC report, CLI | All listed EEG formats load from public test files | 1.5–2 months |
 | M1.2 Pipeline | Preprocess, bad channels, ICA, epoching, ERP, spectral, TFR, cluster stats, provenance, script export | Reproduces a published ERP effect on a public dataset | 2.5–3 months |
 | **Release v0.1** | Engine on PyPI with docs and example notebooks | People outside the project can use it | — |
-| M1.3 Local AI | LLM client, tool registry, templates, plan checks, RAG index, approvals in the CLI | "Compare conditions A vs B" runs end to end from the CLI on the workstation model | 2–3 months |
-| M1.4 Evaluation | Agent eval set (tasks + expected outputs); first LoRA fine-tune only if evals show gaps | Eval pass rate tracked; base vs fine-tuned compared | 1–1.5 months, then ongoing |
+| M1.3 Local AI | Local model runtime and hardware tiers, LLM client, templates, plan checks, RAG index, approvals in the CLI | "Compare conditions A vs B" runs end to end from the CLI **on a computer with no GPU and 16 GB RAM** | 2–3 months |
+| M1.4 Evaluation | Agent eval set (tasks + expected outputs), scored per tier; first LoRA fine-tune (on the HPC) only if evals show gaps | Eval pass rate tracked on the minimum tier; base vs fine-tuned compared | 1–1.5 months, then ongoing |
 | **Release v0.2** | Engine + local agent | — | — |
-| M1.5 Engine server + main UI | FastAPI server, Electron/React app: data browser, trace browser, plots, agent panel with approvals | The M1.3 workflow runs entirely from the app | 3–4 months |
-| M1.6 3D viewer | New Unity 6 WebGL viewer, embedding, JS bridge, scene service; sensor topographies over time | Results appear in the embedded 3D panel; clicking a sensor opens its ERP | 2–3 months |
-| **Release v1.0** | Desktop app | — | — |
+| M1.5 Desktop app | Local engine service, Electron/React app (data browser, trace browser, plots, agent panel with approvals), installer per OS | The M1.3 workflow runs entirely from the installed app on the minimum computer | 3–4 months |
+| M1.6 3D viewer | New Unity 6 WebGL viewer, embedding, JS bridge, scene service; sensor topographies over time | Results appear in the embedded 3D panel; clicking a sensor opens its ERP; smooth on integrated graphics | 2–3 months |
+| **Release v1.0** | Desktop app for Windows, macOS and Linux | — | — |
 
 **Total for milestone 1: about 13–18 months full-time.**
 
@@ -308,8 +327,10 @@ Durations assume one developer working full-time; part-time roughly doubles them
 The detailed order of work within milestone 1. Near-term stages are specified in more detail than
 later ones; later stages will be refined as they come closer.
 
-**Progress (2026-10-25):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
-done except the XDF reader, items 10 and 11 done. Next: item 12.
+**Progress (2026-10-27):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
+done except the XDF reader, Stage C (M1.2 Pipeline, v0.1) done, awaiting publication. Next:
+Stage D. Plan changed on 2026-10-27: BrainO is a desktop application on the user's own computer
+only, with no server or paid GPU (minimum: no GPU, 16 GB RAM); Stages D and E were adjusted.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
 these, and they are cheapest to settle while only one tool exists.
@@ -446,40 +467,58 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
 
 **Stage D — M1.3–M1.4 Local agent → v0.2.**
 
-15. **Eval harness first** (tasks with expected outputs), so every agent change is scored.
-16. **LLM client** for the OpenAI-compatible API, with schema-constrained tool calls.
-17. **Agent loop in the CLI**, with approval prompts for decision tools.
-18. **Templates and plan checks**, built on the Stage C pipeline specs.
-19. **RAG index** over the MNE, BIDS and BrainO documentation.
-20. **Baseline evaluation**, then LoRA fine-tuning on the HPC only where the evals show gaps.
+15. **Eval harness first** (tasks with expected outputs), so every agent change is scored, per
+    hardware tier.
+16. **Local model runtime:** BrainO starts and stops llama.cpp itself, detects RAM and GPU
+    memory, proposes a model tier, and downloads the chosen model once (checked against a pinned
+    hash). A short benchmark tells the user how fast the agent will be on their computer.
+17. **LLM client** for the OpenAI-compatible API, with schema-constrained tool calls, sending only
+    the tool schemas each step needs (prompt processing is the bottleneck on a CPU).
+18. **Agent loop in the CLI**, with approval prompts for decision tools.
+19. **Templates and plan checks**, built on the Stage C pipeline specs.
+20. **RAG index** over the MNE, BIDS and BrainO documentation, small enough to search on a laptop
+    (a local embedding model on the CPU).
+21. **Baseline evaluation on the minimum tier** (CPU, ~4B model), then LoRA fine-tuning on the HPC
+    only where the evals show gaps; fine-tuned models are published as GGUF files for users to
+    download.
 
-**Stage E — M1.5 Server and UI.**
+**Stage E — M1.5 Desktop app.**
 
-21. **FastAPI server** exposing the tool registry (already schema-driven, so this layer stays thin).
-22. **Job runner** with progress reported over WebSocket.
-23. **Electron/React app**, in this order: data browser → plots → agent panel with approvals →
+22. **Local engine service:** FastAPI on localhost exposing the tool registry (already
+    schema-driven, so this layer stays thin), started and stopped by the app.
+23. **Job runner** that fits the user's computer: as many jobs at once as cores and memory allow,
+    progress reported over WebSocket, cancellable, results cached.
+24. **Electron/React app**, in this order: data browser → plots → agent panel with approvals →
     trace browser (the hardest view, so it comes last).
+25. **Installers** for Windows, macOS and Linux, each bundling a Python runtime with the engine
+    and llama.cpp; the model is downloaded on first use. Tested on a computer with no GPU and
+    16 GB RAM.
 
 **Stage F — M1.6 Unity viewer → v1.0.**
 
-24. **Scene service** in the engine for binary meshes and arrays.
-25. **Unity viewer:** WebGL build, JS bridge, sensor topographies over time.
-26. **Picking:** clicking a sensor in the 3D view opens its ERP plot in the main UI.
+26. **Scene service** in the engine for binary meshes and arrays.
+27. **Unity viewer:** WebGL build, JS bridge, sensor topographies over time; meshes sized to run
+    smoothly on integrated graphics.
+28. **Picking:** clicking a sensor in the 3D view opens its ERP plot in the main UI.
 
 ### Later phases
 - **Phase 2 — EEG depth:** source localisation on cortical surfaces, connectivity, ML decoding,
   BrainO connectome view driven by computed connectivity.
 - **Phase 3 — fMRI:** DICOM/NIfTI import, fMRIPrep integration, GLM, resting-state connectivity,
-  surface and volume rendering in the viewer.
-- **Phase 4 — Collaboration and scale:** group studies, HPC job backend, browser access to a lab
-  server, shared projects.
+  surface and volume rendering in the viewer. fMRIPrep runs on the user's computer (in a
+  container, several hours per subject on a CPU), so jobs must survive closing the app and
+  resume.
+- **Phase 4 — Collaboration:** group studies and shared projects without a BrainO server:
+  projects, results and exported scripts are files people share by their own means (a shared
+  drive, Git, OSF). A user who has their own cluster can run the exported scripts there.
 - **Phase 5 — Multimodal and extensibility:** EEG-fMRI fusion, plugin SDK for third-party tools.
 
 ## 9. Resources (open source, single developer)
 
 | Item | Cost |
 |---|---|
-| All software: MNE, nilearn, scikit-learn, PyTorch, FastAPI, React, Electron, Ollama/llama.cpp/vLLM, Qwen weights | Free (open source / open weights) |
+| All software: MNE, nilearn, scikit-learn, PyTorch, FastAPI, React, Electron, llama.cpp, Qwen weights | Free (open source / open weights) |
+| Servers and cloud | **None.** BrainO runs on users' computers; the website and model downloads are hosted free (GitHub Pages and Releases, Hugging Face) |
 | Unity 6 | Free (Unity Personal; no revenue) |
 | GitHub, CI for public repos, PyPI, Read the Docs | Free |
 | Development GPU | Already available: RTX 2080 Ti (office) |
@@ -497,9 +536,11 @@ a paper in the Journal of Open Source Software (JOSS) helps adoption and citatio
 |---|---|
 | Scope is very large for one developer | Library-first order with usable releases at each step; build depth before breadth; invite contributors after v0.1 |
 | Local model plans or reasons poorly | Constrained tool calls, validated templates, rule-based plan checks, approvals, eval suite; fine-tune where evals show gaps |
-| Users without a capable GPU | Tiered models; the engine and UI work fully without the agent |
+| Most users have no GPU | The agent is designed and evaluated for a ~4B model on the CPU (16 GB RAM); templates, constrained tool calls and plan checks carry reliability, not model size. A GPU or more RAM only adds speed or a larger model. The engine and UI work fully without the agent |
+| Heavy analyses are slow on laptops | Results cached so nothing runs twice; progress and cancel for every job; jobs sized to the machine's cores and memory; long jobs resume after the app is closed |
+| Installer size (Python, scientific stack, model runtime) | Models downloaded on first use, not bundled; one installer per OS |
 | Agent produces wrong science | Executed tools only, guardrails, approvals, eval suite, re-runnable scripts |
-| WebGL memory and performance limits for large surfaces/volumes | Server-side decimation and level-of-detail meshes, streaming time series in chunks, 2D slice rendering in the main UI as a fallback |
+| WebGL memory and performance limits for large surfaces/volumes | Engine-side decimation and level-of-detail meshes, streaming time series in chunks, 2D slice rendering in the main UI as a fallback |
 | Unity WebGL build size and load time | Keep the viewer small, compressed builds, load the viewer once and keep it alive |
 | Licensing | See open question 1. Model weights are downloaded by the user, not bundled; check each Qwen model's licence (most recent Qwen releases are Apache 2.0, some earlier sizes used a custom Qwen licence). FSL/FreeSurfer stay optional external tools, never bundled. |
 | PHI and clinical regulation | De-identify on import, everything local, audit log; clinical use needs a separate regulatory track (e.g. FDA SaMD / EU MDR) |
@@ -512,5 +553,7 @@ a paper in the Journal of Open Source Software (JOSS) helps adoption and citatio
    `viewer/`) avoids it.
 2. Real-time EEG streaming (LSL) for neurofeedback/BCI: in scope, and when?
 3. Which in-house datasets should drive milestone 1 validation, in addition to public ones?
-4. Packaging: one installer bundling the Python runtime and LLM server, or a pip/conda engine plus
-   the desktop app?
+
+*Decided (2026-10-27):* packaging is one installer per operating system bundling the Python
+runtime, the engine and llama.cpp, with the model downloaded on first use; the engine also stays
+available on PyPI for scripting.

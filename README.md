@@ -9,6 +9,8 @@ interactive 3D visualisation.
 - An analysis agent running on a local, open-weight model (Qwen): it plans and runs analyses
   through real tools, asks before key decisions, and never sends data off your machine
 - A desktop app with an embedded Unity 3D brain viewer
+- Runs entirely on your own computer: no server, no account, no GPU needed (16 GB RAM is
+  enough; a GPU only makes the agent faster)
 
 > **Status:** alpha. The EEG engine (v0.1: import, analysis pipeline, provenance and script
 > export, validated against ERP CORE) is usable from Python and the command line; the agent,
