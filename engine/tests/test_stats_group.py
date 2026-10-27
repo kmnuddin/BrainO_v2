@@ -34,7 +34,7 @@ def simulate(n: int = 20, effect: float = 3.0, seed: int = 0) -> tuple[np.ndarra
     mask = np.zeros((len(CHANNELS), TIMES.size), dtype=bool)
     rows = [CHANNELS.index(c) for c in EFFECT_CHANNELS]
     cols = (EFFECT_TIMES[0] <= TIMES) & (EFFECT_TIMES[1] >= TIMES)
-    mask[np.ix_(rows, cols)] = True
+    mask[np.ix_(np.array(rows), cols)] = True
     b[:, mask] += effect
     return a, b
 
