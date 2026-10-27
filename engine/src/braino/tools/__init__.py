@@ -5,6 +5,8 @@ from braino.context import NoDatasetError, RunContext
 # Importing these modules registers the built-in tools.
 from braino.tools import dataset as _dataset  # noqa: F401
 from braino.tools import eeg as _eeg  # noqa: F401
+from braino.tools import eeg_measures as _eeg_measures  # noqa: F401
+from braino.tools import stats as _stats  # noqa: F401
 from braino.tools import system as _system  # noqa: F401
 from braino.tools.base import (
     MissingContextError,

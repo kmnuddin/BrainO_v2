@@ -1,0 +1,48 @@
+# ERP CORE N170 (Kappenman et al., 2021): faces minus cars, mean amplitude at PO8,
+# 110-150 ms. Filter, sampling rate, reference (the average of all scalp and EOG channels) and
+# the 26 ms monitor delay follow the authors' processing; artifact handling is BrainO's.
+name: erpcore-n170
+description: ERP CORE N170 face perception, faces minus cars at PO8, 110-150 ms
+task: N170
+steps:
+  - id: preprocess
+    tool: eeg.preprocess
+    args: {l_freq: 0.1, h_freq: 30.0, resample_hz: 256, reference: average_with_eog}
+  - id: ica
+    tool: eeg.ica_clean
+  - id: bad_channels
+    tool: eeg.detect_bad_channels
+  - id: epochs
+    tool: eeg.epoch
+    args:
+      tmin: -0.2
+      tmax: 0.8
+      baseline: [-0.2, 0.0]
+      event_delay_s: 0.026
+      conditions:
+        faces: [stimulus/1, stimulus/2, stimulus/3, stimulus/4, stimulus/5, stimulus/6, stimulus/7,
+         stimulus/8, stimulus/9, stimulus/10, stimulus/11, stimulus/12, stimulus/13,
+         stimulus/14, stimulus/15, stimulus/16, stimulus/17, stimulus/18, stimulus/19,
+         stimulus/20, stimulus/21, stimulus/22, stimulus/23, stimulus/24, stimulus/25,
+         stimulus/26, stimulus/27, stimulus/28, stimulus/29, stimulus/30, stimulus/31,
+         stimulus/32, stimulus/33, stimulus/34, stimulus/35, stimulus/36, stimulus/37,
+         stimulus/38, stimulus/39, stimulus/40]
+        cars: [stimulus/41, stimulus/42, stimulus/43, stimulus/44, stimulus/45, stimulus/46,
+         stimulus/47, stimulus/48, stimulus/49, stimulus/50, stimulus/51, stimulus/52,
+         stimulus/53, stimulus/54, stimulus/55, stimulus/56, stimulus/57, stimulus/58,
+         stimulus/59, stimulus/60, stimulus/61, stimulus/62, stimulus/63, stimulus/64,
+         stimulus/65, stimulus/66, stimulus/67, stimulus/68, stimulus/69, stimulus/70,
+         stimulus/71, stimulus/72, stimulus/73, stimulus/74, stimulus/75, stimulus/76,
+         stimulus/77, stimulus/78, stimulus/79, stimulus/80]
+  - id: erp
+    tool: eeg.erp
+    args:
+      contrasts: [{name: difference, plus: faces, minus: cars}]
+      measures: [{name: N170, channels: [PO8], tmin: 0.11, tmax: 0.15, kind: mean}]
+group:
+  - id: n170_test
+    tool: stats.mass_univariate
+    args: {conditions: [difference], channels: [PO8], tmin: 0.11, tmax: 0.15, correction: fdr}
+  - id: clusters
+    tool: stats.cluster_permutation
+    args: {conditions: [difference], tmin: 0.0, tmax: 0.4}

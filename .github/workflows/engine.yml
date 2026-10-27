@@ -5,6 +5,7 @@ on:
     paths: ["engine/**", ".github/workflows/engine.yml"]
   pull_request:
     paths: ["engine/**", ".github/workflows/engine.yml"]
+  workflow_call:  # the release workflow runs these checks first
 
 permissions:
   contents: read

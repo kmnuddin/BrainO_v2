@@ -325,6 +325,49 @@ def runs_show(
     typer.echo(log.model_dump_json(indent=2))
 
 
+_OUTPUT_HELP = "Write the script here instead of printing it"
+
+
+@runs_app.command("export")
+def runs_export(
+    run_id: Annotated[str, typer.Argument(help="Run ID, as printed by 'braino runs list'")],
+    dataset: Annotated[Path, typer.Option("--dataset", help=_DATASET_HELP)],
+    output: Annotated[Path | None, typer.Option("--output", "-o", help=_OUTPUT_HELP)] = None,
+) -> None:
+    """Export a run as a standalone Python script that re-runs it and checks its results."""
+    from braino.provenance.export import (
+        ExportError,
+        original_inputs,
+        render_script,
+        steps_from_run,
+    )
+
+    context = _context(dataset)
+    try:
+        steps, calls, environment = steps_from_run(
+            context.derivatives_root, run_id, context.proposals
+        )
+    except (RunNotFoundError, ExportError) as exc:
+        _fail(str(exc))
+    if not steps:
+        _fail(f"run {run_id} has no successful analysis steps to export")
+    script = render_script(
+        steps,
+        title=f"BrainO run {run_id}",
+        environment=environment,
+        inputs=original_inputs(calls),
+    )
+    _write_script(script, output)
+
+
+def _write_script(script: str, output: Path | None) -> None:
+    if output is None:
+        typer.echo(script, nl=False)
+        return
+    output.write_text(script, encoding="utf-8")
+    typer.echo(f"wrote {output}", err=True)
+
+
 @proposals_app.command("list")
 def proposals_list(
     dataset: Annotated[Path, typer.Option("--dataset", help=_DATASET_HELP)],
@@ -401,3 +444,238 @@ def _decide(
         typer.echo(str(exc), err=True)
         raise typer.Exit(code=1) from None
     typer.echo(record.model_dump_json(indent=2))
+
+
+# --- pipelines ----------------------------------------------------------------------------
+
+pipeline_app = typer.Typer(
+    help="Run analyses declared as pipeline specs (YAML/JSON), with cached results.",
+    no_args_is_help=True,
+)
+app.add_typer(pipeline_app, name="pipeline")
+
+_SPEC_HELP = "Spec file (.yaml/.json) or the name of a built-in spec"
+WAITING_EXIT_CODE = 3
+"""Exit code of ``braino pipeline run`` when it stopped at decisions waiting for a person."""
+
+
+def _load_spec(source: str) -> Any:
+    from braino.pipelines import SpecError, load_spec
+
+    try:
+        return load_spec(source)
+    except (SpecError, OSError) as exc:
+        _fail(str(exc))
+
+
+@pipeline_app.command("list")
+def pipeline_list() -> None:
+    """List the pipeline specs that come with BrainO."""
+    from braino.pipelines import builtin_specs, load_spec
+
+    for name, path in sorted(builtin_specs().items()):
+        typer.echo(f"{name:<24} {load_spec(path).description}")
+
+
+@pipeline_app.command("show")
+def pipeline_show(spec: Annotated[str, typer.Argument(help=_SPEC_HELP)]) -> None:
+    """Print a spec (e.g. a built-in one, to copy and adapt)."""
+    from braino.pipelines import builtin_specs
+
+    path = builtin_specs().get(spec) or Path(spec)
+    if not path.is_file():
+        _fail(f"no spec {spec}")
+    _load_spec(str(path))
+    typer.echo(path.read_text(encoding="utf-8"), nl=False)
+
+
+@pipeline_app.command("validate")
+def pipeline_validate(spec: Annotated[str, typer.Argument(help=_SPEC_HELP)]) -> None:
+    """Check a spec: its tools exist and accept the arguments given."""
+    loaded = _load_spec(spec)
+    typer.echo(
+        f"{loaded.name}: {len(loaded.steps)} steps per recording, {len(loaded.group)} group "
+        "steps; OK"
+    )
+
+
+@pipeline_app.command("run")
+def pipeline_run(
+    spec: Annotated[str, typer.Argument(help=_SPEC_HELP)],
+    dataset: Annotated[Path, typer.Option("--dataset", help=_DATASET_HELP)] = Path("."),
+    subjects: Annotated[
+        str | None, typer.Option("--subjects", help="Comma-separated subset of the subjects")
+    ] = None,
+    from_step: Annotated[
+        str | None, typer.Option("--from", help="Run this step and the ones after it again")
+    ] = None,
+    auto_approve: Annotated[
+        bool,
+        typer.Option(
+            "--auto-approve",
+            help="Approve every proposal as made, in your name (e.g. for validation runs)",
+        ),
+    ] = False,
+) -> None:
+    """Run a pipeline over a dataset. Steps whose inputs and settings are unchanged are
+    skipped. Decision steps wait for your approval unless --auto-approve is given; approve
+    with 'braino proposals approve' and run again to continue."""
+    from braino.pipelines import SpecError, run_pipeline
+
+    loaded = _load_spec(spec)
+    context = _context(dataset)
+    typer.echo(f"run {context.run_id}", err=True)
+    approver = f"{current_user()} (auto-approved in a pipeline run)" if auto_approve else None
+    try:
+        report = run_pipeline(
+            loaded,
+            context,
+            subjects=subjects.split(",") if subjects else None,
+            from_step=from_step,
+            auto_approve=approver,
+            progress=lambda o: typer.echo(_outcome_line(o)),
+        )
+    except SpecError as exc:
+        _fail(str(exc))
+    counts = ", ".join(
+        f"{report.count(s)} {s}"
+        for s in ("ran", "cached", "pending", "rejected", "failed", "blocked")
+        if report.count(s)
+    )
+    typer.echo(f"{loaded.name}: {len(report.subjects)} subjects; steps {counts}")
+    if report.failed:
+        raise typer.Exit(code=1)
+    if report.pending:
+        typer.echo(
+            f"{len(report.pending)} decisions wait for you: braino proposals list --pending "
+            f"--dataset {dataset}",
+            err=True,
+        )
+        raise typer.Exit(code=WAITING_EXIT_CODE)
+
+
+@pipeline_app.command("status")
+def pipeline_status(
+    spec: Annotated[str, typer.Argument(help=_SPEC_HELP)],
+    dataset: Annotated[Path, typer.Option("--dataset", help=_DATASET_HELP)] = Path("."),
+) -> None:
+    """Show, for each subject, which steps have a current result."""
+    from braino.pipelines import load_state
+
+    loaded = _load_spec(spec)
+    state = load_state(_context(dataset), loaded)
+    if not state.records:
+        typer.echo(f"{loaded.name} has not run on this dataset")
+        return
+    by_subject: dict[str, list[str]] = {}
+    for record in state.records.values():
+        mark = record.step
+        if record.proposal_id and record.apply is None:
+            mark += " (decision pending or rejected)"
+        by_subject.setdefault(record.subject, []).append(mark)
+    for subject, steps in sorted(by_subject.items()):
+        typer.echo(f"{subject:<8} {', '.join(steps)}")
+
+
+@pipeline_app.command("export")
+def pipeline_export(
+    spec: Annotated[str, typer.Argument(help=_SPEC_HELP)],
+    dataset: Annotated[Path, typer.Option("--dataset", help=_DATASET_HELP)] = Path("."),
+    output: Annotated[Path | None, typer.Option("--output", "-o", help=_OUTPUT_HELP)] = None,
+) -> None:
+    """Export a pipeline's current results as a standalone Python script that re-runs every
+    step (including steps reused from earlier runs) and checks the results."""
+    from braino.pipelines import load_state
+    from braino.provenance.export import (
+        ExportError,
+        original_inputs,
+        render_script,
+        steps_from_pipeline,
+    )
+
+    loaded = _load_spec(spec)
+    context = _context(dataset)
+    state = load_state(context, loaded)
+    try:
+        steps, calls, environment = steps_from_pipeline(
+            context.derivatives_root, state, loaded, context.proposals
+        )
+    except (RunNotFoundError, ExportError) as exc:
+        _fail(str(exc))
+    script = render_script(
+        steps,
+        title=f"BrainO pipeline {loaded.name}: {loaded.description}".rstrip(": "),
+        environment=environment,
+        inputs=original_inputs(calls),
+    )
+    _write_script(script, output)
+
+
+def _outcome_line(outcome: Any) -> str:
+    where = outcome.subject if outcome.subject == "group" else f"sub-{outcome.subject}"
+    text = f"{where:<10} {outcome.step:<16} {outcome.status:<8}"
+    if outcome.message:
+        text += f" {outcome.message}"
+    return text
+
+
+validate_app = typer.Typer(
+    help="Check BrainO's analyses against published results.", no_args_is_help=True
+)
+app.add_typer(validate_app, name="validate")
+
+
+@validate_app.command("erpcore")
+def validate_erpcore(
+    component: Annotated[str, typer.Argument(help="P3 or N170")],
+    subjects: Annotated[
+        str | None,
+        typer.Option("--subjects", help="Comma-separated participants, e.g. 001,002; default all"),
+    ] = None,
+    as_json: Annotated[bool, typer.Option("--json", help="Print the full result as JSON")] = False,
+) -> None:
+    """Run the built-in ERP CORE pipeline and compare with the published scores.
+
+    Downloads the data on first use (P3 2.2 GB, N170 3.4 GB for all 40 participants) into
+    $BRAINO_DATA (default ~/.cache/braino). Decisions are auto-approved in your name.
+    """
+    from braino.datasets.erpcore import DownloadError, references
+    from braino.validation.erpcore import run as run_validation
+
+    if component not in references():
+        _fail(f"unknown component {component!r}; choose from {', '.join(references())}")
+    try:
+        result = run_validation(
+            component,
+            subjects.split(",") if subjects else None,
+            progress=None if as_json else lambda o: typer.echo(_outcome_line(o), err=True),
+        )
+    except (DownloadError, OSError) as exc:
+        _fail(f"download failed ({exc}); run the command again to resume")
+    except ValueError as exc:
+        _fail(str(exc))
+    if as_json:
+        typer.echo(result.model_dump_json(indent=2))
+        return
+    for subject, reason in result.failed.items():
+        typer.echo(f"sub-{subject} failed at {reason}")
+    report = result.report
+    if report is None:
+        typer.echo("fewer than 3 participants scored; nothing to compare")
+        raise typer.Exit(code=1)
+    lo, hi = report.braino_ci95_uv
+    typer.echo(
+        f"{component}: BrainO {report.braino_mean_uv:+.2f} µV [95% CI {lo:+.2f}, {hi:+.2f}], "
+        f"n = {report.n_braino}; published {report.published_mean_uv:+.2f} µV"
+    )
+    if report.correlation is not None:
+        typer.echo(
+            f"participant level: r = {report.correlation:.3f} over {report.n_compared}, mean "
+            f"absolute difference {report.mean_abs_difference_uv:.2f} µV"
+        )
+    typer.echo(f"excluded (> 25% rejected): {', '.join(result.excluded) or 'none'}")
+    for check, ok in report.checks.items():
+        typer.echo(f"  {'PASS' if ok else 'FAIL'}  {check}")
+    typer.echo("REPRODUCED" if report.passed else "NOT REPRODUCED")
+    if not report.passed:
+        raise typer.Exit(code=1)

@@ -221,8 +221,25 @@ def _retype_channels(raw: Any) -> dict[str, ChannelRetype]:
     return changes
 
 
+def add_template_positions(
+    raw: Any, montage: str | None = "auto"
+) -> tuple[Literal["file", "template", "none"], str | None, list[str], list[str]]:
+    """Give the EEG channels of ``raw`` positions (in place) as :func:`normalise` does, for
+    recordings that were not imported by BrainO. Names are matched regardless of case, so
+    ``FP1`` gets the position of ``Fp1``.
+
+    Returns where positions come from, the template used (if any), the EEG channels still
+    without a position, and notes.
+    """
+    notes: list[str] = []
+    positions, template, unplaced = _set_positions(
+        _import_mne(), raw, montage, notes, match_case=False
+    )
+    return positions, template, unplaced, notes
+
+
 def _set_positions(
-    mne: Any, raw: Any, montage: str | None, notes: list[str]
+    mne: Any, raw: Any, montage: str | None, notes: list[str], *, match_case: bool = True
 ) -> tuple[Literal["file", "template", "none"], str | None, list[str]]:
     eeg = [raw.ch_names[i] for i in mne.pick_types(raw.info, eeg=True, exclude=[])]
     if not eeg:
@@ -246,8 +263,9 @@ def _set_positions(
         name = montage
 
     layout = mne.channels.make_standard_montage(name)
-    raw.set_montage(layout, on_missing="ignore")
-    unplaced = [ch for ch in eeg if ch not in layout.ch_names]
+    raw.set_montage(layout, on_missing="ignore", match_case=match_case)
+    known = set(layout.ch_names) if match_case else {ch.lower() for ch in layout.ch_names}
+    unplaced = [ch for ch in eeg if (ch if match_case else ch.lower()) not in known]
     notes.append(
         f"Electrode positions are approximate, taken from the standard {name} layout "
         f"for {len(eeg) - len(unplaced)} of {len(eeg)} EEG channels."
@@ -259,6 +277,9 @@ def _choose_template(mne: Any, eeg: list[str]) -> str | None:
     """The layout the EEG channel names identify, if any (see :data:`CAP_TEMPLATES`)."""
     names = set(eeg)
     positional = set(mne.channels.make_standard_montage(POSITIONAL_TEMPLATE).ch_names)
+    if not names & positional:  # e.g. all upper case
+        names = {ch.lower() for ch in eeg}
+        positional = {ch.lower() for ch in positional}
     if len(names & positional) >= MIN_TEMPLATE_COVERAGE * len(names):
         return POSITIONAL_TEMPLATE
     complete_caps = []

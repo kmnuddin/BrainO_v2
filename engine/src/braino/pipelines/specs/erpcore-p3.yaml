@@ -1,0 +1,40 @@
+# ERP CORE P3 (Kappenman et al., 2021): rare minus frequent letters, mean amplitude at Pz,
+# 300-600 ms. Filter, sampling rate, reference and the 26 ms monitor delay (measured by the
+# authors with a photosensor) follow their processing; artifact handling is BrainO's (ICA with
+# ICLabel, PyPREP bad channels, autoreject).
+name: erpcore-p3
+description: ERP CORE P3 oddball, rare minus frequent letters at Pz, 300-600 ms
+task: P3
+steps:
+  - id: preprocess
+    tool: eeg.preprocess
+    args: {l_freq: 0.1, h_freq: 30.0, resample_hz: 256, reference: [P9, P10]}
+  - id: ica
+    tool: eeg.ica_clean
+  - id: bad_channels
+    tool: eeg.detect_bad_channels
+  - id: epochs
+    tool: eeg.epoch
+    args:
+      tmin: -0.2
+      tmax: 0.8
+      baseline: [-0.2, 0.0]
+      event_delay_s: 0.026
+      conditions:
+        rare: [stimulus/11, stimulus/22, stimulus/33, stimulus/44, stimulus/55]
+        frequent: [stimulus/12, stimulus/13, stimulus/14, stimulus/15, stimulus/21, stimulus/23,
+           stimulus/24, stimulus/25, stimulus/31, stimulus/32, stimulus/34, stimulus/35,
+           stimulus/41, stimulus/42, stimulus/43, stimulus/45, stimulus/51, stimulus/52,
+           stimulus/53, stimulus/54]
+  - id: erp
+    tool: eeg.erp
+    args:
+      contrasts: [{name: difference, plus: rare, minus: frequent}]
+      measures: [{name: P3, channels: [Pz], tmin: 0.3, tmax: 0.6, kind: mean}]
+group:
+  - id: p3_test
+    tool: stats.mass_univariate
+    args: {conditions: [difference], channels: [Pz], tmin: 0.3, tmax: 0.6, correction: fdr}
+  - id: clusters
+    tool: stats.cluster_permutation
+    args: {conditions: [difference], tmin: 0.0, tmax: 0.8}

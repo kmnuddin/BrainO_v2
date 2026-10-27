@@ -10,21 +10,33 @@ interactive 3D visualisation.
   through real tools, asks before key decisions, and never sends data off your machine
 - A desktop app with an embedded Unity 3D brain viewer
 
-> **Status:** pre-alpha. Milestone M1.0 (engine foundation) is done; see the roadmap.
+> **Status:** alpha. The EEG engine (v0.1: import, analysis pipeline, provenance and script
+> export, validated against ERP CORE) is usable from Python and the command line; the agent,
+> app and viewer are in development. See the roadmap.
 
 | | |
 |---|---|
+| Documentation | <https://kmnuddin.github.io/BrainO_v2/> |
 | Plan and roadmap | [`docs/PLAN.md`](docs/PLAN.md) |
 | Python engine | [`engine/`](engine/README.md) |
+| Example notebooks | [`examples/`](examples/) |
+| Changes | [`CHANGELOG.md`](CHANGELOG.md) |
 | Contributing | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
 
-## Quick start (engine)
+## Quick start
+
+```bash
+pip install "braino[eeg]"
+braino pipeline list                                  # built-in analyses
+braino validate erpcore P3 --subjects 001,002,003     # reproduce a published effect
+```
+
+For development:
 
 ```bash
 cd engine
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev,eeg]"
-braino tools list
 ```
 
 ## History

@@ -308,8 +308,8 @@ Durations assume one developer working full-time; part-time roughly doubles them
 The detailed order of work within milestone 1. Near-term stages are specified in more detail than
 later ones; later stages will be refined as they come closer.
 
-**Progress (2026-10-24):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
-done except the XDF reader, item 10 done. Next: item 11.
+**Progress (2026-10-25):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
+done except the XDF reader, items 10 and 11 done. Next: item 12.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
 these, and they are cheapest to settle while only one tool exists.
@@ -391,10 +391,58 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
 11. **Tools, in dependency order:** `eeg.preprocess` → `eeg.detect_bad_channels` (decision) →
     `eeg.ica_clean` (decision) → `eeg.epoch` with autoreject → `eeg.erp`, `eeg.spectral`,
     `eeg.tfr` → `stats.mass_univariate`, `stats.cluster_permutation`.
+    *Done (`braino.eeg`, `braino.stats`, tools in `braino.tools.eeg`, `.eeg_measures`,
+    `.stats`). Each step writes new derivative files, never changing one in place; decisions
+    made on an older version of an earlier step's output are refused. Changes from the order
+    above and from library defaults, each found on ERP CORE data:*
+    - *ICA before bad-channel detection works best. With bad channels first, PyPREP marks the
+      channels near the eyes bad for eye activity, ICA then cannot separate the blinks, and the
+      remaining blink activity cancelled most of the P3 (participant 007: 0.2 µV instead of
+      6.8). Either order is allowed; detection reads the ICA-cleaned recording if there is one.*
+    - *Detection runs on an average-referenced copy, with flat channels found first and blinks
+      left out (with mastoid references, PyPREP marked the mastoids bad). Reference channels
+      cannot be marked bad. PyPREP's correlation criterion uses 5% of windows, not PREP's 1%,
+      which marked 13 of 30 channels bad on a clean recording.*
+    - *ICA is extended infomax solved with Picard: same solution, 230 s → 6 s on 2 min of
+      20-channel data.*
+    - *TFR defaults start at 6 Hz, since 3-cycle wavelets at 4 Hz need 1.2 s epochs.*
+
+    *First check against ERP CORE (P3, participants 001–010, default settings except the
+    authors' 0.1–30 Hz filter, 256 Hz and P9/P10 reference): for the 7 participants the authors
+    kept, r = 0.98 with the published scores, mean absolute difference 0.7 µV; participant 009,
+    whom they excluded, also loses 77% of epochs here. Correct-response selection and the
+    authors' own artifact rejection are not reproduced yet.*
+
+    ***Full runs (2026-10-25, `braino validate erpcore`, all 40 participants): both
+    reproduced.*** *P3: BrainO +7.04 µV [95% CI +5.36, +8.71], n = 34, published +6.29 µV;
+    participant scores r = 0.949 over 30 (mean absolute difference 0.77 µV). N170: BrainO
+    −3.68 µV [−4.61, −2.75], n = 40, published −3.37 µV; r = 0.967 over 37 (0.63 µV). The
+    N170 first failed (−1.73 µV, r = 0.64): the authors' scripts move every event 26 ms later
+    for their measured monitor delay, which matters for a 110–150 ms window. `eeg.epoch` now
+    takes `event_delay_s`, and `eeg.preprocess` the authors' N170 reference
+    (`average_with_eog`). The provisional r ≥ 0.9 criterion holds.*
 12. **Pipeline spec and runner:** steps declared in YAML/JSON, results cached, re-run from any
     step. These specs later become the agent's validated templates.
+    *Done (`braino.pipelines`, `braino pipeline`). Specs are checked against each tool's input
+    schema when loaded. A step is reused when its tool, arguments and BrainO version are the
+    same and every file it read and wrote still has the recorded hash, so re-running a step
+    re-runs what depends on it without tracking dependencies by hand. Decision steps stop the
+    subject until a person decides (a decision made outside the runner counts as new, so later
+    steps re-run); `--auto-approve` is a command-line flag for the person running it, never part
+    of a spec. Built-in specs `erpcore-p3` and `erpcore-n170`; `braino validate erpcore` runs
+    them and applies ERP CORE's exclusion rule (> 25% of trials rejected).*
 13. **Script export** from the provenance record.
+    *Done (`braino.provenance.export`, `braino runs export`, `braino pipeline export`). The script
+    re-runs each recorded call, replays each decision with the reviewer's edits, checks input
+    hashes first, and compares every number each step reported with the recorded result
+    (relative tolerance 1e-4); files are not compared byte for byte because FIF files store the
+    time of writing. Tested by replaying exports on fresh copies of a dataset.*
 14. **Docs site, example notebooks and a PyPI release workflow** → v0.1.
+    *Done, except publishing: MkDocs site (`mkdocs.yml`; tool and command references generated
+    from the code; deployed to GitHub Pages by `.github/workflows/docs.yml`), two executed
+    notebooks in `examples/`, `CHANGELOG.md`, and `.github/workflows/release.yml` (on a `v*`
+    tag: checks, build, wheel smoke test, PyPI trusted publishing, GitHub release). Version is
+    0.1.0. To publish: add the trusted publisher on PyPI, enable Pages, push the tag.*
 
 **Stage D — M1.3–M1.4 Local agent → v0.2.**
 
