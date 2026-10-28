@@ -9,6 +9,11 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   tool use, decisions and answers (every number must come from a tool result), reports per
   hardware tier, and comparison between runs. `braino.agent.Session` is what agents work
   through.
+- Local model runtime (`braino model`, `braino.runtime`): detects RAM and GPUs, proposes a
+  model tier (Qwen3.5 4B on the minimum computer, Qwen3.5 9B or Qwen3.6 35B-A3B with more),
+  installs a pinned llama.cpp build and downloads the model once, checked against pinned
+  SHA-256 hashes and resumable; starts and stops `llama-server` on localhost with a per-session
+  API key; and benchmarks how long an agent step takes on this computer.
 - `eeg.epoch` warns when a condition loses half or more of its epochs.
 - The synthetic EEG generator moved to `braino.datasets.synthetic`.
 

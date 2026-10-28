@@ -22,7 +22,10 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-DATA_ENV = "BRAINO_DATA"
+from braino.paths import DATA_ENV, data_root
+
+__all__ = ["DATA_ENV", "DownloadError", "Reference", "citation", "fetch", "files", "references"]
+
 TASKS = ("P3", "N170")
 SUBJECTS = tuple(f"{i:03d}" for i in range(1, 41))
 _CHUNK = 1 << 20
@@ -51,7 +54,7 @@ class DownloadError(RuntimeError):
 
 
 def data_dir() -> Path:
-    return Path(os.environ.get(DATA_ENV) or Path.home() / ".cache" / "braino") / "erpcore"
+    return data_root() / "erpcore"
 
 
 @cache

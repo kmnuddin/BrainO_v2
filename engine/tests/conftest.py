@@ -10,15 +10,20 @@ if TYPE_CHECKING:
 
 SKIP_NETWORK_ENV = "BRAINO_SKIP_NETWORK"
 LARGE_DOWNLOADS_ENV = "BRAINO_LARGE_DOWNLOADS"
+LLAMA_ENV = "BRAINO_LLAMA_TESTS"
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
     offline = os.environ.get(SKIP_NETWORK_ENV) == "1"
     large = os.environ.get(LARGE_DOWNLOADS_ENV) == "1"
+    llama = os.environ.get(LLAMA_ENV) == "1"
     skip_network = pytest.mark.skip(reason=f"needs downloaded test data ({SKIP_NETWORK_ENV}=1)")
     skip_large = pytest.mark.skip(reason=f"large download; set {LARGE_DOWNLOADS_ENV}=1 to run")
+    skip_llama = pytest.mark.skip(reason=f"runs the real llama.cpp; set {LLAMA_ENV}=1 to run")
     for item in items:
-        if "large_download" in item.keywords and (offline or not large):
+        if "llama" in item.keywords and (offline or not llama):
+            item.add_marker(skip_llama)
+        elif "large_download" in item.keywords and (offline or not large):
             item.add_marker(skip_large)
         elif "network" in item.keywords and offline:
             item.add_marker(skip_network)

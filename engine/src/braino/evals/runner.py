@@ -13,10 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
-import platform
 import shutil
-import sys
 import tempfile
 import time
 import traceback
@@ -32,6 +29,7 @@ from braino.context import RunContext
 from braino.evals.agents import AgentFactory, EvalSession
 from braino.evals.checks import CheckResult, evaluate
 from braino.evals.tasks import DatasetSpec, EvalTask
+from braino.paths import data_root
 
 
 class TaskResult(BaseModel):
@@ -136,8 +134,6 @@ def run_task(task: EvalTask, agent: Any, folder: Path) -> TaskResult:
 
 def prepare_dataset(spec: DatasetSpec) -> Path:
     """The dataset of ``spec``, built (or downloaded) once and cached."""
-    from braino.datasets.erpcore import data_dir
-
     if spec.erpcore is not None:
         from braino.datasets.erpcore import fetch
 
@@ -145,7 +141,7 @@ def prepare_dataset(spec: DatasetSpec) -> Path:
     assert spec.synthetic is not None
     recipe = spec.synthetic.model_dump(mode="json")
     key = hashlib.sha256(json.dumps(recipe, sort_keys=True).encode()).hexdigest()[:16]
-    root = data_dir().parent / "evals" / f"synthetic-{key}"
+    root = data_root() / "evals" / f"synthetic-{key}"
     done = root / ".complete"
     if not done.is_file():
         from braino.datasets.synthetic import write_dataset
@@ -183,46 +179,10 @@ def _write_transcript(folder: Path, task: EvalTask, session: Any, answer: Any) -
 
 
 def hardware() -> dict[str, Any]:
-    info: dict[str, Any] = {
-        "platform": f"{platform.system()} {platform.machine()}",
-        "processor": platform.processor() or None,
-        "cpu_count": os.cpu_count(),
-    }
-    memory = _total_memory_gb()
-    if memory is not None:
-        info["memory_gb"] = memory
-    return info
+    """The computer the run is on (CPU, RAM, GPUs), for the report."""
+    from braino.runtime.hardware import detect
 
-
-def _total_memory_gb() -> float | None:
-    try:
-        if sys.platform != "win32":
-            pages = float(os.sysconf("SC_PHYS_PAGES")) * float(os.sysconf("SC_PAGE_SIZE"))
-            return round(pages / 2**30, 1)
-        else:
-            import ctypes
-
-            class Status(ctypes.Structure):
-                _fields_ = [
-                    ("length", ctypes.c_ulong),
-                    ("load", ctypes.c_ulong),
-                    ("total", ctypes.c_ulonglong),
-                    ("available", ctypes.c_ulonglong),
-                    ("total_page", ctypes.c_ulonglong),
-                    ("available_page", ctypes.c_ulonglong),
-                    ("total_virtual", ctypes.c_ulonglong),
-                    ("available_virtual", ctypes.c_ulonglong),
-                    ("available_extended", ctypes.c_ulonglong),
-                ]
-
-            status = Status()
-            status.length = ctypes.sizeof(Status)
-            kernel32 = ctypes.windll.kernel32
-            if kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
-                return round(float(status.total) / 2**30, 1)
-    except (OSError, ValueError, AttributeError):
-        return None
-    return None
+    return detect().model_dump(mode="json")
 
 
 def _report(

@@ -30,6 +30,7 @@ nav:
       - Pipelines: guide/pipelines.md
       - Reproducibility: guide/reproducibility.md
       - Validation: guide/validation.md
+      - The local AI model: guide/model.md
       - Evaluating the agent: guide/evals.md
   - Examples: examples.md
   - Reference:

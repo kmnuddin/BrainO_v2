@@ -29,6 +29,16 @@ The main entry points. Every tool is also callable through the registry (see
 
 ::: braino.provenance.replay.Replay
 
+## Local model runtime
+
+::: braino.runtime.tiers.recommend
+
+::: braino.runtime.manager.setup
+
+::: braino.runtime.manager.start_server
+
+::: braino.runtime.server.LlamaServer
+
 ## Agent evaluation
 
 ::: braino.agent.session.Session

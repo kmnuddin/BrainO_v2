@@ -1,0 +1,83 @@
+{
+  "llama_cpp": {
+    "build": "b11606",
+    "released": "2026-10-13",
+    "licence": "MIT",
+    "url": "https://github.com/ggml-org/llama.cpp/releases/download/b11606/{name}",
+    "builds": [
+      {"os": "windows", "arch": "x64", "backend": "cpu", "files": [
+        {"name": "llama-b11606-bin-win-cpu-x64.zip", "size": 19514151, "sha256": "8c0f4f2a1b808eebe00e738edf027cceea1aa9e6c883618bd37151666093f1b4"}]},
+      {"os": "windows", "arch": "arm64", "backend": "cpu", "files": [
+        {"name": "llama-b11606-bin-win-cpu-arm64.zip", "size": 12382025, "sha256": "291f03f5d02b511e82a30f657f5fac16e986dffb805c137972267213df1e9a14"}]},
+      {"os": "windows", "arch": "x64", "backend": "vulkan", "files": [
+        {"name": "llama-b11606-bin-win-vulkan-x64.zip", "size": 32128781, "sha256": "a70498cb1ba105c4e0abca28e5d784bd6aafbabc870b41237855ffa28a6d6627"}]},
+      {"os": "windows", "arch": "arm64", "backend": "vulkan", "files": [
+        {"name": "llama-b11606-bin-win-vulkan-arm64.zip", "size": 24730346, "sha256": "af421c0736dca0ef0b22b4841920aef75a9d684a65f38f4eb730eb75bea3f424"}]},
+      {"os": "windows", "arch": "x64", "backend": "cuda", "files": [
+        {"name": "llama-b11606-bin-win-cuda-12.4-x64.zip", "size": 265220040, "sha256": "a18ed7ef12a209704335dd7211e6e9958d53e59eec59d20bf2a4341adea016cc"},
+        {"name": "cudart-llama-bin-win-cuda-12.4-x64.zip", "size": 391443627, "sha256": "8c79a9b226de4b3cacfd1f83d24f962d0773be79f1e7b75c6af4ded7e32ae1d6"}]},
+      {"os": "linux", "arch": "x64", "backend": "cpu", "files": [
+        {"name": "llama-b11606-bin-ubuntu-x64.tar.gz", "size": 17734745, "sha256": "d7619f6f3d8d1f6c63641c0904abff560e9dfa8ec0bd5a57e36f424ac96fac55"}]},
+      {"os": "linux", "arch": "arm64", "backend": "cpu", "files": [
+        {"name": "llama-b11606-bin-ubuntu-arm64.tar.gz", "size": 13842023, "sha256": "328e338bcb726bc47fe94adbce89e7b1a38867ba00b04ee3fb59e1f58f549845"}]},
+      {"os": "linux", "arch": "x64", "backend": "vulkan", "files": [
+        {"name": "llama-b11606-bin-ubuntu-vulkan-x64.tar.gz", "size": 30364335, "sha256": "316a23ff1f5dcd071b61de1bfdac06e57f5957f884e1be20d1da3ce10a178be6"}]},
+      {"os": "linux", "arch": "arm64", "backend": "vulkan", "files": [
+        {"name": "llama-b11606-bin-ubuntu-vulkan-arm64.tar.gz", "size": 24120327, "sha256": "995f366c8b049063a2db835c413e98d6c667b3c7c70d03f11174d2a345f4c408"}]},
+      {"os": "linux", "arch": "x64", "backend": "cuda", "files": [
+        {"name": "llama-b11606-bin-ubuntu-cuda-12.8-x64.tar.gz", "size": 171583578, "sha256": "e9c03574aba06bc1f6be55e3f26f0fe0dbebbd4822288a1bd77af4681a286ae7"},
+        {"name": "cudart-llama-b11606-bin-ubuntu-cuda-12.8-x64.tar.gz", "size": 594377552, "sha256": "23588940010242dff9f4cb8d4c56927360336dcc7a3e8af98546a99a33df6999"}]},
+      {"os": "macos", "arch": "arm64", "backend": "metal", "files": [
+        {"name": "llama-b11606-bin-macos-arm64.tar.gz", "size": 12116141, "sha256": "a39c5a9c4bbb5b989ed9274300629d5feb5920e52c3257a8e615f3868db44f35"}]},
+      {"os": "macos", "arch": "x64", "backend": "cpu", "files": [
+        {"name": "llama-b11606-bin-macos-x64.tar.gz", "size": 11613846, "sha256": "bd7c149424dc6350e2501bdfdb676dbe4f4f34580b0d890f3e8f963cc2acbbc5"}]}
+    ]
+  },
+  "models": [
+    {
+      "id": "qwen3.5-4b",
+      "name": "Qwen3.5 4B Instruct (Q4_K_M)",
+      "params_b": 4,
+      "active_params_b": 4,
+      "moe": false,
+      "cpu_ok": true,
+      "quality": 1,
+      "licence": "Apache-2.0",
+      "repo": "unsloth/Qwen3.5-4B-GGUF",
+      "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+      "file": "Qwen3.5-4B-Q4_K_M.gguf",
+      "size": 2740937888,
+      "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4"
+    },
+    {
+      "id": "qwen3.5-9b",
+      "name": "Qwen3.5 9B Instruct (Q4_K_M)",
+      "params_b": 9,
+      "active_params_b": 9,
+      "moe": false,
+      "cpu_ok": false,
+      "quality": 2,
+      "licence": "Apache-2.0",
+      "repo": "unsloth/Qwen3.5-9B-GGUF",
+      "revision": "3885219b6810b007914f3a7950a8d1b469d598a5",
+      "file": "Qwen3.5-9B-Q4_K_M.gguf",
+      "size": 5680522464,
+      "sha256": "03b74727a860a56338e042c4420bb3f04b2fec5734175f4cb9fa853daf52b7e8"
+    },
+    {
+      "id": "qwen3.6-35b-a3b",
+      "name": "Qwen3.6 35B-A3B Instruct, mixture of experts (Q4_K_M)",
+      "params_b": 35,
+      "active_params_b": 3,
+      "moe": true,
+      "cpu_ok": true,
+      "quality": 3,
+      "licence": "Apache-2.0",
+      "repo": "ggml-org/Qwen3.6-35B-A3B-GGUF",
+      "revision": "7878dc9a905c7c9379e5e8d6a1aa9affdd6839c5",
+      "file": "Qwen3.6-35B-A3B-Q4_K_M.gguf",
+      "size": 20419565568,
+      "sha256": "671e47e0ec53c665d048b98c3ecbfd5236b5ca9c3e02ed19fc8f81f7b85140c7"
+    }
+  ]
+}

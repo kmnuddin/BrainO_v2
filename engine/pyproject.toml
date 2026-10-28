@@ -103,4 +103,5 @@ addopts = "-ra --strict-markers"
 markers = [
     "network: downloads sample data (cached); skipped when BRAINO_SKIP_NETWORK=1",
     "large_download: downloads over 50 MB (e.g. ERP CORE); runs only when BRAINO_LARGE_DOWNLOADS=1",
+    "llama: downloads and runs the real llama.cpp and model (~2.6 GB); only when BRAINO_LLAMA_TESTS=1",
 ]

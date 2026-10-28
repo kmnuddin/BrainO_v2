@@ -786,3 +786,233 @@ def eval_compare(
             typer.echo(f"{label}: {', '.join(ids)}")
     if result.broken:
         raise typer.Exit(code=1)
+
+
+# --- local model runtime ------------------------------------------------------------------
+
+model_app = typer.Typer(
+    help="Set up and run the local AI model (llama.cpp with a Qwen model).",
+    no_args_is_help=True,
+)
+app.add_typer(model_app, name="model")
+
+
+def _progress_bar(label: str) -> Any:
+    """A download progress callback that prints one updating line to stderr."""
+    import sys
+    import time
+
+    state = {"shown": -1.0, "start": time.monotonic()}
+
+    def update(done: int, total: int) -> None:
+        share = done / total if total else 1.0
+        if share < 1.0 and share - state["shown"] < 0.005:
+            return
+        state["shown"] = share
+        rate = done / max(time.monotonic() - state["start"], 1e-6) / 2**20
+        sys.stderr.write(
+            f"\r  {label}: {share:6.1%} of {total / 2**30:.2f} GB ({rate:.1f} MiB/s)   "
+        )
+        if share >= 1.0:
+            sys.stderr.write("\n")
+        sys.stderr.flush()
+
+    return update
+
+
+@model_app.command("hardware")
+def model_hardware(
+    as_json: Annotated[bool, typer.Option("--json", help="Print as JSON")] = False,
+) -> None:
+    """Show this computer's CPU, RAM and GPUs, and the model tier BrainO proposes."""
+    from braino.runtime import catalog, detect, recommend
+
+    hw = detect()
+    rec = recommend(hw)
+    if as_json:
+        data = {"hardware": hw.model_dump(), "recommendation": rec.model_dump()}
+        typer.echo(json.dumps(data, indent=2))
+        return
+    typer.echo(f"Computer:  {hw.platform}, {hw.cpu or 'unknown CPU'}, {hw.cpu_count} threads")
+    typer.echo(f"RAM:       {hw.memory_gb} GB")
+    for g in hw.gpus:
+        kind = "shared memory" if g.unified else "dedicated"
+        typer.echo(f"GPU:       {g.name}, {g.memory_gb:g} GB {kind} (from {g.source})")
+    if not hw.gpus:
+        typer.echo("GPU:       none with its own memory")
+    model = catalog().model(rec.model)
+    typer.echo(f"\nProposed:  tier '{rec.tier}': {model.id} on {rec.placement} ({rec.backend})")
+    for reason in rec.reasons:
+        typer.echo(f"  {reason}")
+    for warning in rec.warnings:
+        typer.echo(f"  Warning: {warning}")
+    others = [o for o in rec.options if o.model != rec.model]
+    if others:
+        typer.echo("Also fits: " + "; ".join(f"{o.model} ({o.placement})" for o in others))
+
+
+@model_app.command("list")
+def model_list() -> None:
+    """List the models BrainO can run, and which are downloaded or fit here."""
+    from braino.runtime import catalog, detect, installed_models, options
+
+    fits = {o.model: o.placement for o in options(detect())}
+    have = {m.id for m in installed_models()}
+    for m in catalog().models:
+        where = fits.get(m.id, "does not fit")
+        mark = "downloaded" if m.id in have else ""
+        typer.echo(f"{m.id:<18} {m.size_gb:5.1f} GB  {m.licence:<11} {where:<13} {mark}")
+
+
+@model_app.command("setup")
+def model_setup(
+    model: Annotated[
+        str | None, typer.Option("--model", help="Model id (default: the proposed one)")
+    ] = None,
+    backend: Annotated[
+        str | None, typer.Option("--backend", help="cpu, vulkan, cuda or metal (default: auto)")
+    ] = None,
+    bench: Annotated[bool, typer.Option("--bench/--no-bench", help="Measure the speed")] = True,
+    yes: Annotated[bool, typer.Option("--yes", "-y", help="Do not ask before downloading")] = False,
+) -> None:
+    """Install llama.cpp and download the model for this computer, once.
+
+    Downloads are checked against pinned SHA-256 hashes and resume if interrupted. Afterwards a
+    short benchmark tells you how fast the agent will be.
+    """
+    from braino.runtime import (
+        DownloadError,
+        ServerError,
+        SetupError,
+        catalog,
+        choose,
+        describe,
+        detect,
+        setup,
+    )
+    from braino.runtime.catalog import BACKENDS
+    from braino.runtime.install import find_server, is_model_installed
+
+    if backend is not None and backend not in BACKENDS:
+        _fail(f"unknown backend {backend!r}; choose from {', '.join(BACKENDS)}")
+    hw = detect()
+    cat = catalog()
+    try:
+        option, chosen = choose(hw, model, backend)
+        spec = cat.model(option.model)
+        build = cat.build(hw.os, hw.arch, chosen)
+    except (SetupError, KeyError) as exc:
+        _fail(str(exc).strip("'\""))
+    need = 0 if find_server(chosen) else build.size
+    need += 0 if is_model_installed(spec) else spec.size
+    typer.echo(f"Model:    {spec.name} ({spec.licence}), runs on {option.placement}")
+    typer.echo(f"Runtime:  llama.cpp {cat.llama_cpp.build} ({chosen})")
+    typer.echo(f"Download: {need / 2**30:.2f} GB")
+    if need and not yes and not typer.confirm("Download now?", default=True):
+        raise typer.Exit(code=1)
+    try:
+        settings = setup(option.model, chosen, benchmark=bench, progress=_progress_bar, hw=hw)
+    except (SetupError, DownloadError, ServerError) as exc:
+        _fail(str(exc))
+    typer.echo(
+        f"Ready: {settings.model} on {settings.placement} ({settings.backend}), "
+        f"tier '{settings.tier}'."
+    )
+    if settings.benchmark is not None:
+        typer.echo(describe(settings.benchmark))
+
+
+@model_app.command("status")
+def model_status() -> None:
+    """Show the chosen model, what is installed, and the last benchmark."""
+    from braino.runtime import describe, installed_backends, installed_models, load_settings
+    from braino.runtime.install import find_server
+
+    s = load_settings()
+    if s.model is None:
+        typer.echo("No model set up yet: run 'braino model setup'.")
+    else:
+        typer.echo(
+            f"Model:     {s.model} on {s.placement} ({s.backend}), tier '{s.tier}', "
+            f"context {s.ctx_size} tokens"
+        )
+    typer.echo("Runtimes:  " + (", ".join(installed_backends()) or "none installed"))
+    server = find_server(s.backend)
+    if server is not None:
+        typer.echo(f"Server:    {server}")
+    typer.echo("Models:    " + (", ".join(m.id for m in installed_models()) or "none downloaded"))
+    if s.benchmark is not None:
+        typer.echo(f"Speed:     {describe(s.benchmark)}")
+
+
+@model_app.command("bench")
+def model_bench() -> None:
+    """Measure how fast the agent will be with the chosen model."""
+    from braino.runtime import ServerError, SetupError, describe, run_saved_benchmark
+
+    try:
+        settings = run_saved_benchmark()
+    except (SetupError, ServerError) as exc:
+        _fail(str(exc))
+    assert settings.benchmark is not None
+    typer.echo(describe(settings.benchmark))
+
+
+@model_app.command("serve")
+def model_serve(
+    port: Annotated[int | None, typer.Option("--port", help="Port (default: a free one)")] = None,
+) -> None:
+    """Run the model server in the foreground until Ctrl+C (for development).
+
+    Prints the OpenAI-compatible base URL and this session's API key.
+    """
+    import time
+
+    from braino.runtime import ServerError, SetupError, start_server
+
+    try:
+        server = start_server(port=port)
+    except (SetupError, ServerError) as exc:
+        _fail(str(exc))
+    typer.echo(
+        f"Serving {server.alias} at {server.base_url}/v1 (loaded in {server.load_seconds} s). "
+        f"Press Ctrl+C to stop."
+    )
+    typer.echo(f"API key: {server.api_key}")
+    try:
+        while server.running:
+            time.sleep(0.5)
+        typer.echo("The server stopped:\n" + server.log_tail(), err=True)
+        raise typer.Exit(code=1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.stop()
+
+
+@model_app.command("remove")
+def model_remove(
+    model: Annotated[str | None, typer.Argument(help="Model id to delete")] = None,
+    runtime: Annotated[
+        str | None, typer.Option("--runtime", help="Delete an installed llama.cpp backend")
+    ] = None,
+) -> None:
+    """Delete a downloaded model or an installed llama.cpp build, to free disk space."""
+    from braino.runtime import catalog
+    from braino.runtime.install import remove_model, remove_runtime
+
+    if model is None and runtime is None:
+        _fail("name a model, or --runtime BACKEND")
+    if model is not None:
+        try:
+            spec = catalog().model(model)
+        except KeyError as exc:
+            _fail(str(exc).strip("'\""))
+        typer.echo(f"{model}: " + ("deleted" if remove_model(spec) else "not downloaded"))
+    if runtime is not None:
+        from braino.runtime.catalog import BACKENDS
+
+        if runtime not in BACKENDS:
+            _fail(f"unknown backend {runtime!r}; choose from {', '.join(BACKENDS)}")
+        done = remove_runtime(runtime)
+        typer.echo(f"llama.cpp {runtime}: " + ("deleted" if done else "not installed"))

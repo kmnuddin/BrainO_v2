@@ -148,9 +148,9 @@ in four layers on top of Qwen:
 
    | Tier | User's computer | Example Qwen model | Expectation |
    |---|---|---|---|
-   | **Minimum (default)** | No GPU, 16 GB RAM | ~4B dense (~3 GB) | Full agent on the CPU; slower answers. The design target |
-   | More RAM | No GPU, 32 GB+ RAM | ~30B mixture-of-experts with ~3B active (~18 GB) | Better planning; MoE keeps CPU speed close to a small model |
-   | Consumer GPU | 6–12 GB VRAM | ~8B dense on the GPU, or the ~30B MoE partly offloaded | Faster, and a larger model |
+   | **Minimum (default)** | No GPU, 16 GB RAM | Qwen3.5 4B (2.6 GB) | Full agent on the CPU; slower answers. The design target |
+   | More RAM | No GPU, 32 GB+ RAM | Qwen3.6 35B-A3B, mixture of experts with ~3B active (19 GB) | Better planning; MoE keeps CPU speed close to a small model |
+   | Consumer GPU | 6–12 GB VRAM, or Apple silicon | Qwen3.5 9B on the GPU, or the 35B-A3B with its experts in RAM | Faster, and a larger model |
 
    The agent is designed and evaluated for the minimum tier: larger models make it better, but
    nothing may depend on them. On a CPU, reading the prompt is the slow part, so the agent sends
@@ -483,6 +483,19 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
 16. **Local model runtime:** BrainO starts and stops llama.cpp itself, detects RAM and GPU
     memory, proposes a model tier, and downloads the chosen model once (checked against a pinned
     hash). A short benchmark tells the user how fast the agent will be on their computer.
+    *Done in code (`braino.runtime`, `braino model hardware|list|setup|status|bench|serve|remove`);
+    a run of the real server and model is pending (see below). Pinned in `catalog.json`:
+    llama.cpp build b11606 (2026-10-13; CPU, Vulkan, CUDA 12 and Metal builds for Windows,
+    Linux and macOS, x64 and arm64) and three Apache-2.0 models: Qwen3.5 4B (minimum tier,
+    2.6 GB), Qwen3.5 9B (GPU tier, 5.3 GB) and Qwen3.6 35B-A3B (more-RAM and GPU tiers,
+    19 GB). Models are pinned by repository revision and SHA-256. Hardware detection needs no
+    administrator rights (`nvidia-smi`, the Windows registry, Linux sysfs, Apple silicon).
+    Downloads resume and retry. The server runs on 127.0.0.1 on a free port with a per-session
+    API key, one slot and prompt-cache reuse. llama.cpp's own `--fit` places layers on the GPU,
+    and a mixture-of-experts model's experts in RAM when the GPU is too small. The benchmark
+    reads a prompt of BrainO's tool schemas and estimates first and later agent-step times.
+    Tested with a stand-in server (start, health wait, API key, failure logs, timeout,
+    benchmark, full setup); `BRAINO_LLAMA_TESTS=1` runs the real build and model.*
 17. **LLM client** for the OpenAI-compatible API, with schema-constrained tool calls, sending only
     the tool schemas each step needs (prompt processing is the bottleneck on a CPU).
 18. **Agent loop in the CLI**, with approval prompts for decision tools.

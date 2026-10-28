@@ -60,6 +60,13 @@ braino eval list                                       # agent evaluation tasks
 braino eval run --agent oracle -o report.json          # score an agent (see the docs)
 ```
 
+```bash
+braino model hardware          # CPU, RAM, GPUs, and the model tier BrainO proposes
+braino model setup             # install llama.cpp, download the model once, benchmark it
+braino model status            # chosen model, installed files, measured speed
+braino model serve             # run the model server in the foreground (development)
+```
+
 ## Tools
 
 Every analysis step is a **tool**: a function that takes one Pydantic model and returns another.
