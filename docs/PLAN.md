@@ -483,8 +483,11 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
 16. **Local model runtime:** BrainO starts and stops llama.cpp itself, detects RAM and GPU
     memory, proposes a model tier, and downloads the chosen model once (checked against a pinned
     hash). A short benchmark tells the user how fast the agent will be on their computer.
-    *Done in code (`braino.runtime`, `braino model hardware|list|setup|status|bench|serve|remove`);
-    a run of the real server and model is pending (see below). Pinned in `catalog.json`:
+    *Done (`braino.runtime`, `braino model hardware|list|setup|status|bench|serve|remove`).
+    Run for real on the office desktop (i7-8700, CPU build, 4B model): setup, hashes, server
+    start (model loaded in 4 s) and benchmark all work; it reads 65 tokens/s and writes
+    9 tokens/s, so a first agent step takes about 45 s and later ones about 20 s ("usable").
+    The GPU builds have not been run yet. Pinned in `catalog.json`:
     llama.cpp build b11606 (2026-10-13; CPU, Vulkan, CUDA 12 and Metal builds for Windows,
     Linux and macOS, x64 and arm64) and three Apache-2.0 models: Qwen3.5 4B (minimum tier,
     2.6 GB), Qwen3.5 9B (GPU tier, 5.3 GB) and Qwen3.6 35B-A3B (more-RAM and GPU tiers,
@@ -498,6 +501,27 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     benchmark, full setup); `BRAINO_LLAMA_TESTS=1` runs the real build and model.*
 17. **LLM client** for the OpenAI-compatible API, with schema-constrained tool calls, sending only
     the tool schemas each step needs (prompt processing is the bottleneck on a CPU).
+    *Done (`braino.llm`). Every step is one JSON action (`call`, `load_tools`, `decide`, `ask`,
+    `answer`) constrained by `response_format` with a schema built from the loaded tools'
+    own parameters, so llama.cpp's grammar makes invalid calls impossible. Native tool calls
+    are not used: with Qwen3.5's tool-call format llama.cpp does not enforce the parameter
+    schemas (it accepted `filter_method: "chebyshev"`). Compact schemas (no titles, optional
+    fields as `type: [X, null]`, `$ref`s inlined) are 16% smaller and accept exactly the same
+    values (checked with a JSON-schema validator). All 12 schemas are 6,500 tokens (100 s of
+    reading on the CPU), so the system prompt has a one-line catalogue of every tool, the
+    request's words preload up to 4 schemas, and the model loads others (`load_tools`, or
+    simply calling the tool). A tool named in a result ("run eeg.preprocess first") is
+    loaded automatically. The system prompt is identical for every request and the
+    conversation only grows at the end (results as Qwen `<tool_response>` messages), so the
+    prompt cache holds: later steps read 50–400 new tokens. Reasoning is off (it cost ~20 s
+    per step). Works with any server that supports JSON-schema replies (`llama_cpp=False`).
+    A throwaway loop over the eval suite with the real 4B model on the CPU found three
+    problems the unit tests did not (`$ref`s breaking when nested, prerequisites never
+    loaded, repeated questions) and one habit (calling a tool before loading it), all
+    handled: 4/13 → 8/13 tasks passed, mean score 0.52 → 0.86. What remains is for item 18:
+    repeated identical calls and decision requests, a step budget for many-subject tasks
+    (the group test took 30+ steps), reporting decisions and answers faithfully, and
+    printing Unicode safely on a Windows console.*
 18. **Agent loop in the CLI**, with approval prompts for decision tools.
 19. **Templates and plan checks**, built on the Stage C pipeline specs.
 20. **RAG index** over the MNE, BIDS and BrainO documentation, small enough to search on a laptop

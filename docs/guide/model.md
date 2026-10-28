@@ -89,6 +89,46 @@ For development, `braino model serve` runs it in the foreground and prints its
 OpenAI-compatible address and key. `BRAINO_LLAMA_SERVER=/path/to/llama-server` makes BrainO use
 a llama.cpp you built yourself (for example on an HPC cluster) instead of the downloaded one.
 
+## How the agent talks to the model
+
+The agent works one step at a time. Each step the model writes one JSON object: call a tool,
+load the description of more tools, ask the user to approve a proposal, ask the user a
+question, or give the final answer.
+
+- **No invalid tool calls.** Each reply must match a JSON schema built from the tools the
+  model has loaded, with each tool's own parameters. llama.cpp turns the schema into a grammar,
+  so the model cannot call a tool that does not exist, misspell a parameter or pass a value of
+  the wrong type. (The API's native tool calls are not used for this: llama.cpp does not check
+  their parameters against the schema for Qwen's tool-call format.) Checks a schema cannot
+  express, such as `tmin` before `tmax`, are made when the tool runs, and the error goes back
+  to the model.
+- **Only the tools a step needs.** All of BrainO's tool descriptions together are about
+  6,500 tokens, close to two minutes of reading for the 4B model on a CPU. The model sees a
+  one-line list of every tool, starts with the few the request's words point to, and loads
+  others when it needs them (or simply calls one, which loads it). A tool named in a result, as in "run eeg.preprocess first", is
+  loaded automatically.
+- **The prompt cache is reused.** The conversation only grows at the end, and the instructions
+  at its start are the same for every request, so llama.cpp keeps them cached. A later step
+  reads only what is new: the last tool result, and any tool descriptions just loaded.
+- **Reasoning is off.** Qwen3.5 can think step by step before it replies, but on a CPU that
+  costs about 20 s of writing per step. The agent turns it off; the step-by-step structure
+  does that work instead.
+
+The client speaks the OpenAI-compatible API, so another server that supports JSON-schema
+replies (Ollama, vLLM) can stand in for llama.cpp:
+
+```python
+from braino.llm import ChatClient, Conversation
+
+client = ChatClient(
+    "http://localhost:11434/v1",
+    model="my-qwen",  # the model's name on that server
+    llama_cpp=False,
+)
+conversation = Conversation(client, "Check the data quality of subject 02.")
+step = conversation.next_step()  # e.g. CallTool(tool="eeg.qc_report", arguments={...})
+```
+
 From Python:
 
 ```python

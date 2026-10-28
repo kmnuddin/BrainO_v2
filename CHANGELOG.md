@@ -14,6 +14,11 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   installs a pinned llama.cpp build and downloads the model once, checked against pinned
   SHA-256 hashes and resumable; starts and stops `llama-server` on localhost with a per-session
   API key; and benchmarks how long an agent step takes on this computer.
+- LLM client (`braino.llm`) for the OpenAI-compatible API: every agent step is one action
+  (call a tool, load tools, ask for a decision, ask the user, answer) constrained by a JSON
+  schema built from the loaded tools' parameters, so tool calls cannot be invalid. Only the
+  tool schemas a step needs are sent, in compact form, and the conversation only grows at the
+  end so llama.cpp's prompt cache is reused.
 - `eeg.epoch` warns when a condition loses half or more of its epochs.
 - The synthetic EEG generator moved to `braino.datasets.synthetic`.
 

@@ -39,6 +39,16 @@ The main entry points. Every tool is also callable through the registry (see
 
 ::: braino.runtime.server.LlamaServer
 
+## LLM client
+
+::: braino.llm.client.ChatClient
+
+::: braino.llm.conversation.Conversation
+
+::: braino.llm.steps.step_schema
+
+::: braino.llm.select.select_tools
+
 ## Agent evaluation
 
 ::: braino.agent.session.Session
