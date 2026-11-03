@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Annotated, Any, NoReturn
 
@@ -681,6 +683,163 @@ def validate_erpcore(
         raise typer.Exit(code=1)
 
 
+# --- the agent ----------------------------------------------------------------------------
+
+_SERVER_HELP = (
+    "Use this OpenAI-compatible server (its .../v1 address) instead of starting the local model"
+)
+
+
+@app.command("agent")
+def agent_command(
+    dataset: Annotated[Path, typer.Option("--dataset", help=_DATASET_HELP)],
+    request: Annotated[
+        str | None,
+        typer.Argument(help="What to do, in your words; omit it to type requests one by one"),
+    ] = None,
+    server: Annotated[str | None, typer.Option("--server", help=_SERVER_HELP)] = None,
+    api_key: Annotated[
+        str | None,
+        typer.Option("--api-key", envvar="BRAINO_LLM_API_KEY", help="API key for --server"),
+    ] = None,
+    model_name: Annotated[
+        str, typer.Option("--model-name", help="The model's name on --server")
+    ] = "local",
+    llama_cpp: Annotated[
+        bool,
+        typer.Option(
+            "--llama-cpp/--other-server",
+            help="Whether --server is llama.cpp (prompt cache and reasoning switch)",
+        ),
+    ] = True,
+    max_steps: Annotated[
+        int, typer.Option("--max-steps", min=1, help="Steps the agent may take per request")
+    ] = 60,
+    verbose: Annotated[
+        bool, typer.Option("--verbose", "-v", help="Show the model's replies and timings")
+    ] = False,
+) -> None:
+    """Ask the AI agent to analyse a dataset, in your own words.
+
+    The agent runs on the local model (see 'braino model setup'). It works through BrainO's
+    tools step by step; when a tool proposes a decision (bad channels, ICA components) you
+    approve, edit or reject it here, and the agent never decides for you. Every step is in
+    the run's provenance record.
+    """
+    from braino.agent import ConsoleSession, LLMAgent
+
+    _safe_console()
+    context = _context(dataset)
+    session = ConsoleSession(context)
+    with _model_client(server, api_key, model_name, llama_cpp) as (client, ctx_size):
+        agent = LLMAgent(
+            client, max_steps=max_steps, ctx_size=ctx_size, on_event=_AgentPrinter(verbose)
+        )
+        typer.echo(f"run {context.run_id}", err=True)
+        try:
+            if request is not None:
+                _show_answer(agent.solve(request, session))
+            else:
+                typer.echo("Type a request, or press Enter on an empty line to finish.")
+                while True:
+                    text = typer.prompt("\nYou", default="", show_default=False).strip()
+                    if not text:
+                        break
+                    _show_answer(agent.follow_up(text, session))
+        except (KeyboardInterrupt, typer.Abort):
+            typer.echo("\nStopped.", err=True)
+            raise typer.Exit(code=130) from None
+    typer.echo(
+        f"Steps recorded in run {context.run_id}: braino runs show {context.run_id} "
+        f"--dataset {dataset}",
+        err=True,
+    )
+
+
+def _safe_console() -> None:
+    """Print characters the console cannot show (such as µ or a minus sign) as '?' instead of
+    failing, e.g. on a Windows console with a legacy code page."""
+    import io
+    import sys
+
+    for stream in (sys.stdout, sys.stderr):
+        if isinstance(stream, io.TextIOWrapper):
+            with contextlib.suppress(ValueError, OSError):
+                stream.reconfigure(errors="replace")
+
+
+@contextlib.contextmanager
+def _model_client(
+    server: str | None, api_key: str | None, model_name: str, llama_cpp: bool
+) -> Iterator[tuple[Any, int]]:
+    """A chat client for ``server``, or for the local model, started here and stopped after."""
+    from braino.llm import ChatClient
+    from braino.runtime import ServerError, SetupError, load_settings, start_server
+
+    if server is not None:
+        client = ChatClient(server, api_key=api_key, model=model_name, llama_cpp=llama_cpp)
+        yield client, load_settings().ctx_size
+        return
+    settings = load_settings()
+    typer.echo(f"Starting the local model ({settings.model or 'not set up'})...", err=True)
+    try:
+        running = start_server()
+    except (SetupError, ServerError) as exc:
+        _fail(str(exc))
+    with running:
+        typer.echo(f"Model loaded in {running.load_seconds} s.", err=True)
+        yield ChatClient.for_server(running), running.ctx_size
+
+
+class _AgentPrinter:
+    """Shows the agent's steps as it works: tool calls, their outcome, and (verbose) the
+    model's replies with timings."""
+
+    def __init__(self, verbose: bool) -> None:
+        self.verbose = verbose
+
+    def __call__(self, event: Any) -> None:
+        if event.kind == "model":
+            if self.verbose:
+                d = event.data
+                typer.echo(
+                    f"  [model {d['seconds']:.1f} s, read {d['prompt_read']} of "
+                    f"{d['prompt_tokens']} tokens, wrote {d['completion_tokens']}] "
+                    f"{_clip(event.text, 300)}",
+                    err=True,
+                )
+        elif event.kind == "call":
+            arguments = ", ".join(
+                f"{k}={json.dumps(v, ensure_ascii=False)}"
+                for k, v in event.data["arguments"].items()
+            )
+            typer.echo(f"> {event.text}({_clip(arguments, 160)})")
+        elif event.kind == "result":
+            if event.data["ok"]:
+                proposal = event.data.get("proposal_id")
+                extra = f", proposal {proposal}" if proposal else ""
+                typer.echo(f"  done in {event.seconds:.1f} s{extra}")
+            else:
+                typer.echo(f"  failed: {_clip(event.text, 300)}")
+        elif event.kind == "skipped":
+            typer.echo(f"> {event.data['tool']}: not run again ({_clip(event.text, 120)})")
+        elif event.kind == "decision" and self.verbose:
+            typer.echo(f"  {event.text}", err=True)
+
+
+def _show_answer(answer: Any) -> None:
+    typer.echo("")
+    typer.echo(answer.text)
+    if answer.unverified:
+        numbers = ", ".join(f"{n:g}" for n in answer.unverified)
+        typer.echo(f"\nCheck these numbers: they are not in any tool result ({numbers}).", err=True)
+
+
+def _clip(text: str, limit: int) -> str:
+    text = " ".join(text.split())
+    return text if len(text) <= limit else text[: limit - 3] + "..."
+
+
 # --- agent evaluation ---------------------------------------------------------------------
 
 eval_app = typer.Typer(
@@ -706,8 +865,24 @@ def eval_list(
 @eval_app.command("run")
 def eval_run(
     agent: Annotated[
-        str, typer.Option("--agent", help="oracle, null, or module:factory for your own agent")
+        str,
+        typer.Option(
+            "--agent",
+            help="llm (the AI agent on the local model, or on --server), oracle, null, or "
+            "module:factory for your own agent",
+        ),
     ] = "oracle",
+    server: Annotated[str | None, typer.Option("--server", help=_SERVER_HELP)] = None,
+    api_key: Annotated[
+        str | None,
+        typer.Option("--api-key", envvar="BRAINO_LLM_API_KEY", help="API key for --server"),
+    ] = None,
+    max_steps: Annotated[
+        int, typer.Option("--max-steps", min=1, help="Steps the llm agent may take per task")
+    ] = 60,
+    verbose: Annotated[
+        bool, typer.Option("--verbose", "-v", help="Show the llm agent's steps")
+    ] = False,
     tasks: Annotated[
         str | None, typer.Option("--tasks", help="Comma-separated task ids; default all")
     ] = None,
@@ -734,9 +909,10 @@ def eval_run(
     """
     from braino.evals import TaskError, agent_factory, run_suite, select_tasks
 
+    _safe_console()
     try:
         selected = select_tasks(tasks.split(",") if tasks else None, include_large=include_large)
-        factory = agent_factory(agent)
+        factory = None if agent == "llm" else agent_factory(agent)
     except (TaskError, ValueError, ImportError, AttributeError) as exc:
         _fail(str(exc))
 
@@ -750,7 +926,24 @@ def eval_run(
         if result.error:
             typer.echo(f"        ! {result.error}")
 
-    report = run_suite(selected, factory, workdir=workdir, tier=tier, model=model, progress=line)
+    with contextlib.ExitStack() as stack:
+        if factory is None:
+            from braino.agent import LLMAgent
+            from braino.runtime import load_settings
+
+            client, ctx_size = stack.enter_context(_model_client(server, api_key, "local", True))
+            printer = _AgentPrinter(verbose=True) if verbose else None
+            if model is None and server is None:
+                model = load_settings().model
+            if tier is None and server is None:
+                tier = load_settings().tier
+
+            def factory(task: Any) -> Any:
+                return LLMAgent(client, max_steps=max_steps, ctx_size=ctx_size, on_event=printer)
+
+        report = run_suite(
+            selected, factory, workdir=workdir, tier=tier, model=model, progress=line
+        )
     passed = sum(t.passed for t in report.tasks)
     typer.echo(
         f"{report.agent}: {passed} of {len(report.tasks)} tasks passed "

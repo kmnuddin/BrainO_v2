@@ -70,6 +70,14 @@ class AgentAnswer(BaseModel):
     """The agent's final reply to the request."""
 
     text: str
+    unverified: list[float] = Field(
+        default_factory=list,
+        description="Numbers in the answer that no tool result gave (the agent was asked to "
+        "correct them once)",
+    )
+    stopped: str | None = Field(
+        default=None, description="Why the agent stopped before finishing, if it did"
+    )
 
 
 class Session(ABC):

@@ -49,9 +49,17 @@ The main entry points. Every tool is also callable through the registry (see
 
 ::: braino.llm.select.select_tools
 
-## Agent evaluation
+## Agent
+
+::: braino.agent.loop.LLMAgent
+
+::: braino.agent.console.ConsoleSession
 
 ::: braino.agent.session.Session
+
+::: braino.agent.grounding.ungrounded_in_answer
+
+## Agent evaluation
 
 ::: braino.evals.runner.run_suite
 

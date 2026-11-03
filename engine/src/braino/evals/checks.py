@@ -9,15 +9,12 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from braino.agent.grounding import is_number as _is_number
+from braino.agent.grounding import numbers_in, ungrounded_in_answer
 from braino.agent.session import AgentAnswer, Session, ToolCallLog
 from braino.evals.tasks import Check, EvalTask
 
-# Numbers in text, but not digits inside names such as "T8", "P3", "sub-01" or "Fp1".
-_NUMBER = re.compile(r"(?<![A-Za-z0-9_.\-])-?\d+(?:\.\d+)?(?![0-9])")
-SMALL_INTEGERS = 3
-"""Integers up to this size (counts like "two conditions") need no grounding."""
-SCALES = (1.0, 100.0, 1000.0)
-"""A result may be stated as a percentage (0.12 -> 12%) or in ms (0.3 s -> 300 ms)."""
+__all__ = ["CheckResult", "evaluate", "match", "numbers_in", "render", "resolve"]
 
 
 class CheckResult(BaseModel):
@@ -136,13 +133,7 @@ def _max_calls(check: Check, task: EvalTask, s: Session, a: AgentAnswer | None) 
 def _grounded(check: Check, task: EvalTask, s: Session, a: AgentAnswer | None) -> Outcome:
     if a is None:
         return False, "no answer"
-    allowed = list(numbers_from_session(s)) + [n for n, _ in numbers_in(task.request)]
-    invented = []
-    for value, decimals in numbers_in(a.text):
-        if decimals == 0 and abs(value) <= SMALL_INTEGERS:
-            continue
-        if not any(_same(value, decimals, v) for v in allowed):
-            invented.append(value)
+    invented = ungrounded_in_answer(a.text, s, task.request)
     if invented:
         return False, f"not from any tool result: {invented}"
     return True, ""
@@ -199,47 +190,6 @@ def match(value: Any, matcher: Any) -> bool:
     return bool(value == matcher)
 
 
-def numbers_in(text: str) -> list[tuple[float, int]]:
-    """The numbers in ``text``, with their number of decimals."""
-    out = []
-    for m in _NUMBER.finditer(text):
-        token = m.group(0)
-        decimals = len(token.split(".", 1)[1]) if "." in token else 0
-        out.append((float(token), decimals))
-    return out
-
-
-def numbers_from_session(session: Session) -> Iterator[float]:
-    """Every number in the tool results, decisions and user replies of the session."""
-    for call in session.calls:
-        yield from _leaves(call.result)
-    for decision in session.decisions:
-        yield from _leaves(decision.applied)
-        yield from _leaves(decision.edits)
-    for q in session.questions:
-        yield from (n for n, _ in numbers_in(q.reply))
-
-
-def _same(value: float, decimals: int, source: float) -> bool:
-    """Whether ``value``, written with ``decimals`` decimals, is ``source`` rounded (possibly
-    as a percentage or in thousandths)."""
-    tolerance = 0.5 * 10.0**-decimals + 1e-9
-    return any(abs(source * scale - value) <= tolerance for scale in SCALES)
-
-
-def _leaves(data: Any) -> Iterator[float]:
-    if isinstance(data, dict):
-        for v in data.values():
-            yield from _leaves(v)
-    elif isinstance(data, list | tuple):
-        for v in data:
-            yield from _leaves(v)
-    elif _is_number(data):
-        yield float(data)
-    elif isinstance(data, str):
-        yield from (n for n, _ in numbers_in(data))
-
-
 def _strings(data: Any) -> Iterator[str]:
     if isinstance(data, str):
         yield data
@@ -250,10 +200,6 @@ def _strings(data: Any) -> Iterator[str]:
     elif isinstance(data, list | tuple):
         for v in data:
             yield from _strings(v)
-
-
-def _is_number(value: Any) -> bool:
-    return isinstance(value, int | float) and not isinstance(value, bool)
 
 
 def _has_term(text: str, term: str) -> bool:

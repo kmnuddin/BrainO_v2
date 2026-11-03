@@ -19,6 +19,15 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   schema built from the loaded tools' parameters, so tool calls cannot be invalid. Only the
   tool schemas a step needs are sent, in compact form, and the conversation only grows at the
   end so llama.cpp's prompt cache is reused.
+- The AI agent (`braino agent`, `braino.agent.LLMAgent`): give a request in your own words
+  and the agent works through the tools on the local model, step by step, showing each tool
+  call. Decision tools' proposals are shown at the terminal to approve, edit or reject;
+  questions are answered at the prompt; follow-up requests continue the conversation. The
+  loop does not run a call again while its result still holds, reports decisions as final,
+  checks every number in the answer against the tool results (and asks the model to correct
+  any that are not), and has a step budget. `braino eval run --agent llm` scores it.
+- Grounding checks read ranges ("0.1-40 Hz"), minus signs and thousands separators
+  correctly; they are shared by the agent and the evaluation (`braino.agent.grounding`).
 - `eeg.epoch` warns when a condition loses half or more of its epochs.
 - The synthetic EEG generator moved to `braino.datasets.synthetic`.
 

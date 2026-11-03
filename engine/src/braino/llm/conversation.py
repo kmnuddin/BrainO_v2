@@ -47,7 +47,9 @@ one step at a time. Every reply is one JSON object with one action:
 - "call": run a loaded tool with arguments. Its result comes back as a tool response.
 - "load_tools": load tools you need that are not loaded yet; their descriptions come back.
 - "decide": a decision tool returned a proposal_id. Ask the user to approve it, explaining \
-the proposal in "message". Never treat a proposal as done before the user decides.
+the proposal in "message". Never treat a proposal as done before the user decides. The \
+user's decision is final: do not ask about it again, and report what was applied (or that \
+nothing was changed).
 - "ask": ask the user when the request is unclear. Do not guess subjects, conditions, events \
 or channels: find them with tools, or ask.
 - "answer": your final reply to the request.
@@ -55,7 +57,8 @@ Rules: every number in an answer must come from a tool result. Report what the t
 including warnings. If a tool fails, read its error: if another tool must run first, run it, \
 then retry; otherwise fix the call or explain the problem. Never repeat a call that failed \
 unchanged. If the information asked for is not in the dataset, answer that it is not \
-available.
+available. Keep the answer short: the main results, with numbers exactly as the tools gave \
+them.
 
 All tools (load a tool before calling it):
 {catalogue}"""
@@ -124,15 +127,20 @@ class Conversation:
         last = self.replies[-1].usage
         return last.prompt_tokens + last.completion_tokens + self._estimate(self._unsent)
 
-    def next_step(self) -> Step:
-        """Ask the model for its next action."""
+    def next_step(self, *, final: bool = False) -> Step:
+        """Ask the model for its next action; with ``final``, only an answer is allowed."""
         loads = 0
         repaired = False
         while True:
-            # No two questions in a row: a small model may otherwise ask again and again.
-            just_asked = bool(self.steps) and isinstance(self.steps[-1], AskUser)
-            can_ask = self.can_ask and not just_asked
-            schema = step_schema(self.loaded, self.loadable, self.pending, can_ask=can_ask)
+            # No question right after a question or a decision request: a small model may
+            # otherwise ask again and again, or ask to approve what the user just decided.
+            last = self.steps[-1] if self.steps else None
+            just_asked = isinstance(last, AskUser | RequestDecision)
+            can_ask = self.can_ask and not just_asked and not final
+            loaded: list[Tool] = [] if final else self.loaded
+            loadable: list[str] = [] if final else self.loadable
+            pending: list[str] = [] if final else self.pending
+            schema = step_schema(loaded, loadable, pending, can_ask=can_ask)
             if self.tokens + self.max_tokens > self.ctx_size:
                 raise ContextFullError(
                     f"the conversation ({self.tokens} tokens) no longer fits in the "
@@ -145,7 +153,7 @@ class Conversation:
             try:
                 if reply.finish_reason == "length":
                     raise StepError(f"the reply was cut off at {self.max_tokens} tokens")
-                step = parse_step(reply.content, self.loaded, self.loadable, self.pending)
+                step = parse_step(reply.content, loaded, loadable, pending)
             except StepError as error:
                 if repaired:
                     raise
@@ -190,6 +198,15 @@ class Conversation:
     def add_user_reply(self, reply: str) -> None:
         """The user's answer to an ``ask`` step."""
         self.add_result(f"The user replied: {reply}")
+
+    def follow_up(self, request: str) -> None:
+        """A new request from the user, after the answer to the previous one. The tools its
+        words point to are loaded, as for the first request."""
+        self._append({"role": "user", "content": request})
+        new = [n for n in select_tools(request, self.tools) if n in self.loadable]
+        if new:
+            self._append({"role": "assistant", "content": _dump(LoadTools(tools=new))})
+            self._load(new)
 
     def _load(self, names: Sequence[str]) -> None:
         tools = [self.tools.get(n) for n in names]

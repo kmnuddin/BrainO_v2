@@ -115,7 +115,7 @@ def run_task(task: EvalTask, agent: Any, folder: Path) -> TaskResult:
         (folder / "error.txt").write_text(traceback.format_exc(), encoding="utf-8")
     seconds = time.perf_counter() - clock
     checks = evaluate(task, session, answer)
-    _write_transcript(folder, task, session, answer)
+    _write_transcript(folder, task, session, answer, getattr(agent, "log", None))
     required = [c for c in checks if c.required]
     return TaskResult(
         id=task.id,
@@ -166,7 +166,9 @@ def _copy_dataset(source: Path, target: Path) -> Path:
     return target
 
 
-def _write_transcript(folder: Path, task: EvalTask, session: Any, answer: Any) -> None:
+def _write_transcript(
+    folder: Path, task: EvalTask, session: Any, answer: Any, model_log: Any = None
+) -> None:
     transcript = {
         "task": task.id,
         "request": task.request,
@@ -174,8 +176,14 @@ def _write_transcript(folder: Path, task: EvalTask, session: Any, answer: Any) -
         "decisions": [d.model_dump(mode="json") for d in session.decisions],
         "questions": [q.model_dump(mode="json") for q in session.questions],
         "answer": None if answer is None else answer.text,
+        "unverified": None if answer is None else answer.unverified,
+        "stopped": None if answer is None else answer.stopped,
     }
-    (folder / "transcript.json").write_text(json.dumps(transcript, indent=2), encoding="utf-8")
+    if model_log is not None:
+        transcript["model"] = model_log
+    (folder / "transcript.json").write_text(
+        json.dumps(transcript, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
 
 
 def hardware() -> dict[str, Any]:

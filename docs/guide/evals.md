@@ -7,6 +7,7 @@ on each hardware tier, starting with the minimum computer (no GPU, 16 GB RAM).
 ```bash
 braino eval list                               # the tasks
 braino eval run --agent oracle                 # check the harness: should pass everything
+braino eval run --agent llm -o today.json      # BrainO's agent on the local model
 braino eval run --agent mypkg.agent:make --tier minimum --model qwen-4b -o today.json
 braino eval compare last-week.json today.json  # what got fixed, what broke
 ```
@@ -49,6 +50,11 @@ Two agents come with BrainO to check the harness itself:
   the task is wrong, not an agent.
 - `null` does nothing, and must fail every task (its score shows which checks pass by doing
   nothing).
+
+`llm` is BrainO's own agent ([asking the agent](agent.md)) on the local model, which the run
+starts and stops; the report records the model and tier you set up. `--server` scores it on
+another OpenAI-compatible server instead, and `--verbose` prints its steps. Each task's
+transcript also keeps the model's replies with their timings.
 
 ## Adding your own agent
 

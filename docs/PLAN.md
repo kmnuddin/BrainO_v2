@@ -523,6 +523,34 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     (the group test took 30+ steps), reporting decisions and answers faithfully, and
     printing Unicode safely on a Windows console.*
 18. **Agent loop in the CLI**, with approval prompts for decision tools.
+    *Done (`braino agent`, `braino.agent.LLMAgent`, `ConsoleSession`;
+    `braino eval run --agent llm`). The CLI shows each tool call and its outcome. Proposals
+    are shown with the agent's explanation, to approve, edit (JSON, checked against the
+    proposal's model before anything is applied) or reject, with a note. Questions are
+    answered at the prompt, and follow-up requests continue the conversation. `--server`
+    uses another OpenAI-compatible server. Guards around the model:
+    - An identical call (arguments with defaults filled in) is not run again while nothing
+      has changed since, and a failed call is not retried unchanged until something else
+      has run.
+    - A decision tool is not run again once its proposal is decided or waiting. After two
+      skipped calls in a row the model must answer.
+    - A decision comes back in plain words (applied result, or nothing changed) as final.
+    - No question right after a decision request.
+    - Every number in the answer is checked against the tool results, with one correction
+      round; any that remain are listed under the answer.
+    - A 60-step budget, with an answer forced at the last step or when the context is
+      nearly full.
+    The grounding rule moved to `braino.agent.grounding`, shared with the evals. It had a
+    bug: numbers after a hyphen were skipped, so "band-pass 0.1-40 Hz" did not ground
+    "40 Hz". It now also reads minus signs and thousands separators. Printing replaces
+    characters a Windows console cannot show.
+    With the real 4B model on the CPU (i7-8700), the eval went from 8/13 to 12/13 passed
+    (mean score 0.86 → 0.98) in 29 minutes. The group tests took 28 and 29 steps and
+    passed. In this run neither the repeat guard nor the number check had to act; the
+    plain decision results, the prompt rules and the scoring fix made the difference. The
+    one failure is `bad-channels-ask`. The answer is correct ("T8 marked; Pz was proposed
+    but not applied"), but the check fails any answer that mentions Pz; whether to loosen
+    it is open.*
 19. **Templates and plan checks**, built on the Stage C pipeline specs.
 20. **RAG index** over the MNE, BIDS and BrainO documentation, small enough to search on a laptop
     (a local embedding model on the CPU).

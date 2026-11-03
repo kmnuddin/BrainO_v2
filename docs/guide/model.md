@@ -1,8 +1,9 @@
 # The local AI model
 
-BrainO's agent runs on your own computer: [llama.cpp](https://github.com/ggml-org/llama.cpp)
-with an open-weight Qwen model. Nothing is sent to an AI service, and there is no account or
-server. The engine and its tools work without the model; you only need it for the agent.
+BrainO's agent ([asking the agent](agent.md)) runs on your own computer:
+[llama.cpp](https://github.com/ggml-org/llama.cpp) with an open-weight Qwen model. Nothing is
+sent to an AI service, and there is no account or server. The engine and its tools work
+without the model; you only need it for the agent.
 
 ```bash
 braino model hardware   # what this computer has, and the model BrainO proposes
