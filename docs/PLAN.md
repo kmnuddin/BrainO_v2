@@ -548,9 +548,11 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     (mean score 0.86 → 0.98) in 29 minutes. The group tests took 28 and 29 steps and
     passed. In this run neither the repeat guard nor the number check had to act; the
     plain decision results, the prompt rules and the scoring fix made the difference. The
-    one failure is `bad-channels-ask`. The answer is correct ("T8 marked; Pz was proposed
-    but not applied"), but the check fails any answer that mentions Pz; whether to loosen
-    it is open.*
+    one failure was `bad-channels-ask`: the answer was correct ("T8 marked; Pz was proposed
+    but not applied"), but the check failed any answer that mentioned Pz. The check now
+    allows Pz in a sentence that says it was not applied (`unless` on
+    `answer_not_mentions`), which makes that run 13/13; "T8 and Pz are marked" still
+    fails.*
 19. **Templates and plan checks**, built on the Stage C pipeline specs.
 20. **RAG index** over the MNE, BIDS and BrainO documentation, small enough to search on a laptop
     (a local embedding model on the CPU).

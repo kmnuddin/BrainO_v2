@@ -98,6 +98,11 @@ class Check(BaseModel):
     max: float | None = None
     terms: list[str] = Field(default_factory=list)
     any_term: bool = Field(default=False, description="answer_mentions: any term instead of all")
+    unless: list[str] = Field(
+        default_factory=list,
+        description="answer_not_mentions: a term may appear in a sentence that also has one of "
+        "these phrases (e.g. 'not applied')",
+    )
     count: int | None = None
 
     @model_validator(mode="after")

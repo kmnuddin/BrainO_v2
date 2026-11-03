@@ -28,6 +28,8 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   any that are not), and has a step budget. `braino eval run --agent llm` scores it.
 - Grounding checks read ranges ("0.1-40 Hz"), minus signs and thousands separators
   correctly; they are shared by the agent and the evaluation (`braino.agent.grounding`).
+- `answer_not_mentions` checks take `unless` phrases: `bad-channels-ask` now passes an answer
+  that names Pz as proposed but not applied.
 - `eeg.epoch` warns when a condition loses half or more of its epochs.
 - The synthetic EEG generator moved to `braino.datasets.synthetic`.
 

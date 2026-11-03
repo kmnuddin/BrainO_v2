@@ -11,7 +11,11 @@ checks:
   - {kind: order, before: eeg.preprocess, after: eeg.detect_bad_channels}
   - {kind: decision_requested, tool: eeg.detect_bad_channels}
   - {kind: answer_mentions, terms: [T8]}
-  - {kind: answer_not_mentions, terms: [Pz], description: reports the edited decision, not the proposal}
+  # Pz may be named only as not applied ("Pz was proposed but not applied").
+  - kind: answer_not_mentions
+    terms: [Pz]
+    unless: [not applied, not marked, not been marked, not included, kept as good, left as good]
+    description: reports the edited decision, not the proposal
 solution:
   - {id: pre, tool: eeg.preprocess, args: {subject: "02"}}
   - {id: bads, tool: eeg.detect_bad_channels, args: {subject: "02", method: qc}}

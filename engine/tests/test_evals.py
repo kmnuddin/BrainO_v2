@@ -94,6 +94,26 @@ def test_numbers_in_text_leave_names_alone() -> None:
     assert numbers_in(text) == [(6.38, 2), (300.0, 0), (0.0001, 4), (-2.5, 1), (10.0, 0)]
 
 
+def test_not_mentions_allows_terms_named_as_not_applied() -> None:
+    from braino.evals.checks import _not_mentions
+
+    bad = next(t for t in builtin_tasks() if t.id == "bad-channels-ask")
+    check = next(c for c in bad.checks if c.kind == "answer_not_mentions")
+
+    def passes(text: str) -> bool:
+        return _not_mentions(check, bad, None, AgentAnswer(text=text))[0]  # type: ignore[arg-type]
+
+    assert passes("T8 is marked bad in subject 02.")
+    assert passes(  # the 4B model's answer in the eval run
+        "Bad channels marked for subject 02:\n- T8 (amplitude far from other channels)\n\n"
+        "Note: Pz was proposed but not applied; only T8 was marked bad. Good EEG channels: 19."
+    )
+    assert passes("T8 is marked bad. Pz was not marked, as you decided.")
+    assert not passes("T8 and Pz are marked bad.")
+    assert not passes("T8 and Pz are marked bad and were not interpolated.")
+    assert not passes("T8 is marked. Pz is also bad; the rest were not marked.")
+
+
 def test_templates() -> None:
     results = {"erp": {"measures": [{"waveform": "rare", "v": 1.0}, {"waveform": "d", "v": 6.384}]}}
     assert resolve(results, "erp.measures[waveform=d].v") == 6.384

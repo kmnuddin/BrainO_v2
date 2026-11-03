@@ -122,7 +122,10 @@ def _mentions(check: Check, task: EvalTask, s: Session, a: AgentAnswer | None) -
 def _not_mentions(check: Check, task: EvalTask, s: Session, a: AgentAnswer | None) -> Outcome:
     if a is None:
         return True, "no answer"
-    found = [t for t in check.terms if _has_term(a.text, t)]
+    sentences = [
+        s for s in _SENTENCE.split(a.text) if not any(_has_term(s, u) for u in check.unless)
+    ]
+    found = [t for t in check.terms if any(_has_term(s, t) for s in sentences)]
     return (not found), f"mentions {found}" if found else ""
 
 
@@ -200,6 +203,10 @@ def _strings(data: Any) -> Iterator[str]:
     elif isinstance(data, list | tuple):
         for v in data:
             yield from _strings(v)
+
+
+# Sentence ends: '.', '!', '?' or ';' before a space, or a line break. Decimals stay whole.
+_SENTENCE = re.compile(r"(?<=[.!?;])\s+|\n+")
 
 
 def _has_term(text: str, term: str) -> bool:
