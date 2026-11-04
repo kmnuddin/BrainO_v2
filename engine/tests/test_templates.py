@@ -30,7 +30,14 @@ from braino.tools.analysis import AnalysisResult
 
 RARE: dict[str, Any] = {"condition_a": "rare", "events_a": ["stimulus/rare"]}
 FREQUENT: dict[str, Any] = {"condition_b": "frequent", "events_b": ["stimulus/frequent"]}
-ERP: dict[str, Any] = {**RARE, **FREQUENT, "channels": ["Pz"], "tmin": 0.3, "tmax": 0.5}
+ERP: dict[str, Any] = {
+    **RARE,
+    **FREQUENT,
+    "test_scope": "measured",
+    "channels": ["Pz"],
+    "tmin": 0.3,
+    "tmax": 0.5,
+}
 FAST: dict[str, Any] = {"reject": "peak_to_peak", "peak_to_peak_uv": 100.0}
 
 

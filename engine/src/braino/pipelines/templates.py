@@ -91,6 +91,12 @@ class _Common(BaseModel):
 
 
 class ErpComparisonSettings(_Common):
+    # Required, so the model has to choose: a small model leaves optional fields as they are.
+    test_scope: Literal["measured", "all"] = Field(
+        description="Where the group test looks: 'measured' (the channels and window below) "
+        "or 'all' (every channel and time point of the epochs, when asked to test every "
+        "channel or time point)"
+    )
     channels: list[str] = Field(
         min_length=1, description="Channels to measure and test at (averaged), e.g. ['Pz']"
     )
@@ -103,12 +109,6 @@ class ErpComparisonSettings(_Common):
     epoch_tmax: float = Field(default=0.8, description="Epoch end, s")
     l_freq: float = Field(default=0.1, ge=0, description="High-pass, Hz")
     h_freq: float = Field(default=30.0, gt=0, description="Low-pass, Hz")
-    test_scope: Literal["measured", "all"] = Field(
-        default="measured",
-        description="Where the group test looks: 'measured' (the channels and window above) "
-        "or 'all' (every channel and time point of the epochs, e.g. when asked to test "
-        "everywhere)",
-    )
     test: Literal["mass_univariate", "cluster_permutation"] = Field(
         default="mass_univariate",
         description="Group test: 'mass_univariate' (t-test at each point, corrected) or "

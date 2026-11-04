@@ -576,7 +576,11 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     channel and time point", though, it tested Pz at 0-500 ms: the template always tested
     the measurement channels and window, and the task only checked for a correction. The
     template now has `test_scope` ('measured' or 'all'), and `stats-correction` checks that
-    every channel and the whole epoch are tested.*
+    every channel and the whole epoch are tested. As an optional setting the model left it
+    at its default (stats-correction failed); made required, it chooses: 'all' for
+    stats-correction, 'measured' for the other two, all three passing. In that run the plan
+    check also caught a measurement window of 0-1 s in epochs ending at 0.8 s, and the model
+    fixed it on the next step.*
 20. **RAG index** over the MNE, BIDS and BrainO documentation, small enough to search on a laptop
     (a local embedding model on the CPU).
 21. **Baseline evaluation on the minimum tier** (CPU, ~4B model), then LoRA fine-tuning on the HPC

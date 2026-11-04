@@ -75,7 +75,8 @@ proposals you review for each subject.
 braino pipeline templates      # the templates and their settings
 braino pipeline template erp-comparison --dataset study_bids -o p3.yaml --settings \
   '{"condition_a": "rare", "events_a": ["stimulus/rare"], "condition_b": "frequent",
-    "events_b": ["stimulus/frequent"], "channels": ["Pz"], "tmin": 0.3, "tmax": 0.6}'
+    "events_b": ["stimulus/frequent"], "test_scope": "measured", "channels": ["Pz"],
+    "tmin": 0.3, "tmax": 0.6}'
 braino pipeline run p3.yaml --dataset study_bids
 ```
 
@@ -123,7 +124,8 @@ from braino.pipelines.templates import build
 
 spec = build("erp-comparison", {"condition_a": "rare", "events_a": ["stimulus/rare"],
                                 "condition_b": "frequent", "events_b": ["stimulus/frequent"],
-                                "channels": ["Pz"], "tmin": 0.3, "tmax": 0.6}, Path("study_bids"))
+                                "test_scope": "measured", "channels": ["Pz"],
+                                "tmin": 0.3, "tmax": 0.6}, Path("study_bids"))
 for finding in check_plan(spec, dataset=Path("study_bids")).findings:
     print(finding)
 ```
