@@ -1,6 +1,6 @@
 """Which tool schemas the first step gets, from the words of the request.
 
-All 12 tool schemas are about 6,500 tokens: 100 s of reading for the 4B model on a CPU. A
+All the tool schemas are about 8,000 tokens: 100 s of reading for the 4B model on a CPU. A
 request needs a few of them, so the conversation starts with the tools its words point to (at
 most :data:`MAX_PRELOAD`), and the model loads others itself when it needs them
 (``load_tools``; the system prompt lists every tool in one line each). A wrong guess costs a
@@ -17,6 +17,37 @@ MAX_PRELOAD = 4
 
 #: Word stems that point to a tool. A tool missing here is still listed for the model.
 KEYWORDS: dict[str, tuple[str, ...]] = {
+    "analysis.erp_comparison": (
+        "compar",
+        "versus",
+        "vs",
+        "minus",
+        "differ",
+        "across subjects",
+        "all subjects",
+        "every subject",
+        "group",
+        "significan",
+        "erp",
+        "p3",
+        "p300",
+        "n170",
+        "n400",
+        "mmn",
+    ),
+    "analysis.spectral_comparison": (
+        "compar",
+        "versus",
+        "vs",
+        "differ",
+        "across subjects",
+        "all subjects",
+        "group",
+        "band power",
+        "alpha power",
+        "theta power",
+        "beta power",
+    ),
     "dataset.inspect": (
         "dataset",
         "subject",

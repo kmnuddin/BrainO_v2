@@ -492,13 +492,88 @@ def pipeline_show(spec: Annotated[str, typer.Argument(help=_SPEC_HELP)]) -> None
 
 
 @pipeline_app.command("validate")
-def pipeline_validate(spec: Annotated[str, typer.Argument(help=_SPEC_HELP)]) -> None:
-    """Check a spec: its tools exist and accept the arguments given."""
+def pipeline_validate(
+    spec: Annotated[str, typer.Argument(help=_SPEC_HELP)],
+    dataset: Annotated[
+        Path | None, typer.Option("--dataset", help="Also check the plan against this dataset")
+    ] = None,
+) -> None:
+    """Check a spec: its tools exist and accept the arguments given, and the plan holds
+    together (step order, conditions, windows, multiple-comparison correction; with
+    --dataset, also subjects, events, channels and filters)."""
     loaded = _load_spec(spec)
-    typer.echo(
-        f"{loaded.name}: {len(loaded.steps)} steps per recording, {len(loaded.group)} group "
-        "steps; OK"
+    check = _check_plan(loaded, dataset)
+    summary = (
+        f"{loaded.name}: {len(loaded.steps)} steps per recording, {len(loaded.group)} group steps"
     )
+    if check.errors:
+        _fail(f"{summary}; {len(check.errors)} problem(s)")
+    typer.echo(f"{summary}; OK" + (f", {len(check.warnings)} warning(s)" if check.warnings else ""))
+
+
+def _check_plan(spec: Any, dataset: Path | None) -> Any:
+    """Run the plan checks and print what they find."""
+    from braino.pipelines.checks import check_plan
+
+    check = check_plan(spec, dataset=dataset.resolve() if dataset is not None else None)
+    for finding in check.findings:
+        typer.echo(str(finding), err=True)
+    return check
+
+
+@pipeline_app.command("templates")
+def pipeline_templates() -> None:
+    """List the analysis templates: tested pipelines filled in with a few settings."""
+    from braino.pipelines.templates import TEMPLATES
+
+    for template in TEMPLATES.values():
+        typer.echo(f"{template.name:<22} {template.description}")
+        for name, field in template.settings.model_fields.items():
+            required = " (required)" if field.is_required() else ""
+            typer.echo(f"    {name}{required}: {field.description or ''}")
+
+
+@pipeline_app.command("template")
+def pipeline_template(
+    name: Annotated[str, typer.Argument(help="Template name (see 'braino pipeline templates')")],
+    settings: Annotated[
+        str,
+        typer.Option(
+            "--settings",
+            help="The template's settings as JSON, e.g. "
+            '\'{"condition_a": "rare", "events_a": ["stimulus/rare"], ...}\'',
+        ),
+    ],
+    dataset: Annotated[Path, typer.Option("--dataset", help=_DATASET_HELP)] = Path("."),
+    output: Annotated[
+        Path | None, typer.Option("--output", "-o", help="Write the spec here")
+    ] = None,
+) -> None:
+    """Make a pipeline spec from a template, checked against the dataset, to read, change and
+    run with 'braino pipeline run'."""
+    import yaml
+    from pydantic import ValidationError
+
+    from braino.pipelines.templates import TemplateError, build
+
+    try:
+        values = json.loads(settings)
+    except json.JSONDecodeError as exc:
+        _fail(f"--settings is not valid JSON: {exc.msg}")
+    try:
+        spec = build(name, values, dataset.resolve())
+    except (TemplateError, ValidationError) as exc:
+        _fail(str(exc))
+    check = _check_plan(spec, dataset)
+    text = yaml.safe_dump(spec.model_dump(mode="json"), sort_keys=False, allow_unicode=True)
+    text = f"# {spec.description}\n# Made from the {name} template.\n{text}"
+    if output is None:
+        typer.echo(text, nl=False)
+    else:
+        output.write_text(text, encoding="utf-8")
+        typer.echo(f"wrote {output}", err=True)
+    if check.errors:
+        raise typer.Exit(code=1)
 
 
 @pipeline_app.command("run")
@@ -525,6 +600,8 @@ def pipeline_run(
     from braino.pipelines import SpecError, run_pipeline
 
     loaded = _load_spec(spec)
+    if _check_plan(loaded, dataset).errors:
+        _fail("the plan check found problems; nothing was run")
     context = _context(dataset)
     typer.echo(f"run {context.run_id}", err=True)
     approver = f"{current_user()} (auto-approved in a pipeline run)" if auto_approve else None
@@ -723,12 +800,15 @@ def agent_command(
 
     The agent runs on the local model (see 'braino model setup'). It works through BrainO's
     tools step by step; when a tool proposes a decision (bad channels, ICA components) you
-    approve, edit or reject it here, and the agent never decides for you. Every step is in
-    the run's provenance record.
+    approve, edit or reject it here, and the agent never decides for you. To compare
+    conditions it plans a tested pipeline from a template, which you approve before it runs.
+    Every step is in the run's provenance record.
     """
     from braino.agent import ConsoleSession, LLMAgent
+    from braino.tools.analysis import step_progress
 
     _safe_console()
+    step_progress.set(lambda o: typer.echo(f"    {_outcome_line(o)}"))
     context = _context(dataset)
     session = ConsoleSession(context)
     with _model_client(server, api_key, model_name, llama_cpp) as (client, ctx_size):

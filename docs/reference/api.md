@@ -21,6 +21,10 @@ The main entry points. Every tool is also callable through the registry (see
 
 ::: braino.pipelines.runner.PipelineReport
 
+::: braino.pipelines.checks.check_plan
+
+::: braino.pipelines.templates.build
+
 ## Provenance and export
 
 ::: braino.provenance.store.load_run

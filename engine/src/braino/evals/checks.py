@@ -130,7 +130,8 @@ def _not_mentions(check: Check, task: EvalTask, s: Session, a: AgentAnswer | Non
 
 
 def _max_calls(check: Check, task: EvalTask, s: Session, a: AgentAnswer | None) -> Outcome:
-    return len(s.calls) <= (check.count or 0), f"{len(s.calls)} calls"
+    n = sum(c.within is None for c in s.calls)  # the agent's calls, not a pipeline's steps
+    return n <= (check.count or 0), f"{n} calls"
 
 
 def _grounded(check: Check, task: EvalTask, s: Session, a: AgentAnswer | None) -> Outcome:

@@ -77,6 +77,13 @@ def scan_dataset(root: str | Path, *, max_recordings: int | None = None) -> Data
     )
 
 
+def recording_channels(root: str | Path, recording: RecordingSummary) -> list[str]:
+    """The channel names of a recording, from its channels table (empty if it has none)."""
+    path = Path(root) / recording.path
+    stem = path.name[: -len(path.name.split("_")[-1])]
+    return [row["name"] for row in _read_tsv(path.parent / f"{stem}channels.tsv") if "name" in row]
+
+
 def _data_files(root: Path) -> list[Path]:
     files = []
     for subject_dir in sorted(root.glob("sub-*")):

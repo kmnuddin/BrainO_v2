@@ -25,7 +25,12 @@ class ToolRegistry:
         return tool
 
     def tool(
-        self, *, name: str, risk: Risk, apply: Callable[..., BaseModel] | None = None
+        self,
+        *,
+        name: str,
+        risk: Risk,
+        apply: Callable[..., BaseModel] | None = None,
+        runs_steps: bool = False,
     ) -> Callable[[ToolFuncT], ToolFuncT]:
         """Decorator that registers a function as a tool and returns it unchanged.
 
@@ -33,7 +38,7 @@ class ToolRegistry:
         """
 
         def decorator(func: ToolFuncT) -> ToolFuncT:
-            self.register(make_tool(func, name=name, risk=risk, apply=apply))
+            self.register(make_tool(func, name=name, risk=risk, apply=apply, runs_steps=runs_steps))
             return func
 
         return decorator

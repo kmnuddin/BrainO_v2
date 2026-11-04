@@ -53,7 +53,8 @@ class ConsoleSession(Session):
         self.echo("")
         self.echo(f"Decision needed: {tool} proposes")
         for key, value in proposal.items():
-            self.echo(f"    {key}: {_show(value)}")
+            shown = _show(value)
+            self.echo(f"    {key}:{'' if shown.startswith(chr(10)) else ' '}{shown}")
         if message:
             self.echo("The agent says:")
             for line in message.strip().splitlines():
@@ -124,8 +125,17 @@ class ConsoleSession(Session):
 def _show(value: Any) -> str:
     """A proposal field on one line."""
     if isinstance(value, list) and all(isinstance(v, str | int | float) for v in value):
+        if any(len(str(v)) > LONG_ITEM for v in value):  # e.g. a plan's steps: one per line
+            return "".join(f"\n        {_clip(str(v))}" for v in value)
         return ", ".join(map(str, value)) if value else "(none)"
     if isinstance(value, dict | list):
-        text = json.dumps(value, ensure_ascii=False)
-        return text if len(text) <= 200 else text[:197] + "..."
+        return _clip(json.dumps(value, ensure_ascii=False))
     return str(value)
+
+
+LONG_ITEM = 40
+"""List items longer than this are shown one per line."""
+
+
+def _clip(text: str, limit: int = 200) -> str:
+    return text if len(text) <= limit else text[: limit - 3] + "..."

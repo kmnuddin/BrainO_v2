@@ -84,6 +84,9 @@ class Tool:
     apply_func: Callable[..., BaseModel] | None = None
     """Decision tools only: commits an approved proposal, ``(proposal, ctx) -> result``."""
     apply_output_model: type[BaseModel] | None = None
+    runs_steps: bool = False
+    """Runs other tools as steps (a pipeline): each step is recorded as its own call, so the
+    tool itself is not recorded around them."""
 
     @property
     def llm_name(self) -> str:
@@ -109,6 +112,8 @@ class Tool:
             if self.needs_context or self.requires_approval:
                 raise MissingContextError(f"tool {self.name!r} needs a RunContext")
             return self._call(params, None)
+        if self.runs_steps:
+            return self._call(params, context)
 
         with context.provenance.tool_call(self.name, self.risk.value, params) as call:
             if self.requires_approval:
@@ -175,13 +180,15 @@ def make_tool(
     name: str,
     risk: Risk,
     apply: Callable[..., BaseModel] | None = None,
+    runs_steps: bool = False,
 ) -> Tool:
     """Build a :class:`Tool` from a function annotated ``(params: InModel) -> OutModel`` or
     ``(params: InModel, ctx: RunContext) -> OutModel``.
 
     The function's docstring becomes the description shown to the language model. Decision
     tools must also pass ``apply``, annotated ``(proposal: OutModel, ctx: RunContext) ->
-    ResultModel``; other tools must not.
+    ResultModel``; other tools must not. ``runs_steps`` marks a tool that runs other tools
+    as steps (see :attr:`Tool.runs_steps`).
     """
     if not _NAME_PATTERN.fullmatch(name):
         raise ToolDefinitionError(
@@ -226,6 +233,7 @@ def make_tool(
         needs_context=needs_context,
         apply_func=apply,
         apply_output_model=apply_output_model,
+        runs_steps=runs_steps,
     )
 
 

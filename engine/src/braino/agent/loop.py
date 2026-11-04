@@ -13,6 +13,8 @@ small model does when it loses track:
 - **Grounding.** Before an answer reaches the user, every number in it is checked against
   the tool results (:mod:`braino.agent.grounding`). Numbers no tool gave are sent back once
   for correction; any that remain are listed with the answer.
+- **Plans.** Decisions that wait inside a plan run by ``analysis.run`` (ICA, bad channels
+  for each subject) become decisions the model can ask for, like a decision tool's own.
 - **Budgets.** The model has ``max_steps`` steps, and must answer at the last one, or when
   the conversation nearly fills the model's context.
 """
@@ -172,7 +174,9 @@ class LLMAgent:
                     time.perf_counter() - started,
                     {"ok": outcome.ok, "proposal_id": outcome.proposal_id},
                 )
-                conv.add_result(outcome, proposal_id=outcome.proposal_id)
+                conv.add_result(
+                    outcome, proposal_id=outcome.proposal_id, waiting=_waiting(outcome.result)
+                )
             elif isinstance(step, RequestDecision):
                 repeats = 0
                 decision = session.request_decision(step.proposal_id, step.message)
@@ -278,6 +282,14 @@ def _key(session: Session, step: CallTool) -> str:
     except (ToolNotFoundError, ValidationError):
         pass
     return json.dumps([step.tool, arguments], sort_keys=True, default=str)
+
+
+def _waiting(result: dict[str, Any] | None) -> list[str]:
+    """Proposals a pipeline's steps made that wait for the user (``analysis.run``)."""
+    waiting = (result or {}).get("waiting")
+    if not isinstance(waiting, list):
+        return []
+    return [w["proposal_id"] for w in waiting if isinstance(w, dict) and w.get("proposal_id")]
 
 
 def _risk(session: Session, tool: str) -> Risk | None:

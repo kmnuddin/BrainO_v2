@@ -53,6 +53,9 @@ nothing was changed).
 - "ask": ask the user when the request is unclear. Do not guess subjects, conditions, events \
 or channels: find them with tools, or ask.
 - "answer": your final reply to the request.
+To compare two conditions (ERPs or band power), for one subject or a group, use \
+analysis.erp_comparison or analysis.spectral_comparison rather than each step: they plan a \
+tested pipeline, the user approves the plan (decide), then analysis.run runs it.
 Rules: every number in an answer must come from a tool result. Report what the tools found, \
 including warnings. If a tool fails, read its error: if another tool must run first, run it, \
 then retry; otherwise fix the call or explain the problem. Never repeat a call that failed \
@@ -172,11 +175,16 @@ class Conversation:
             return step
 
     def add_result(
-        self, result: BaseModel | dict[str, Any] | str, *, proposal_id: str | None = None
+        self,
+        result: BaseModel | dict[str, Any] | str,
+        *,
+        proposal_id: str | None = None,
+        waiting: Sequence[str] = (),
     ) -> None:
         """Report what the last action led to: a tool's result (or error), the user's
-        decision, or the user's reply to a question. A decision tool's ``proposal_id``
-        becomes something the model can ask the user to decide."""
+        decision, or the user's reply to a question. A decision tool's ``proposal_id``, and
+        the proposals ``waiting`` in a pipeline's result, become something the model can ask
+        the user to decide."""
         if isinstance(result, BaseModel):
             text = result.model_dump_json(exclude_none=True)
         elif isinstance(result, str):
@@ -187,8 +195,9 @@ class Conversation:
             cut = len(text) - MAX_RESULT_CHARS
             text = f"{text[:MAX_RESULT_CHARS]} ... ({cut} more characters not shown)"
         self._append(_tool(text))
-        if proposal_id is not None and proposal_id not in self.pending:
-            self.pending.append(proposal_id)
+        for pid in [proposal_id, *waiting]:
+            if pid is not None and pid not in self.pending:
+                self.pending.append(pid)
         # "run eeg.preprocess first": load the tools a result names, so the next step can
         # call them (only loaded tools are in the step's schema).
         named = [n for n in self.loadable if _mentions(text, n)]

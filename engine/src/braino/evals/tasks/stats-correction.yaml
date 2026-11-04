@@ -9,6 +9,13 @@ checks:
     tool: [stats.mass_univariate, stats.cluster_permutation]
     args: {correction: {not: none}}
     description: a group test with a correction for multiple comparisons
+  - kind: tool_called
+    tool: [stats.mass_univariate, stats.cluster_permutation]
+    args:
+      channels: null
+      tmin: {any: [null, {range: [-1, 0]}]}
+      tmax: {any: [null, {range: [0.7, 10]}]}
+    description: tests every channel and time point, as asked
   - kind: answer_mentions
     terms: [corrected, correction, cluster, FDR, Bonferroni, family-wise]
     any_term: true

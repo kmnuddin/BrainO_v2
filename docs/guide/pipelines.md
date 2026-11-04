@@ -37,7 +37,50 @@ subjects. Optional fields: `session`, `run`, `subjects` (default: everyone with 
 
 ```bash
 braino pipeline validate p3.yaml
+braino pipeline validate p3.yaml --dataset study_bids   # also against the data
 ```
+
+## Plan checks
+
+A spec whose every step is valid can still be a wrong plan. Before a pipeline runs, its steps
+are checked together, as a reviewer would:
+
+| Rule | Example of what it catches |
+|---|---|
+| Each step's input is made by an earlier step | `eeg.erp` with no `eeg.epoch` before it; a group test of ERPs with no `eeg.erp` step |
+| Cleaning comes before epoching | `eeg.ica_clean` after `eeg.epoch` (the epochs would not use it) |
+| Names are defined | a contrast of condition `target` when the epochs define `rare` and `frequent`; an epochs label no step made |
+| Windows fit the epochs | a measure at 300–1200 ms in epochs that end at 800 ms; a baseline outside the epoch |
+| Group tests are sound | fewer than 3 subjects; no multiple-comparison correction (warning); a cluster test with too few subjects for its permutations (warning) |
+| The plan fits the data (with `--dataset`) | subjects without the task; a condition whose events never occur (the events that do are listed); channels not in the recordings; a low-pass at or above half the sampling rate |
+
+Errors stop the plan: `braino pipeline run` refuses to start and prints them. Warnings are
+printed and the run goes on.
+
+## Templates
+
+For common analyses, a template writes the spec from a few settings: the two conditions and
+their events, and where and when to measure. Everything else keeps the steps and defaults
+BrainO validated on ERP CORE.
+
+| Template | What it does |
+|---|---|
+| `erp-comparison` | preprocess (0.1–30 Hz), epoch both conditions, average, measure the difference wave (mean or peak) in a window at some channels, and, with 3 subjects or more, test it across subjects (mass-univariate with FDR by default, or a cluster test), at the measured channels and window or, with `"test_scope": "all"`, at every channel and time point |
+| `spectral-comparison` | preprocess (1–45 Hz), epoch both conditions, band power (alpha by default) per condition, and a corrected group test of the spectra in the band |
+
+Both can add ICA (`"ica": true`) and bad-channel detection (`"bad_channels": true`), whose
+proposals you review for each subject.
+
+```bash
+braino pipeline templates      # the templates and their settings
+braino pipeline template erp-comparison --dataset study_bids -o p3.yaml --settings \
+  '{"condition_a": "rare", "events_a": ["stimulus/rare"], "condition_b": "frequent",
+    "events_b": ["stimulus/frequent"], "channels": ["Pz"], "tmin": 0.3, "tmax": 0.6}'
+braino pipeline run p3.yaml --dataset study_bids
+```
+
+The spec it writes is an ordinary one, checked against the dataset: read it, change it, run
+it. The [AI agent](agent.md#comparing-conditions) uses the same templates.
 
 ## Running
 
@@ -69,10 +112,23 @@ braino pipeline show erpcore-p3 > my_p3.yaml   # copy and adapt
 ```
 
 `erpcore-p3` and `erpcore-n170` reproduce the ERP CORE analyses ([validation](validation.md)).
-They are also the first of the validated templates that the AI agent will fill in for common
-analyses.
 
 ## From Python
+
+```python
+from pathlib import Path
+
+from braino.pipelines.checks import check_plan
+from braino.pipelines.templates import build
+
+spec = build("erp-comparison", {"condition_a": "rare", "events_a": ["stimulus/rare"],
+                                "condition_b": "frequent", "events_b": ["stimulus/frequent"],
+                                "channels": ["Pz"], "tmin": 0.3, "tmax": 0.6}, Path("study_bids"))
+for finding in check_plan(spec, dataset=Path("study_bids")).findings:
+    print(finding)
+```
+
+Running one:
 
 ```python
 from braino.pipelines import load_spec, run_pipeline

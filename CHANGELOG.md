@@ -30,6 +30,20 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   correctly; they are shared by the agent and the evaluation (`braino.agent.grounding`).
 - `answer_not_mentions` checks take `unless` phrases: `bad-channels-ask` now passes an answer
   that names Pz as proposed but not applied.
+- Plan checks (`braino.pipelines.checks`, `braino pipeline validate --dataset`): a spec's
+  steps are checked together before it runs: step order, conditions, contrasts and labels
+  defined before use, windows inside the epochs, group tests with enough subjects and a
+  multiple-comparison correction, and, against the dataset, subjects, events, channels and
+  filters. `braino pipeline run` refuses a plan with errors.
+- Templates (`braino.pipelines.templates`, `braino pipeline templates`, `braino pipeline
+  template`): `erp-comparison` and `spectral-comparison` write a tested pipeline spec from a
+  few settings. An ERP comparison's group test looks at the measured channels and window, or
+  (`test_scope: all`) at every channel and time point.
+- Analysis tools for the agent: `analysis.erp_comparison` and `analysis.spectral_comparison`
+  plan a comparison from a template, check it against the data and propose it for approval;
+  `analysis.run` runs an approved plan over every subject and reports each subject's values,
+  their mean and the group test. Decisions inside the plan (ICA, bad channels) come to the
+  user one by one. The console shows a plan's steps one per line.
 - `eeg.epoch` warns when a condition loses half or more of its epochs.
 - The synthetic EEG generator moved to `braino.datasets.synthetic`.
 

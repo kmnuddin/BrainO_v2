@@ -13,7 +13,13 @@ from pydantic import BaseModel, Field, model_validator
 
 from braino.context import RunContext
 from braino.io.dataset import scan_dataset
-from braino.stats.group import ClusterResult, Correction, GroupData, UnivariateResult
+from braino.stats.group import (
+    MIN_SUBJECTS,
+    ClusterResult,
+    Correction,
+    GroupData,
+    UnivariateResult,
+)
 from braino.tools.base import Risk
 from braino.tools.recordings import (
     LABEL_PATTERN,
@@ -230,10 +236,10 @@ def load_group(ctx: RunContext, params: GroupInput) -> tuple[GroupData, list[str
         loaded[subject] = _load_subject(ctx, path, params)
 
     subjects = sorted(loaded)
-    if len(subjects) < 3:
+    if len(subjects) < MIN_SUBJECTS:
         raise NotEnoughSubjectsError(
             f"{len(subjects)} subjects have {params.data} results labelled {params.label!r}; "
-            "group tests need at least 3"
+            f"group tests need at least {MIN_SUBJECTS}"
         )
     first = loaded[subjects[0]]
     common = [ch for ch in first[1] if all(ch in loaded[s][1] for s in subjects)]

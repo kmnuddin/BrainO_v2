@@ -55,6 +55,49 @@ reports what was applied, and does not ask again.
 The agent can also ask you a question when your request is unclear (which subject, which
 conditions); type the answer at the prompt.
 
+## Comparing conditions
+
+To compare two conditions, for one subject or across all of them, the agent does not plan
+each step itself. It fills in a tested [template](pipelines.md#templates) (`erp-comparison`
+or `spectral-comparison`) with the conditions, their events, and where and when to measure.
+The plan is [checked](pipelines.md#plan-checks) against the data first: a condition whose
+events do not occur, or a channel that does not exist, goes back to the agent to fix. Then
+the whole plan is shown to you to approve before anything runs:
+
+```text
+> analysis.erp_comparison(condition_a="rare", events_a=["stimulus/rare"], ...)
+  done in 0.4 s, proposal 20261103T091200Z-4d5e6f-2
+
+Decision needed: analysis.erp_comparison proposes
+    template: erp-comparison
+    name: erp-rare-vs-frequent
+    task: oddball
+    subjects: 01, 02, 03, 04, 05, 06
+    steps:
+        eeg.preprocess(l_freq=0.1, h_freq=30.0, reference="average")
+        eeg.epoch(conditions={"rare": ["stimulus/rare"], ...}, tmin=-0.2, tmax=0.8, ...)
+        eeg.erp(contrasts=[...], measures=[{"name": "amplitude", "channels": ["Pz"], ...}])
+    group_steps:
+        stats.mass_univariate(conditions=["rare_minus_frequent"], channels=["Pz"], ...)
+    warnings: (none)
+    settings: {...}
+Approve, edit or reject? [a/e/r]: a
+> analysis.run(name="erp-rare-vs-frequent")
+    sub-01     preprocess       ran
+    sub-01     epochs           ran
+    ...
+    group      group_test       ran
+  done in 11.2 s
+```
+
+`analysis.run` runs only plans you approved. It reports each subject's values, their mean
+and the group test, and every step is recorded as its own tool call. To change the subjects,
+edit `subjects` before approving. To change a setting, reject the plan with a note saying
+what to change, and the agent plans again. If the plan includes ICA or bad-channel
+detection, each subject's proposal comes to you in turn, and the run continues once you have
+decided them. The approved spec is kept in `derivatives/braino/pipelines/<name>/spec.yaml`:
+`braino pipeline run` reruns it without the agent.
+
 ## What the agent may not do
 
 The loop around the model keeps it on track:

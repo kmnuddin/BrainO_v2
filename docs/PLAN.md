@@ -554,6 +554,29 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     `answer_not_mentions`), which makes that run 13/13; "T8 and Pz are marked" still
     fails.*
 19. **Templates and plan checks**, built on the Stage C pipeline specs.
+    *Done (`braino.pipelines.checks`, `braino.pipelines.templates`, `braino.tools.analysis`).
+    Plan checks look at a spec's steps together: each step's input made by an earlier one,
+    cleaning before epoching, conditions, contrasts and labels defined before use, windows
+    inside the epochs, group tests with at least 3 subjects and a multiple-comparison
+    correction (a warning otherwise, and for cluster tests with too few subjects for their
+    permutations), and, against the dataset, subjects, events (listing the ones that occur),
+    channels and filters. `braino pipeline run` refuses a plan with errors. Two templates,
+    `erp-comparison` and `spectral-comparison`, are typed settings models that build specs
+    from the ERP CORE-validated steps. For the agent, each template is a decision tool: the
+    model fills in a few typed fields, the plan is checked (errors go back to the model) and
+    shown to the user whole, and approving it only saves it; `analysis.run` runs an approved
+    plan, each step recorded as its own call (provenance stays flat, and the agent cannot
+    run a plan the user has not seen). Decisions inside a plan come to the user one by one,
+    then the run continues. On synthetic data, 6 subjects run in about 11 s, and running
+    again reuses every step. Resting-state connectivity is left for when a connectivity
+    tool exists.
+    With the real 4B model on the CPU, the eval passed 13/13 (mean score 1.00) in 23
+    minutes, down from 29. The model chose the template itself for the three comparison
+    tasks, which went from 28-29 tool calls to 3 (inspect, plan, run). Asked to test "every
+    channel and time point", though, it tested Pz at 0-500 ms: the template always tested
+    the measurement channels and window, and the task only checked for a correction. The
+    template now has `test_scope` ('measured' or 'all'), and `stats-correction` checks that
+    every channel and the whole epoch are tested.*
 20. **RAG index** over the MNE, BIDS and BrainO documentation, small enough to search on a laptop
     (a local embedding model on the CPU).
 21. **Baseline evaluation on the minimum tier** (CPU, ~4B model), then LoRA fine-tuning on the HPC

@@ -30,6 +30,9 @@ from pydantic import BaseModel, Field
 
 Correction = Literal["fdr", "bonferroni", "max_stat", "none"]
 
+MIN_SUBJECTS = 3
+"""Subjects a group test needs at least."""
+
 
 @dataclass
 class GroupData:
@@ -112,8 +115,8 @@ def univariate(
 
     shape = group.shape[1:]
     n = group.shape[0]
-    if n < 3:
-        raise ValueError(f"need at least 3 subjects, have {n}")
+    if n < MIN_SUBJECTS:
+        raise ValueError(f"need at least {MIN_SUBJECTS} subjects, have {n}")
     k = len(group.data)
     if k <= 2:
         x = group.data[0] if k == 1 else group.data[0] - group.data[1]
@@ -192,8 +195,8 @@ def cluster_test(
     from scipy import stats
 
     n = group.shape[0]
-    if n < 3:
-        raise ValueError(f"need at least 3 subjects, have {n}")
+    if n < MIN_SUBJECTS:
+        raise ValueError(f"need at least {MIN_SUBJECTS} subjects, have {n}")
     if len(group.data) > 2:
         raise ValueError("cluster tests here compare one condition with 0, or two conditions")
     x = group.data[0] if len(group.data) == 1 else group.data[0] - group.data[1]

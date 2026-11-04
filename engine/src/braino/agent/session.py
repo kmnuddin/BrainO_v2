@@ -46,6 +46,9 @@ class ToolCallLog(BaseModel):
     error: str | None = None
     proposal_id: str | None = None
     seconds: float
+    within: str | None = Field(
+        default=None, description="The tool that ran this one as a step (e.g. analysis.run)"
+    )
 
 
 class DecisionLog(BaseModel):
@@ -102,6 +105,7 @@ class Session(ABC):
         args = dict(arguments or {})
         logged_args = args
         name = tool
+        before = len(self.context.provenance.calls)
         try:
             spec = self.tools.get(tool)
             name = spec.name
@@ -129,7 +133,30 @@ class Session(ABC):
                 seconds=round(time.perf_counter() - started, 3),
             )
         )
+        self._log_steps(name, before)
         return outcome
+
+    def _log_steps(self, parent: str, before: int) -> None:
+        """Log the tools that ``parent`` ran as steps (a pipeline), after it."""
+        try:
+            if not self.tools.get(parent).runs_steps:
+                return
+        except ToolNotFoundError:
+            return
+        for record in self.context.provenance.calls[before:]:
+            self.calls.append(
+                ToolCallLog(
+                    index=len(self.calls) + 1,
+                    tool=record.tool,
+                    arguments=record.arguments,
+                    ok=record.status == "ok",
+                    result=record.result,
+                    error=record.error,
+                    proposal_id=record.proposal_id,
+                    seconds=round((record.finished_at - record.started_at).total_seconds(), 3),
+                    within=parent,
+                )
+            )
 
     def request_decision(self, proposal_id: str, message: str = "") -> DecisionLog:
         """Ask the user about a proposal; returns their decision (and its application)."""
