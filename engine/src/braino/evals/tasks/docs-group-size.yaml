@@ -1,0 +1,31 @@
+id: docs-group-size
+category: docs
+description: >-
+  A question about how BrainO works is answered from its own documentation, without
+  running an analysis.
+request: How many subjects does BrainO need before it will run a group test?
+dataset:
+  synthetic: {subjects: ["01", "02"], seconds: 30}
+checks:
+  - kind: tool_called
+    tool: docs.search
+    description: looks it up in the documentation
+  - kind: answer_number
+    min: 3
+    max: 3
+    description: at least 3 subjects
+  - kind: tool_not_called
+    tool:
+      - analysis.erp_comparison
+      - analysis.spectral_comparison
+      - analysis.run
+      - stats.mass_univariate
+      - stats.cluster_permutation
+    description: runs no analysis to find out
+solution:
+  - id: docs
+    tool: docs.search
+    args: {query: "minimum number of subjects for a group test", source: braino}
+answer: >-
+  At least 3 subjects: the plan check refuses a group test with fewer, and warns when a
+  cluster test has too few subjects for its permutations (BrainO guide, Plan checks).

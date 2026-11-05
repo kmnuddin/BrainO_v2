@@ -852,23 +852,44 @@ def _safe_console() -> None:
 def _model_client(
     server: str | None, api_key: str | None, model_name: str, llama_cpp: bool
 ) -> Iterator[tuple[Any, int]]:
-    """A chat client for ``server``, or for the local model, started here and stopped after."""
+    """A chat client for ``server``, or for the local model, started here and stopped after.
+    Documentation search uses the local embedding model either way (when downloaded)."""
     from braino.llm import ChatClient
     from braino.runtime import ServerError, SetupError, load_settings, start_server
 
+    settings = load_settings()
     if server is not None:
         client = ChatClient(server, api_key=api_key, model=model_name, llama_cpp=llama_cpp)
-        yield client, load_settings().ctx_size
+        with _docs_embedder(settings.threads):
+            yield client, settings.ctx_size
         return
-    settings = load_settings()
     typer.echo(f"Starting the local model ({settings.model or 'not set up'})...", err=True)
     try:
         running = start_server()
     except (SetupError, ServerError) as exc:
         _fail(str(exc))
-    with running:
+    with running, _docs_embedder(settings.threads):
         typer.echo(f"Model loaded in {running.load_seconds} s.", err=True)
         yield ChatClient.for_server(running), running.ctx_size
+
+
+@contextlib.contextmanager
+def _docs_embedder(threads: int | None = None) -> Iterator[None]:
+    """Documentation search by meaning as well as keywords, when the embedding model is
+    downloaded: its server starts at the first search and stops here."""
+    from braino import knowledge
+    from braino.knowledge.embed import LazyEmbedder, available
+
+    if not available():
+        yield
+        return
+    embedder = LazyEmbedder(threads=threads)
+    token = knowledge.embedder.set(embedder)
+    try:
+        yield
+    finally:
+        knowledge.embedder.reset(token)
+        embedder.stop()
 
 
 class _AgentPrinter:
@@ -1061,6 +1082,105 @@ def eval_compare(
         raise typer.Exit(code=1)
 
 
+# --- documentation search -----------------------------------------------------------------
+
+docs_app = typer.Typer(
+    help="Search the documentation that ships with BrainO (BrainO, BIDS, MNE).",
+    no_args_is_help=True,
+)
+app.add_typer(docs_app, name="docs")
+
+
+@docs_app.command("search")
+def docs_search_command(
+    query: Annotated[str, typer.Argument(help="A question or keywords")],
+    source: Annotated[
+        str | None, typer.Option("--source", help="Only one source: braino, bids or mne")
+    ] = None,
+    limit: Annotated[int, typer.Option("--limit", "-n", min=1, max=20, help="Passages")] = 3,
+    keywords_only: Annotated[
+        bool, typer.Option("--keywords-only", help="Do not use the embedding model")
+    ] = False,
+    full: Annotated[bool, typer.Option("--full", help="Print whole passages")] = False,
+) -> None:
+    """Find the passages that answer a question, as the agent's docs.search tool does.
+
+    Uses keywords, and meaning too when the embedding model is downloaded ('braino model
+    setup'); its server starts for the search and stops after.
+    """
+    from braino import knowledge
+    from braino.knowledge.passages import SOURCES
+
+    if source is not None and source not in SOURCES:
+        _fail(f"unknown source {source!r}; choose from {', '.join(SOURCES)}")
+    _safe_console()
+    index = knowledge.default_index()
+    labels = {s.source: f"{s.name} {s.version}" for s in index.meta.sources}
+    with contextlib.ExitStack() as stack:
+        if not keywords_only:
+            stack.enter_context(_docs_embedder())
+        hits = knowledge.search(query, limit=limit, source=source)
+        semantic = any(h.semantic_rank is not None for h in hits)
+    if not hits:
+        typer.echo("Nothing in the documentation matches.")
+        raise typer.Exit(code=1)
+    for n, hit in enumerate(hits, 1):
+        p = hit.passage
+        typer.echo(f"\n{n}. {p.title}  [{labels.get(p.source, p.source)}]")
+        typer.echo(f"   {p.url}")
+        text = p.text if full else _clip(p.text, 400)
+        typer.echo("   " + text.replace("\n", "\n   "))
+    how = "keywords and meaning" if semantic else "keywords only"
+    typer.echo(f"\n(searched by {how})", err=True)
+
+
+@docs_app.command("sources")
+def docs_sources() -> None:
+    """Show what the index holds: each source's version, licence and size."""
+    from braino import knowledge
+
+    meta = knowledge.default_index().meta
+    for s in meta.sources:
+        typer.echo(f"{s.name} {s.version} ({s.licence}): {s.passages} passages, {s.url}")
+    vectors = (
+        f"vectors from {meta.embedding} ({meta.dims} dims)" if meta.embedding else "no vectors"
+    )
+    typer.echo(f"Search: keywords, and meaning with the {vectors}")
+
+
+@docs_app.command("build")
+def docs_build(
+    keywords_only: Annotated[
+        bool, typer.Option("--keywords-only", help="Build without vectors (no model needed)")
+    ] = False,
+    docs_dir: Annotated[
+        Path | None, typer.Option("--docs", help="BrainO's docs/ folder (default: the checkout's)")
+    ] = None,
+) -> None:
+    """Rebuild the index from the pinned sources (for BrainO's developers).
+
+    Downloads the pinned BIDS and MNE releases once, cuts them and BrainO's docs and tools
+    into passages, and embeds the new or changed ones (unchanged ones keep their vectors).
+    Run it after changing the docs or a tool's description.
+    """
+    from braino.knowledge.build import build_and_save
+    from braino.knowledge.embed import ServerEmbedder
+    from braino.runtime import ServerError
+
+    def log(line: str) -> None:
+        typer.echo(line, err=True)
+
+    with contextlib.ExitStack() as stack:
+        embedder = None
+        if not keywords_only:
+            try:
+                embedder = stack.enter_context(ServerEmbedder.create())
+            except ServerError as exc:
+                _fail(f"{exc} (or build with --keywords-only)")
+        index = build_and_save(docs_dir, embedder=embedder, log=log)
+    typer.echo(f"Index: {len(index.passages)} passages, vectors from {index.meta.embedding}.")
+
+
 # --- local model runtime ------------------------------------------------------------------
 
 model_app = typer.Typer(
@@ -1128,6 +1248,7 @@ def model_hardware(
 def model_list() -> None:
     """List the models BrainO can run, and which are downloaded or fit here."""
     from braino.runtime import catalog, detect, installed_models, options
+    from braino.runtime.install import is_model_installed
 
     fits = {o.model: o.placement for o in options(detect())}
     have = {m.id for m in installed_models()}
@@ -1135,6 +1256,9 @@ def model_list() -> None:
         where = fits.get(m.id, "does not fit")
         mark = "downloaded" if m.id in have else ""
         typer.echo(f"{m.id:<18} {m.size_gb:5.1f} GB  {m.licence:<11} {where:<13} {mark}")
+    e = catalog().embedding
+    mark = "downloaded" if is_model_installed(e) else ""
+    typer.echo(f"{e.id:<18} {e.size_gb:5.1f} GB  {e.licence:<11} {'docs search':<13} {mark}")
 
 
 @model_app.command("setup")
@@ -1146,12 +1270,20 @@ def model_setup(
         str | None, typer.Option("--backend", help="cpu, vulkan, cuda or metal (default: auto)")
     ] = None,
     bench: Annotated[bool, typer.Option("--bench/--no-bench", help="Measure the speed")] = True,
+    docs_model: Annotated[
+        bool,
+        typer.Option(
+            "--docs-model/--no-docs-model",
+            help="Also download the embedding model (0.6 GB) the documentation search uses",
+        ),
+    ] = True,
     yes: Annotated[bool, typer.Option("--yes", "-y", help="Do not ask before downloading")] = False,
 ) -> None:
     """Install llama.cpp and download the model for this computer, once.
 
     Downloads are checked against pinned SHA-256 hashes and resume if interrupted. Afterwards a
-    short benchmark tells you how fast the agent will be.
+    short benchmark tells you how fast the agent will be. The embedding model lets the agent
+    search the documentation by meaning; without it, search uses keywords only.
     """
     from braino.runtime import (
         DownloadError,
@@ -1178,13 +1310,24 @@ def model_setup(
         _fail(str(exc).strip("'\""))
     need = 0 if find_server(chosen) else build.size
     need += 0 if is_model_installed(spec) else spec.size
+    if docs_model and not is_model_installed(cat.embedding):
+        need += cat.embedding.size
     typer.echo(f"Model:    {spec.name} ({spec.licence}), runs on {option.placement}")
+    if docs_model:
+        typer.echo(f"Search:   {cat.embedding.name} ({cat.embedding.licence})")
     typer.echo(f"Runtime:  llama.cpp {cat.llama_cpp.build} ({chosen})")
     typer.echo(f"Download: {need / 2**30:.2f} GB")
     if need and not yes and not typer.confirm("Download now?", default=True):
         raise typer.Exit(code=1)
     try:
-        settings = setup(option.model, chosen, benchmark=bench, progress=_progress_bar, hw=hw)
+        settings = setup(
+            option.model,
+            chosen,
+            benchmark=bench,
+            docs_model=docs_model,
+            progress=_progress_bar,
+            hw=hw,
+        )
     except (SetupError, DownloadError, ServerError) as exc:
         _fail(str(exc))
     typer.echo(
@@ -1198,8 +1341,14 @@ def model_setup(
 @model_app.command("status")
 def model_status() -> None:
     """Show the chosen model, what is installed, and the last benchmark."""
-    from braino.runtime import describe, installed_backends, installed_models, load_settings
-    from braino.runtime.install import find_server
+    from braino.runtime import (
+        catalog,
+        describe,
+        installed_backends,
+        installed_models,
+        load_settings,
+    )
+    from braino.runtime.install import find_server, is_model_installed
 
     s = load_settings()
     if s.model is None:
@@ -1214,6 +1363,9 @@ def model_status() -> None:
     if server is not None:
         typer.echo(f"Server:    {server}")
     typer.echo("Models:    " + (", ".join(m.id for m in installed_models()) or "none downloaded"))
+    embedding = catalog().embedding
+    have = "downloaded" if is_model_installed(embedding) else "not downloaded (keyword search only)"
+    typer.echo(f"Search:    {embedding.id}, {have}")
     if s.benchmark is not None:
         typer.echo(f"Speed:     {describe(s.benchmark)}")
 
@@ -1277,8 +1429,9 @@ def model_remove(
     if model is None and runtime is None:
         _fail("name a model, or --runtime BACKEND")
     if model is not None:
+        cat = catalog()
         try:
-            spec = catalog().model(model)
+            spec = cat.embedding if model == cat.embedding.id else cat.model(model)
         except KeyError as exc:
             _fail(str(exc).strip("'\""))
         typer.echo(f"{model}: " + ("deleted" if remove_model(spec) else "not downloaded"))

@@ -52,6 +52,9 @@ MAX_REPEATS = 2
 """Repeated calls in a row after which the model must answer."""
 CONTEXT_RESERVE = 3
 """The model must answer once fewer than this many replies' worth of context is left."""
+DOCUMENTATION_TOOLS = frozenset({"docs.search"})
+"""Tools whose results name other tools in passing: those are not loaded for the next step
+(each costs seconds of reading on a CPU)."""
 
 EventKind = Literal["thinking", "model", "call", "result", "skipped", "decision", "answer"]
 
@@ -175,7 +178,10 @@ class LLMAgent:
                     {"ok": outcome.ok, "proposal_id": outcome.proposal_id},
                 )
                 conv.add_result(
-                    outcome, proposal_id=outcome.proposal_id, waiting=_waiting(outcome.result)
+                    outcome,
+                    proposal_id=outcome.proposal_id,
+                    waiting=_waiting(outcome.result),
+                    load_named=step.tool not in DOCUMENTATION_TOOLS,
                 )
             elif isinstance(step, RequestDecision):
                 repeats = 0

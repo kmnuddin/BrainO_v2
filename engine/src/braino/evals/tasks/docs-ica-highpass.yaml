@@ -1,0 +1,29 @@
+id: docs-ica-highpass
+category: docs
+description: >-
+  A methods question is answered from MNE's tutorials or BrainO's guide, with the cutoff
+  they give.
+request: Why is the data high-pass filtered before ICA, and at what cutoff?
+dataset:
+  synthetic: {subjects: ["01"], seconds: 30}
+checks:
+  - kind: tool_called
+    tool: docs.search
+    description: looks it up in the documentation
+  - kind: answer_number
+    min: 1
+    max: 1
+    description: the 1 Hz cutoff
+  - kind: answer_mentions
+    terms: [drift, slow]
+    any_term: true
+    description: says the high-pass removes slow drifts
+  - kind: tool_not_called
+    tool: [eeg.preprocess, eeg.ica_clean]
+    description: answers the question rather than cleaning the data
+solution:
+  - {id: docs, tool: docs.search, args: {query: "high-pass filter before ICA cutoff slow drifts"}}
+answer: >-
+  Slow drifts make the ICA components depend on each other and degrade the decomposition, so
+  ICA is fitted on a copy high-passed at 1 Hz (MNE tutorial on repairing artifacts with ICA;
+  BrainO does the same).

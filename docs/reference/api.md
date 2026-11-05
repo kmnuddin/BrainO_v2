@@ -53,6 +53,16 @@ The main entry points. Every tool is also callable through the registry (see
 
 ::: braino.llm.select.select_tools
 
+## Documentation search
+
+::: braino.knowledge.search
+
+::: braino.knowledge.index.DocsIndex
+
+::: braino.knowledge.embed.ServerEmbedder
+
+::: braino.knowledge.build.build_and_save
+
 ## Agent
 
 ::: braino.agent.loop.LLMAgent

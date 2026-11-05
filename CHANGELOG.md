@@ -44,6 +44,13 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   `analysis.run` runs an approved plan over every subject and reports each subject's values,
   their mean and the group test. Decisions inside the plan (ICA, bad channels) come to the
   user one by one. The console shows a plan's steps one per line.
+- Documentation search (`braino.knowledge`, `braino docs search`, the agent's `docs.search`
+  tool): an index of BrainO's guide and tools, the BIDS specification 1.11.2 and MNE-Python
+  1.13.2's EEG tutorials, built from pinned releases and shipped with BrainO. Search combines
+  keywords (BM25) and meaning (Qwen3-Embedding 0.6B on the CPU, downloaded by `braino model
+  setup`; keywords alone without it). The agent answers questions about methods, BIDS, MNE
+  and BrainO from the passages, naming the source. `braino docs build` updates the index,
+  embedding only changed passages.
 - `eeg.epoch` warns when a condition loses half or more of its epochs.
 - The synthetic EEG generator moved to `braino.datasets.synthetic`.
 

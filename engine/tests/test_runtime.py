@@ -41,7 +41,7 @@ from braino.runtime import (
 )
 from braino.runtime import install as install_mod
 from braino.runtime.bench import describe, rate, run_benchmark
-from braino.runtime.catalog import ModelSpec, PinnedFile
+from braino.runtime.catalog import PinnedFile, PinnedModel
 from braino.runtime.download import download
 from braino.runtime.hardware import parse_nvidia_smi, vendor_of
 from braino.runtime.settings import load_settings
@@ -139,6 +139,9 @@ def test_catalog_pins_every_platform_and_model() -> None:
         assert m.revision in m.url and m.url.endswith(m.file)
         assert m.licence == "Apache-2.0"
     assert any(m.cpu_ok and not m.moe for m in cat.models)  # the minimum-tier model
+    e = cat.embedding
+    assert e.revision in e.url and e.url.endswith(e.file) and e.licence == "Apache-2.0"
+    assert e.id not in ids and e.query_prefix.endswith("Query:")
     for b in cat.llama_cpp.builds:
         for f in b.files:
             assert cat.llama_cpp.build in cat.llama_cpp.url_of(f)
@@ -361,10 +364,10 @@ def test_server_override(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Non
 def _serve_models(files: FileServer, monkeypatch: pytest.MonkeyPatch) -> Catalog:
     """The real catalog with small stand-in model files served from ``files``."""
     data = catalog().model_dump()
-    for m in data["models"]:
+    for m in [*data["models"], data["embedding"]]:
         pin = files.add(m["file"], b"GGUF" + m["id"].encode() * 1000)
         m["size"], m["sha256"] = pin.size, pin.sha256
-    monkeypatch.setattr(ModelSpec, "url", property(lambda self: f"{files.url}/{self.file}"))
+    monkeypatch.setattr(PinnedModel, "url", property(lambda self: f"{files.url}/{self.file}"))
     return Catalog.model_validate(data)
 
 
@@ -502,7 +505,10 @@ def test_cli_model_commands(fake_setup: Catalog) -> None:
     assert "Ready: qwen3.5-4b" in result.output and "first step" in result.output
     status = runner.invoke(app, ["model", "status"]).output
     assert "qwen3.5-4b on cpu" in status and "Speed:" in status
+    assert "qwen3-embedding-0.6b, downloaded" in status  # for documentation search
     assert "downloaded" in runner.invoke(app, ["model", "list"]).output
+    assert "deleted" in runner.invoke(app, ["model", "remove", "qwen3-embedding-0.6b"]).output
+    assert "keyword search only" in runner.invoke(app, ["model", "status"]).output
     result = runner.invoke(app, ["model", "bench"])
     assert result.exit_code == 0 and "tokens/s" in result.output
     assert runner.invoke(app, ["model", "remove", "nope"]).exit_code == 1

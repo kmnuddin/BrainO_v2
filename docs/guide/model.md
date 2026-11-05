@@ -56,6 +56,10 @@ Everything is downloaded once, into BrainO's data folder (`~/.cache/braino`, or 
   `braino model setup`; dropped connections are retried.
 - **Licences:** the models are under Apache-2.0 and llama.cpp under MIT. Both are downloaded
   from their publishers (Hugging Face, GitHub), not bundled with BrainO.
+- **Documentation search:** setup also downloads Qwen3-Embedding 0.6B (0.6 GB, Apache-2.0),
+  with which the agent [looks things up](agent.md#looking-things-up) by meaning. It runs on
+  the CPU, only while a search needs it, in about 1 GB of RAM. `--no-docs-model` skips it;
+  search then uses keywords alone.
 
 `braino model remove qwen3.6-35b-a3b` deletes a model; `braino model remove --runtime cuda` an
 installed llama.cpp build.

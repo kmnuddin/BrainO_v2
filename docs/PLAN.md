@@ -583,6 +583,24 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     fixed it on the next step.*
 20. **RAG index** over the MNE, BIDS and BrainO documentation, small enough to search on a laptop
     (a local embedding model on the CPU).
+    *Done (`braino.knowledge`, the `docs.search` tool, `braino docs search|sources|build`).
+    708 passages: BrainO's guide and tool descriptions, the BIDS 1.11.2 chapters EEG needs
+    (with the schema's field tables written out, one line per field) and MNE 1.13.2's EEG
+    tutorials, glossary and notes, from pinned release archives. The index ships with
+    BrainO (1.7 MB) and is rebuilt incrementally: only new or changed passages are
+    embedded (a full build takes 10 minutes on the CPU, a docs edit seconds); a test fails
+    while it is stale. Search fuses BM25 keywords and Qwen3-Embedding-0.6B vectors (Q8_0,
+    0.6 GB, downloaded by `braino model setup`, run on the CPU in about 1 GB of RAM, started
+    at the first search: 0.2 s a question). On 22 questions worded as users ask, judged by
+    whether a returned passage holds the answer: keywords 18, meaning alone 15-19, both 21.
+    Most of the gain came from the content, not the ranking: whole field descriptions in
+    the BIDS tables buried the field names, a lead sentence was cut off from its table, the
+    HED appendix crowded out event questions, and the guide never said in prose that a
+    group test needs 3 subjects. Tools named in documentation results are not loaded into
+    the conversation (each schema costs seconds of reading). With the real 4B model, the
+    three new `docs` tasks (BIDS, MNE, BrainO) pass, and the full eval passed 16/16 (mean
+    score 1.00) in 27 minutes, the other tasks taking as long as before. nilearn and
+    COBIDAS-MEEG are left for the fMRI phase and for when their licences are checked.*
 21. **Baseline evaluation on the minimum tier** (CPU, ~4B model), then LoRA fine-tuning on the HPC
     only where the evals show gaps; fine-tuned models are published as GGUF files for users to
     download.

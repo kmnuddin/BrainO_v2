@@ -132,8 +132,8 @@ def mass_univariate(params: MassUnivariateInput, ctx: RunContext) -> MassUnivari
     """Test across subjects at every channel and time (or frequency) point: t-test of one
     condition against 0, paired t-test of two conditions, or repeated-measures ANOVA of more,
     corrected for multiple comparisons (FDR by default). Reads the per-subject results of
-    eeg.erp, eeg.spectral or eeg.tfr. Restrict channels and windows to planned ones when you
-    can: fewer tests, more power."""
+    eeg.erp, eeg.spectral or eeg.tfr; needs at least 3 subjects. Restrict channels and
+    windows to planned ones when you can: fewer tests, more power."""
     from braino.stats.group import univariate
 
     group, missing = load_group(ctx, params)
@@ -162,7 +162,8 @@ def cluster_permutation(params: ClusterInput, ctx: RunContext) -> ClusterOutput:
     """Cluster-based permutation test across subjects (one condition against 0, or a paired
     test of two): finds groups of neighbouring channels and time (or frequency) points with
     an effect, and gives each cluster a p-value that controls the family-wise error rate.
-    Reads the per-subject results of eeg.erp, eeg.spectral or eeg.tfr."""
+    Reads the per-subject results of eeg.erp, eeg.spectral or eeg.tfr; needs at least 3
+    subjects, and 7 or more for enough permutations."""
     from braino.stats.group import cluster_test
 
     if len(params.conditions) > 2:

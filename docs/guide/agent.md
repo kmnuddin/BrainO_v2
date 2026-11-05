@@ -98,6 +98,38 @@ detection, each subject's proposal comes to you in turn, and the run continues o
 decided them. The approved spec is kept in `derivatives/braino/pipelines/<name>/spec.yaml`:
 `braino pipeline run` reruns it without the agent.
 
+## Looking things up
+
+For questions about methods, data formats or BrainO itself ("why high-pass before ICA?",
+"which columns must events.tsv have?"), the agent searches the documentation that ships
+with BrainO (`docs.search`) and answers from what it finds, naming the source, instead of
+from what the model remembers. The index holds:
+
+| Source | What | Licence |
+|---|---|---|
+| BrainO | this guide, and every tool's description and parameters | GPL-3.0-or-later |
+| BIDS specification 1.11.2 | common principles, dataset description, participants and scans, events, the EEG chapter, derivatives, units, HED | CC-BY-4.0 |
+| MNE-Python 1.13.2 | the EEG tutorials (raw data, preprocessing, ICA, referencing, epochs, ERPs, spectra, statistics), the glossary, notes on interpolation and units | BSD-3-Clause |
+
+You can search it yourself:
+
+```bash
+braino docs search "why high-pass filter before ICA"
+braino docs search "required columns" --source bids --full
+braino docs sources        # versions, licences, sizes
+```
+
+Search matches keywords, and also meaning, so a question worded differently from the
+documentation still finds it: that uses a small embedding model (Qwen3-Embedding 0.6B,
+0.6 GB, downloaded by `braino model setup`). It runs on the CPU only while a search needs
+it, beside the chat model, and embeds a question in under a second. Without it, search
+uses keywords alone.
+
+The index is built in advance from pinned releases of each source and ships with BrainO;
+nothing is downloaded or sent anywhere when you search. (Developers: after changing the
+guide or a tool's description, `braino docs build` updates it, embedding only the passages
+that changed; a test fails until it is current.)
+
 ## What the agent may not do
 
 The loop around the model keeps it on track:

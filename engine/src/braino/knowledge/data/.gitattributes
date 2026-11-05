@@ -1,0 +1,3 @@
+# The documentation index is built by 'braino docs build': never convert or diff it as text.
+*.npy binary
+*.gz binary

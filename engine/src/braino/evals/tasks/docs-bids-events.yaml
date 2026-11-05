@@ -1,0 +1,23 @@
+id: docs-bids-events
+category: docs
+description: >-
+  A question about the BIDS standard is answered from the specification that ships with
+  BrainO, not from what the model remembers.
+request: Which columns must every BIDS events.tsv file have?
+dataset:
+  synthetic: {subjects: ["01"], seconds: 30}
+checks:
+  - kind: tool_called
+    tool: docs.search
+    description: looks it up in the documentation
+  - kind: answer_mentions
+    terms: [onset, duration]
+    description: names the two required columns
+  - kind: max_calls
+    count: 3
+    description: a few searches at most, no analysis
+solution:
+  - {id: docs, tool: docs.search, args: {query: "required columns of events.tsv", source: bids}}
+answer: >-
+  Every events.tsv must have the columns onset and duration, both in seconds; other columns
+  such as trial_type are optional (BIDS specification, Events).

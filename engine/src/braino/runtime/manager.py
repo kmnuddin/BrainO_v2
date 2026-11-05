@@ -75,12 +75,14 @@ def setup(
     backend: Backend | None = None,
     *,
     benchmark: bool = True,
+    docs_model: bool = True,
     progress: Callable[[str], Progress | None] | None = None,
     hw: Hardware | None = None,
     cat: Catalog | None = None,
 ) -> RuntimeSettings:
     """Install the runtime and model for this computer, benchmark it, and save the choice.
 
+    With ``docs_model``, the embedding model for documentation search is downloaded too.
     ``progress(label)`` may return a callback for the download of ``label``.
     """
     cat = cat or catalog()
@@ -93,6 +95,8 @@ def setup(
 
     install_runtime(hw, chosen_backend, progress=report(f"llama.cpp ({chosen_backend})"), cat=cat)
     download_model(spec, progress=report(spec.name))
+    if docs_model:
+        download_model(cat.embedding, progress=report(cat.embedding.name))
     settings = load_settings()
     settings = settings.model_copy(
         update={

@@ -56,6 +56,8 @@ or channels: find them with tools, or ask.
 To compare two conditions (ERPs or band power), for one subject or a group, use \
 analysis.erp_comparison or analysis.spectral_comparison rather than each step: they plan a \
 tested pipeline, the user approves the plan (decide), then analysis.run runs it.
+For a question about methods, BIDS, MNE or how BrainO works, look it up with docs.search and \
+answer from the passages it returns, naming their source; do not answer it from memory.
 Rules: every number in an answer must come from a tool result. Report what the tools found, \
 including warnings. If a tool fails, read its error: if another tool must run first, run it, \
 then retry; otherwise fix the call or explain the problem. Never repeat a call that failed \
@@ -180,11 +182,13 @@ class Conversation:
         *,
         proposal_id: str | None = None,
         waiting: Sequence[str] = (),
+        load_named: bool = True,
     ) -> None:
         """Report what the last action led to: a tool's result (or error), the user's
         decision, or the user's reply to a question. A decision tool's ``proposal_id``, and
         the proposals ``waiting`` in a pipeline's result, become something the model can ask
-        the user to decide."""
+        the user to decide. Tools the result names are loaded, unless ``load_named`` is
+        false (documentation names tools in passing)."""
         if isinstance(result, BaseModel):
             text = result.model_dump_json(exclude_none=True)
         elif isinstance(result, str):
@@ -200,7 +204,7 @@ class Conversation:
                 self.pending.append(pid)
         # "run eeg.preprocess first": load the tools a result names, so the next step can
         # call them (only loaded tools are in the step's schema).
-        named = [n for n in self.loadable if _mentions(text, n)]
+        named = [n for n in self.loadable if _mentions(text, n)] if load_named else []
         if named:
             self._load(named)
 

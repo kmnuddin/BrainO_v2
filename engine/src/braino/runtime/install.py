@@ -22,7 +22,15 @@ import zipfile
 from pathlib import Path
 
 from braino.paths import data_root
-from braino.runtime.catalog import BACKENDS, Backend, Catalog, ModelSpec, RuntimeBuild, catalog
+from braino.runtime.catalog import (
+    BACKENDS,
+    Backend,
+    Catalog,
+    ModelSpec,
+    PinnedModel,
+    RuntimeBuild,
+    catalog,
+)
 from braino.runtime.download import DownloadError, Progress, download, is_downloaded
 from braino.runtime.hardware import Hardware
 
@@ -177,16 +185,16 @@ def _extract(archive: Path, target: Path) -> None:
 # --- models ------------------------------------------------------------------------------
 
 
-def model_path(model: ModelSpec) -> Path:
+def model_path(model: PinnedModel) -> Path:
     return models_dir() / model.file
 
 
-def is_model_installed(model: ModelSpec, *, verify: bool = False) -> bool:
+def is_model_installed(model: PinnedModel, *, verify: bool = False) -> bool:
     return is_downloaded(model_path(model), model.pinned(), verify=verify)
 
 
 def download_model(
-    model: ModelSpec, *, progress: Progress | None = None, verify: bool = False
+    model: PinnedModel, *, progress: Progress | None = None, verify: bool = False
 ) -> Path:
     """Download ``model`` once (checked against its pinned SHA-256); returns its path.
 
@@ -203,7 +211,7 @@ def installed_models(cat: Catalog | None = None) -> list[ModelSpec]:
     return [m for m in cat.models if is_model_installed(m)]
 
 
-def remove_model(model: ModelSpec) -> bool:
+def remove_model(model: PinnedModel) -> bool:
     path = model_path(model)
     if not path.exists():
         return False

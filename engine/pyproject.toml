@@ -48,6 +48,7 @@ docs = [
 ]
 dev = [
     "bids-validator>=1.14",
+    "bidsschematools>=1.0", # reads the BIDS schema when building the documentation index
     "jsonschema>=4.18",   # checks that compact tool schemas allow the same values
     "mypy>=1.10",
     "pooch>=1.8",

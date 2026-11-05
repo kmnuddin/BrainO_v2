@@ -88,4 +88,6 @@ baseline-corrected in dB by default.
 **Group statistics**: one-sample t-tests (a difference wave against 0), paired t-tests (two
 conditions) or repeated-measures ANOVA (more), corrected by false discovery rate, Bonferroni
 or permutation of the maximum statistic; and cluster-based permutation tests over neighbouring
-channels and time or frequency points.
+channels and time or frequency points. A group test needs at least 3 subjects. With few
+subjects a cluster test has few distinct permutations (2^n sign flips: 64 for 6 subjects), so
+the plan check warns about a cluster test with fewer than 7.

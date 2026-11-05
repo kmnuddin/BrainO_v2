@@ -46,14 +46,11 @@ class LlamaCpp(BaseModel):
         return self.url.format(name=file.name)
 
 
-class ModelSpec(BaseModel):
+class PinnedModel(BaseModel):
+    """A GGUF file on Hugging Face, pinned by repository revision, size and SHA-256."""
+
     id: str
     name: str
-    params_b: float = Field(description="Parameters, in billions")
-    active_params_b: float = Field(description="Parameters used per token (less for MoE)")
-    moe: bool
-    cpu_ok: bool = Field(description="Fast enough to recommend on a CPU alone")
-    quality: int = Field(description="Higher is a stronger model")
     licence: str
     repo: str
     revision: str = Field(pattern=r"^[0-9a-f]{40}$")
@@ -73,9 +70,28 @@ class ModelSpec(BaseModel):
         return PinnedFile(name=self.file, size=self.size, sha256=self.sha256)
 
 
+class ModelSpec(PinnedModel):
+    """A chat model the agent can run."""
+
+    params_b: float = Field(description="Parameters, in billions")
+    active_params_b: float = Field(description="Parameters used per token (less for MoE)")
+    moe: bool
+    cpu_ok: bool = Field(description="Fast enough to recommend on a CPU alone")
+    quality: int = Field(description="Higher is a stronger model")
+
+
+class EmbeddingSpec(PinnedModel):
+    """The model that turns a question into a vector, to search the documentation."""
+
+    dims: int = Field(gt=0, description="Length of the vectors the model writes")
+    pooling: Literal["last", "mean", "cls"]
+    query_prefix: str = Field(description="Put before a question (not before passages)")
+
+
 class Catalog(BaseModel):
     llama_cpp: LlamaCpp
     models: list[ModelSpec]
+    embedding: EmbeddingSpec
 
     def model(self, model_id: str) -> ModelSpec:
         for m in self.models:
