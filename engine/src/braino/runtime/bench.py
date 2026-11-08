@@ -22,6 +22,8 @@ from braino.runtime.settings import Benchmark, Rating
 
 BENCH_PROMPT_TOKENS = 1024
 BENCH_OUTPUT_TOKENS = 48
+#: Tokens the GPU warm-up writes: enough to run the kernels that write, as well as read.
+WARMUP_OUTPUT_TOKENS = 4
 FIRST_STEP_PROMPT = 2000
 NEXT_STEP_PROMPT = 400
 STEP_OUTPUT = 120
@@ -43,7 +45,12 @@ def bench_prompt(tokens: int = BENCH_PROMPT_TOKENS) -> str:
 
 
 def run_benchmark(server: LlamaServer, model: str, backend: str) -> Benchmark:
-    """Measure ``server`` (already started) and estimate agent step times."""
+    """Measure ``server`` (already started) and estimate agent step times.
+
+    On a GPU, an untimed request runs first: the first time a GPU runs llama.cpp, its driver
+    compiles kernels as they are first used, which made one measurement 100 times too slow
+    (a new card measured 25 instead of 3,000 tokens/s read). A CPU needs no warm-up.
+    """
     payload = {
         "prompt": bench_prompt(),
         "n_predict": BENCH_OUTPUT_TOKENS,
@@ -51,6 +58,8 @@ def run_benchmark(server: LlamaServer, model: str, backend: str) -> Benchmark:
         "cache_prompt": False,  # measure reading the whole prompt
         "ignore_eos": True,  # always write the full count, so the speed is comparable
     }
+    if server.placement != "cpu":
+        server.post("/completion", {**payload, "n_predict": WARMUP_OUTPUT_TOKENS})
     response = server.post("/completion", payload)
     timings = response.get("timings") if isinstance(response, dict) else None
     if not timings:

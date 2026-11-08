@@ -7,9 +7,12 @@ request: How many subjects does BrainO need before it will run a group test?
 dataset:
   synthetic: {subjects: ["01", "02"], seconds: 30}
 checks:
+  # Not required: the stats tools' descriptions say it too, and an answer from them is
+  # grounded in BrainO's documentation as well.
   - kind: tool_called
     tool: docs.search
     description: looks it up in the documentation
+    required: false
   - kind: answer_number
     min: 3
     max: 3

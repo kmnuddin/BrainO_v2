@@ -148,7 +148,10 @@ def _responses(request: dict[str, Any]) -> list[str]:
 
 def test_numbers_in_ranges_minus_signs_and_thousands() -> None:
     minus, dash = chr(0x2212), chr(0x2013)
-    text = f"band-pass 0.1-40 Hz, t = {minus}14.45, 5,020 tests, 0.316{dash}0.48 s, sub-01, T8"
+    text = (
+        f"band-pass 0.1-40 Hz, t = {minus}14.45, 5,020 tests, 0.316{dash}0.48 s, sub-01, T8, "
+        f"t = {dash}9.189"  # a model wrote negative t values with an en dash
+    )
     assert numbers_in(text) == [
         (0.1, 1),
         (40.0, 0),
@@ -156,6 +159,7 @@ def test_numbers_in_ranges_minus_signs_and_thousands() -> None:
         (5020.0, 0),
         (0.316, 3),
         (0.48, 2),
+        (-9.189, 3),
     ]
 
 

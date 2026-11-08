@@ -103,6 +103,17 @@ def test_compact_schemas_are_smaller() -> None:
     assert compact < 0.85 * raw
 
 
+def test_recording_fields_come_first() -> None:
+    """A reply follows the schema's property order, so a tool's settings must come after the
+    fields naming the recording: the 35B model wrote subject, task, session and run, and could
+    then no longer write the preprocessing settings listed before task."""
+    recording = ["subject", "task", "session", "run"]
+    for tool in registry:
+        names = list(parameters(tool)["properties"])
+        if "subject" in names:
+            assert names[:4] == recording, tool.name
+
+
 def test_catalogue_and_cards() -> None:
     text = catalogue(list(registry))
     assert len(text.splitlines()) == len(registry)
@@ -390,7 +401,8 @@ def test_conversation_cut_off_reply(server: ScriptedServer) -> None:
     ]
     conv = Conversation(server.client(), "Hello", preload=[])
     assert conv.next_step() == Answer(text="short")
-    assert "cut off" in server.requests[1]["messages"][-1]["content"]
+    retry = server.requests[1]["messages"][-1]["content"]
+    assert "cut off" in retry and "shorter" in retry
 
 
 def test_conversation_decisions(server: ScriptedServer) -> None:

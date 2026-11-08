@@ -18,6 +18,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
+from braino.eeg.channels import match_channels
+
 MeasureKind = Literal["mean", "peak_positive", "peak_negative"]
 
 
@@ -97,7 +99,7 @@ def measure(evoked: Any, spec: Measure, waveform: str) -> MeasureValue:
     """Take one measure from ``evoked``."""
     import numpy as np
 
-    missing = [ch for ch in spec.channels if ch not in evoked.ch_names]
+    channels, missing = match_channels(spec.channels, evoked.ch_names)
     if missing:
         raise ValueError(f"measure {spec.name!r}: no channel {', '.join(missing)}")
     times = evoked.times
@@ -107,7 +109,7 @@ def measure(evoked: Any, spec: Measure, waveform: str) -> MeasureValue:
             f"({times[0]:g}-{times[-1]:g} s)"
         )
     window = (times >= spec.tmin - 1e-9) & (times <= spec.tmax + 1e-9)
-    trace = evoked.copy().pick(spec.channels).data.mean(axis=0)[window] * 1e6
+    trace = evoked.copy().pick(channels).data.mean(axis=0)[window] * 1e6
     latency = None
     if spec.kind == "mean":
         value = float(trace.mean())
@@ -121,7 +123,7 @@ def measure(evoked: Any, spec: Measure, waveform: str) -> MeasureValue:
         kind=spec.kind,
         value_uv=round(value, 4),
         latency_ms=latency,
-        channels=spec.channels,
+        channels=channels,
         n_trials=int(evoked.nave),
     )
 

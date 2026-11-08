@@ -83,6 +83,11 @@ On a CPU, reading the prompt is the slow part. That is why later steps are faste
 keeps what it has already read, so only the new part of the conversation (a tool result) is
 read again. Run `braino model bench` again after changing the model or the hardware.
 
+The first time llama.cpp runs on a GPU, the driver compiles its code for that card, so the
+first start takes about a minute longer; the driver keeps the result, and later starts take
+seconds. The benchmark sends one untimed request first on a GPU, so it measures the card,
+not the compiling.
+
 ## The server
 
 The agent starts and stops the model server itself; you do not run it by hand. It listens on

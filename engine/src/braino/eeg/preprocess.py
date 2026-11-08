@@ -13,6 +13,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+from braino.eeg.channels import match_channels
+
 FilterMethod = Literal["fir", "iir"]
 
 DATA_TYPES = ("eeg", "eog", "ecg", "emg")
@@ -163,7 +165,7 @@ def apply_reference(raw: Any, reference: str | list[str]) -> str | list[str]:
     if reference == "average_with_eog":
         _average_with_eog(raw)
         return "average_with_eog"
-    missing = [ch for ch in reference if ch not in eeg]
+    reference, missing = match_channels(reference, eeg)
     if missing:
         raise ValueError(f"reference channels not among the EEG channels: {', '.join(missing)}")
     bad = [ch for ch in reference if ch in raw.info["bads"]]

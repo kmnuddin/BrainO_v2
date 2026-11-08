@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 
 from braino.context import RunContext
 from braino.eeg.bad_channels import Method as BadChannelMethod
+from braino.eeg.channels import match_channels
 from braino.eeg.epochs import ConditionCount, EpochParams, RejectMethod
 from braino.eeg.ica import DEFAULT_EXCLUDE, ICLABEL_LABELS, Component, IcaMethod, Labeler
 from braino.eeg.preprocess import PreprocessParams
@@ -153,7 +154,10 @@ def _write_qc_table(ctx: RunContext, path: Path, channels: list[ChannelQc]) -> N
 # --- eeg.preprocess -----------------------------------------------------------------------
 
 
-class PreprocessInput(RecordingSelector, PreprocessParams):
+# The settings base comes first so that the recording's fields come first in the schema (Pydantic
+# puts the last base's fields first). A model's reply follows the schema's order: a model that
+# wrote 'subject' then 'task' could no longer write a setting that came before 'task'.
+class PreprocessInput(PreprocessParams, RecordingSelector):
     pass
 
 
@@ -280,18 +284,19 @@ def apply_bad_channels(proposal: BadChannelProposal, ctx: RunContext) -> BadChan
     ctx.record_input(data_file)
     info = mne.io.read_info(data_file, verbose="error")
     names = list(info.ch_names)
-    unknown = [ch for ch in proposal.channels if ch not in names]
+    # The reviewer may write 'T8' as 't8'.
+    channels, unknown = match_channels(proposal.channels, names)
     if unknown:
         raise ValueError(f"no channel {', '.join(unknown)} in {data_file.name}")
     reference = _reference_channels(_read_sidecar(ctx, data_file))
-    in_reference = [ch for ch in proposal.channels if ch in reference]
+    in_reference = [ch for ch in channels if ch in reference]
     if in_reference:
         raise ValueError(
             f"{', '.join(in_reference)} is the reference; a reference channel cannot be marked "
             "bad. Run eeg.preprocess again with another reference first."
         )
     types = info.get_channel_types()
-    bad = set(proposal.channels)
+    bad = set(channels)
     table = data_file.with_name(data_file.name.replace("_eeg.fif", "_channels.tsv"))
     rows = []
     for ch, kind in zip(names, types, strict=True):
@@ -518,7 +523,7 @@ def ica_clean(params: IcaInput, ctx: RunContext) -> IcaProposal:
 # --- eeg.epoch ----------------------------------------------------------------------------
 
 
-class EpochInput(RecordingSelector, EpochParams):
+class EpochInput(EpochParams, RecordingSelector):  # the recording first: see PreprocessInput
     label: str = Field(
         default="epochs",
         pattern=LABEL_PATTERN,

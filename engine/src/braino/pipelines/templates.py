@@ -98,7 +98,9 @@ class ErpComparisonSettings(_Common):
         "channel or time point)"
     )
     channels: list[str] = Field(
-        min_length=1, description="Channels to measure and test at (averaged), e.g. ['Pz']"
+        min_length=1,
+        description="Channel names to measure at (averaged), e.g. ['Pz']; with test_scope "
+        "'all' the group test still covers every channel",
     )
     tmin: float = Field(description="Start of the measurement window, s (e.g. 0.3)")
     tmax: float = Field(description="End of the measurement window, s (e.g. 0.6)")
@@ -124,7 +126,16 @@ class ErpComparisonSettings(_Common):
             raise ValueError("tmin must be before tmax")
         if self.epoch_tmin >= self.epoch_tmax:
             raise ValueError("epoch_tmin must be before epoch_tmax")
+        if any(ch.strip().lower() in ALL_CHANNELS for ch in self.channels):
+            raise ValueError(
+                "channels names the channels to measure at, e.g. ['Pz'], not 'all': "
+                "test_scope 'all' already tests every channel and time point"
+            )
         return self
+
+
+#: What a model writes for "every channel" in a list that needs channel names.
+ALL_CHANNELS = frozenset({"all", "*", "every", "all channels"})
 
 
 class SpectralComparisonSettings(_Common):

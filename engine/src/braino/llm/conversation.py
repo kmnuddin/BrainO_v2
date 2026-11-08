@@ -157,7 +157,13 @@ class Conversation:
             self._append({"role": "assistant", "content": reply.content})
             try:
                 if reply.finish_reason == "length":
-                    raise StepError(f"the reply was cut off at {self.max_tokens} tokens")
+                    # A small model writing a group result can list every value; asked only to
+                    # reply again, it wrote the same long answer and was cut off again.
+                    raise StepError(
+                        f"the reply was cut off at {self.max_tokens} tokens: it was too long. "
+                        "Write a shorter one; an answer gives the main results in a few "
+                        "sentences, not every value"
+                    )
                 step = parse_step(reply.content, loaded, loadable, pending)
             except StepError as error:
                 if repaired:

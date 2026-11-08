@@ -10,6 +10,7 @@ import mne
 import numpy as np
 
 from braino.datasets.synthetic import EEG, P3_UV, P3_WINDOW, SFREQ, blink_weights, make_raw
+from braino.eeg.channels import match_channels
 from braino.eeg.epochs import EpochParams, make_epochs
 from braino.eeg.erp import Contrast, Measure, condition_averages, measure
 from braino.eeg.ica import fit_ica, remove_components
@@ -159,6 +160,19 @@ def test_measure_errors(recording: mne.io.BaseRaw) -> None:
         measure(evokeds["rare"], Measure(name="x", channels=["Pz"], tmin=0, tmax=2), "rare")
     with pytest.raises(ValueError, match="no condition"):
         condition_averages(epochs, ["standard"])
+
+
+def test_channel_names_match_whatever_their_case(recording: mne.io.BaseRaw) -> None:
+    """A model wrote 'PZ' and 'FZ': the plan check accepted them, so the tools must too."""
+    assert match_channels(["PZ", "fz", "Cz", "M1"], ["Fz", "Cz", "Pz"]) == (
+        ["Pz", "Fz", "Cz"],
+        ["M1"],
+    )
+    epochs, _ = make_epochs(recording, EpochParams(conditions=CONDITIONS, reject="none"))
+    evokeds, _ = condition_averages(epochs)
+    upper = measure(evokeds["rare"], Measure(name="x", channels=["PZ"], tmin=0, tmax=0.1), "rare")
+    exact = measure(evokeds["rare"], Measure(name="x", channels=["Pz"], tmin=0, tmax=0.1), "rare")
+    assert upper == exact and upper.channels == ["Pz"]
 
 
 def test_spectra_find_the_alpha_rhythm(recording: mne.io.BaseRaw) -> None:

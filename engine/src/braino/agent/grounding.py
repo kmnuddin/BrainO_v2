@@ -21,11 +21,15 @@ if TYPE_CHECKING:
 
 # Numbers in text, but not digits inside names such as "T8", "P3", "sub-01" or "Fp1". A number
 # after a hyphen counts only when the hyphen follows a digit, as in a range ("0.1-40 Hz").
-# The sign may be a hyphen or a minus sign; thousands may be separated by commas ("5,020").
+# The sign may be a hyphen, a minus sign or an en dash (models write negative t values with
+# one; in a range with an en dash, the dash follows a digit and is not a sign); thousands may
+# be separated by commas ("5,020").
 MINUS = chr(0x2212)
+EN_DASH = chr(0x2013)
 _NUMBER = re.compile(
     r"(?<![A-Za-z0-9_.])(?<![A-Za-z_]-)[-"
     + MINUS
+    + EN_DASH
     + r"]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?![0-9])"
 )
 SMALL_INTEGERS = 3
@@ -38,7 +42,7 @@ def numbers_in(text: str) -> list[tuple[float, int]]:
     """The numbers in ``text``, with their number of decimals."""
     out = []
     for m in _NUMBER.finditer(text):
-        token = m.group(0).replace(MINUS, "-").replace(",", "")
+        token = m.group(0).replace(MINUS, "-").replace(EN_DASH, "-").replace(",", "")
         decimals = len(token.split(".", 1)[1]) if "." in token else 0
         out.append((float(token), decimals))
     return out

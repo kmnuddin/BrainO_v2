@@ -36,6 +36,8 @@ EPOCH_READERS = ("eeg.erp", "eeg.tfr")
 GROUP_SOURCE = {"erp": "eeg.erp", "psd": "eeg.spectral", "tfr": "eeg.tfr"}
 """The per-subject step whose results each kind of group test reads."""
 MIN_CLUSTER_SUBJECTS = 7
+#: Channel names an unknown-channel error lists (a 64-channel cap fits; 256 do not).
+KNOWN_CHANNELS_LISTED = 70
 """Below this, a sign-flip permutation test has at most 2^6 = 64 permutations: its smallest
 possible p is about 0.03, too coarse to correct for anything."""
 
@@ -379,10 +381,16 @@ class _Plan:
         lower = {k.lower() for k in known}
         unknown = [n for n in names if n.lower() not in lower]
         if unknown:
+            # Name the channels there are, so the next try (often a model's) can pick from them.
+            names_known = sorted(known, key=str.lower)
+            listed = ", ".join(names_known[:KNOWN_CHANNELS_LISTED])
+            more = len(names_known) - KNOWN_CHANNELS_LISTED
+            if more > 0:
+                listed += f" and {more} more"
             self.add(
                 "error",
                 step_id,
-                f"{what}: no channel {', '.join(unknown)} in the recordings",
+                f"{what}: no channel {', '.join(unknown)} in the recordings; they have {listed}",
             )
 
 

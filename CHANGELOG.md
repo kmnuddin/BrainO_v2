@@ -13,7 +13,16 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   model tier (Qwen3.5 4B on the minimum computer, Qwen3.5 9B or Qwen3.6 35B-A3B with more),
   installs a pinned llama.cpp build and downloads the model once, checked against pinned
   SHA-256 hashes and resumable; starts and stops `llama-server` on localhost with a per-session
-  API key; and benchmarks how long an agent step takes on this computer.
+  API key; and benchmarks how long an agent step takes on this computer. On a GPU the
+  benchmark warms up first, so the driver compiling kernels on a card's first run is not
+  measured.
+- Agent fixes found by running the evals on a GPU: tools list the recording's fields
+  (subject, task, session, run) before their settings, since a model's reply follows the
+  schema's order and could not go back to a setting it had passed; channel names are matched
+  whatever their case (`PZ` is `Pz`) by every tool, as the plan check already did; the plan
+  check's unknown-channel error lists the channels there are; an answer cut off for length is
+  asked to be shorter; the ERP template refuses `channels: ['all']` with what to write; and
+  the grounding check reads a number written with an en dash as negative.
 - LLM client (`braino.llm`) for the OpenAI-compatible API: every agent step is one action
   (call a tool, load tools, ask for a decision, ask the user, answer) constrained by a JSON
   schema built from the loaded tools' parameters, so tool calls cannot be invalid. Only the

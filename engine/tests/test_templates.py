@@ -196,6 +196,9 @@ def test_settings_are_checked() -> None:
         ErpComparisonSettings.model_validate({**ERP, "events_b": ["stimulus/rare"]})
     with pytest.raises(ValidationError, match="tmin must be before tmax"):
         ErpComparisonSettings.model_validate({**ERP, "tmin": 0.5, "tmax": 0.3})
+    # A model asked to test every channel wrote channels=['all']: say what to write instead.
+    with pytest.raises(ValidationError, match="not 'all': test_scope 'all'"):
+        ErpComparisonSettings.model_validate({**ERP, "test_scope": "all", "channels": ["all"]})
     with pytest.raises(ValidationError, match="above the low-pass"):
         SpectralComparisonSettings.model_validate({**RARE, **FREQUENT, "fmax": 60})
     with pytest.raises(TemplateError, match="no template 'nope'"):
@@ -243,8 +246,12 @@ def test_plan_checks_against_the_data(original: Path) -> None:
     assert "warning: ep: condition 'frequent': events stimulus/x do not occur" in found
     assert any("the low-pass at 40 Hz is not below half the sampling rate (50 Hz)" in f
                for f in found)  # fmt: skip
-    assert "error: pre: reference: no channel M1 in the recordings" in found
-    assert "error: erp: measure 'P3': no channel Pzz in the recordings" in found
+    # The error lists the channels there are, so the next try can pick a real one.
+    assert any(f.startswith("error: pre: reference: no channel M1 in the recordings; they have ")
+               for f in found)  # fmt: skip
+    pz = next(f for f in found if "no channel Pzz" in f)
+    assert pz.startswith("error: erp: measure 'P3': no channel Pzz in the recordings; they have ")
+    assert "Pz" in pz.split("they have ")[1].split(", ")
     good = build("erp-comparison", ERP, original)
     assert good.subjects == ["01", "02", "03", "04"]
     assert check_plan(good, dataset=original).findings == []

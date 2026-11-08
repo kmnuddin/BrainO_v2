@@ -12,6 +12,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field, model_validator
 
 from braino.context import RunContext
+from braino.eeg.channels import match_channels
 from braino.io.dataset import scan_dataset
 from braino.stats.group import (
     MIN_SUBJECTS,
@@ -245,10 +246,10 @@ def load_group(ctx: RunContext, params: GroupInput) -> tuple[GroupData, list[str
     first = loaded[subjects[0]]
     common = [ch for ch in first[1] if all(ch in loaded[s][1] for s in subjects)]
     if params.channels is not None:
-        absent = [ch for ch in params.channels if ch not in common]
+        chosen, absent = match_channels(params.channels, common)
         if absent:
             raise ValueError(f"channels not in every subject's results: {', '.join(absent)}")
-        common = list(params.channels)
+        common = chosen
     notes = []
     dropped = [ch for ch in first[1] if ch not in common and params.channels is None]
     if dropped:

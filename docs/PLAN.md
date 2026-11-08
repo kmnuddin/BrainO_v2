@@ -487,7 +487,16 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     Run for real on the office desktop (i7-8700, CPU build, 4B model): setup, hashes, server
     start (model loaded in 4 s) and benchmark all work; it reads 65 tokens/s and writes
     9 tokens/s, so a first agent step takes about 45 s and later ones about 20 s ("usable").
-    The GPU builds have not been run yet. Pinned in `catalog.json`:
+    The CUDA build was run on an RTX 5060 Ti (16 GB) with 32 GB of RAM (2026-11-07). BrainO
+    proposed the GPU tier with the 35B-A3B split between GPU and RAM: it reads 421 tokens/s
+    and writes 50 (first step about 7 s), and passed the eval suite 16/16 in about 4 minutes.
+    The 4B on that GPU reads about 3,000 tokens/s and writes 90 (the suite in under 2
+    minutes). Two findings: the first benchmark on a new card measured the driver compiling
+    kernels (25 tokens/s, "slow"), so the benchmark now warms up a GPU first; and the eval
+    runs on the GPU exposed agent failures that the CPU runs had passed by chance (fixed:
+    recording fields first in tool schemas, channel names matched whatever their case, the
+    plan check naming the channels there are, a cut-off answer asked to be shorter, and
+    "channels: ['all']" refused with what to write instead). Pinned in `catalog.json`:
     llama.cpp build b11606 (2026-10-13; CPU, Vulkan, CUDA 12 and Metal builds for Windows,
     Linux and macOS, x64 and arm64) and three Apache-2.0 models: Qwen3.5 4B (minimum tier,
     2.6 GB), Qwen3.5 9B (GPU tier, 5.3 GB) and Qwen3.6 35B-A3B (more-RAM and GPU tiers,

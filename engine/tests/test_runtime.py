@@ -45,6 +45,7 @@ from braino.runtime.catalog import PinnedFile, PinnedModel
 from braino.runtime.download import download
 from braino.runtime.hardware import parse_nvidia_smi, vendor_of
 from braino.runtime.settings import load_settings
+from braino.runtime.tiers import Placement
 
 FAKE_SERVER = Path(__file__).with_name("fake_llama_server.py")
 FAKE_COMMAND = [sys.executable, str(FAKE_SERVER)]
@@ -447,6 +448,26 @@ def test_benchmark(model_file: Path) -> None:
     assert result.rating == "usable" and result.prompt_tokens > 500
     assert "52 s" in describe(result)
     assert (rate(10), rate(40), rate(200)) == ("fast", "usable", "slow")
+
+
+@pytest.mark.parametrize(("placement", "requests"), [("cpu", 1), ("gpu", 2), ("partial", 2)])
+def test_benchmark_warms_up_a_gpu(
+    model_file: Path, monkeypatch: pytest.MonkeyPatch, placement: Placement, requests: int
+) -> None:
+    """On a GPU an untimed request runs first, so the measurement leaves out the driver
+    compiling kernels on the first run; on a CPU there is no need."""
+    sent: list[dict[str, Any]] = []
+    post = LlamaServer.post
+
+    def recording_post(self: LlamaServer, path: str, payload: dict[str, Any], **kw: Any) -> Any:
+        sent.append(payload)
+        return post(self, path, payload, **kw)
+
+    monkeypatch.setattr(LlamaServer, "post", recording_post)
+    with LlamaServer(model_file, binary=FAKE_COMMAND, placement=placement) as server:
+        run_benchmark(server, "qwen3.5-4b", "cuda")
+    assert len(sent) == requests
+    assert sent[-1]["n_predict"] == 48
 
 
 # --- setup, end to end with the stand-in server -------------------------------------------

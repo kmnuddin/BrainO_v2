@@ -11,10 +11,12 @@ checks:
   - {kind: order, before: eeg.preprocess, after: eeg.detect_bad_channels}
   - {kind: decision_requested, tool: eeg.detect_bad_channels}
   - {kind: answer_mentions, terms: [T8]}
-  # Pz may be named only as not applied ("Pz was proposed but not applied").
+  # Pz may be named only as not applied ("Pz was proposed but not applied", "Only T8 was
+  # marked (not Pz as originally proposed)").
   - kind: answer_not_mentions
     terms: [Pz]
-    unless: [not applied, not marked, not been marked, not included, kept as good, left as good]
+    unless: [not applied, not marked, not been marked, not included, kept as good, left as good,
+             not Pz, only T8, originally proposed]
     description: reports the edited decision, not the proposal
 solution:
   - {id: pre, tool: eeg.preprocess, args: {subject: "02"}}
