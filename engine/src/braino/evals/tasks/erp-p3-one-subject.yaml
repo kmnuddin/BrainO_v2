@@ -4,6 +4,9 @@ description: Epoch by conditions and measure a difference wave (planted P3 at Pz
 request: >-
   For subject 01, compare the rare and frequent trials at Pz between 300 and 500 ms. How large is
   the difference?
+variants:
+  - "How big is subject 01's P3 at Pz (rare minus frequent, 0.3-0.5 s)?"
+  - "Measure sub-01's rare versus frequent difference at Pz from 300 to 500 ms."
 dataset:
   synthetic: {subjects: ["01", "02", "03"], seconds: 60}
 checks:

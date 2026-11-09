@@ -35,6 +35,7 @@ from braino.tools import Risk, ToolRegistry, make_tool
 
 class SubjectIn(BaseModel):
     subject: str
+    level: int = 0
 
 
 class Prepared(BaseModel):
@@ -219,6 +220,57 @@ def test_a_repeated_call_is_not_run_and_then_the_agent_must_answer(
     assert sum("Not run: you already made this exact call" in r for r in seen) == 2
     assert _actions(server.requests[-1]) == {"answer"}
     assert "call" in _actions(server.requests[-2])
+
+
+def test_a_call_repeated_after_the_same_tool_ran_on_others_is_not_run(
+    server: ScriptedServer, tmp_path: Path
+) -> None:
+    """A model cycled a quality check over three subjects ten times; each call writes a table,
+    but the tool's own calls do not change what a repeat would find."""
+    server.replies += [
+        LOAD_ALL,
+        _call("demo.prepare", subject="01"),
+        _call("demo.prepare", subject="02"),
+        _call("demo.prepare", subject="01"),  # nothing else ran: not run again
+        _call("demo.find_bad", subject="01"),  # a decision tool...
+        {"action": "decide", "proposal_id": "r1-4", "message": "Mark T8, Pz?"},
+        _call("demo.prepare", subject="01"),  # ...whose applied decision is a change: runs
+        _answer("Done."),
+    ]
+    session = ScriptedSession(tmp_path)
+    LLMAgent(server.client()).solve("Prepare the subjects", session)
+
+    prepared = [c.arguments["subject"] for c in session.calls if c.tool == "demo.prepare"]
+    assert prepared == ["01", "02", "01"]
+    seen = _responses(server.requests[-1])
+    assert sum("Not run: you already made this exact call" in r for r in seen) == 1
+
+
+def test_a_streak_of_one_tool_on_one_subject_is_stopped(
+    server: ScriptedServer, tmp_path: Path
+) -> None:
+    """Calls that differ a little each time (a model added a band per call) are not repeats,
+    but after MAX_STREAK in a row on one subject the next is not run."""
+    from braino.agent.loop import MAX_STREAK
+
+    calls = [_call("demo.prepare", subject="01", level=i) for i in range(MAX_STREAK + 1)]
+    server.replies += [
+        LOAD_ALL,
+        _call("demo.prepare", subject="02"),  # another subject: not part of the streak
+        *calls,
+        _call("demo.measure", subject="01"),  # another tool: runs
+        _answer("Done."),
+    ]
+    session = ScriptedSession(tmp_path)
+    LLMAgent(server.client()).solve("Prepare subject 01", session)
+
+    assert [c.tool for c in session.calls] == [
+        "demo.prepare",
+        *["demo.prepare"] * MAX_STREAK,
+        "demo.measure",
+    ]
+    seen = _responses(server.requests[-1])
+    assert sum(f"called demo.prepare for this subject {MAX_STREAK} times" in r for r in seen) == 1
 
 
 def test_a_failed_call_is_retried_only_after_something_ran(

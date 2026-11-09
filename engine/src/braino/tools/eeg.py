@@ -87,6 +87,14 @@ class QcSummary(BaseModel):
     artifact_threshold_uv: float
     report: str = Field(description="Per-channel table, relative to the dataset")
     notes: list[str]
+    # A small model asked "is anything wrong?" went on to preprocess and mark channels bad in
+    # most runs, despite the rule to do only what was asked; it heeds a tool result more.
+    next: str = Field(
+        default=(
+            "Nothing was changed. Report these findings; marking channels bad or cleaning the "
+            "data are further steps, to suggest rather than run unless the user asked for them."
+        )
+    )
 
 
 @tool(name="eeg.qc_report", risk=Risk.COMPUTE)
@@ -331,7 +339,7 @@ def detect_bad_channels(params: DetectBadChannelsInput, ctx: RunContext) -> BadC
     the eyes look bad, and a broken channel shows up in ICA as a 'channel noise' component.
     Once approved, bad channels are interpolated when epoching (and left out of an ICA run
     afterwards)."""
-    from braino.eeg.bad_channels import find_bad_channels
+    from braino.eeg.bad_channels import find_bad_channels, flat_channels
 
     recording = find_recording(ctx.dataset, params)
     stale_clean = clean_stale(ctx, recording)
@@ -340,6 +348,8 @@ def detect_bad_channels(params: DetectBadChannelsInput, ctx: RunContext) -> BadC
         source = PREPROC
     else:
         raw, sidecar, source = cleanest(ctx, recording, with_decision=False)
+    # A dead electrode is flat in the original recording, but not after an average reference.
+    flat_before = flat_channels(read_original(ctx, recording))
     result = find_bad_channels(
         raw,
         method=params.method,
@@ -348,6 +358,7 @@ def detect_bad_channels(params: DetectBadChannelsInput, ctx: RunContext) -> BadC
         line_freq=sidecar.get("PowerLineFrequency"),
         correlation_max_bad_time=params.correlation_max_bad_time,
         leave_out_blinks=params.leave_out_blinks,
+        flat_before=flat_before,
     )
     path = derivative(ctx, recording, f"desc-{PREPROC}_eeg.fif")
     notes = list(result.notes)
@@ -527,7 +538,8 @@ class EpochInput(EpochParams, RecordingSelector):  # the recording first: see Pr
     label: str = Field(
         default="epochs",
         pattern=LABEL_PATTERN,
-        description="Name for these epochs (letters and digits), used by later steps",
+        description="Name for these epochs (letters and digits); later steps find them by it, "
+        "so keep 'epochs' unless you need a second set (it is not the task)",
     )
 
 

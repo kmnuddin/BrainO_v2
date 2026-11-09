@@ -31,6 +31,7 @@ from braino.pipelines.templates import (
     get_template,
     resolve,
 )
+from braino.stats.group import MIN_SUBJECTS
 from braino.tools.base import Risk
 from braino.tools.registry import tool
 
@@ -116,11 +117,21 @@ def _plan(template_name: str, settings: BaseModel, ctx: RunContext) -> PlanPropo
         subjects=subjects,
         steps=[_describe(s) for s in spec.steps],
         group_steps=[_describe(s) for s in spec.group],
-        warnings=[
-            f.message if f.step is None else f"{f.step}: {f.message}" for f in check.warnings
-        ],
+        warnings=_too_few(len(subjects))
+        + [f.message if f.step is None else f"{f.step}: {f.message}" for f in check.warnings],
         settings=settings.model_dump(mode="json", exclude={"task", "subjects"}),
     )
+
+
+def _too_few(n_subjects: int) -> list[str]:
+    """Why a plan has no group test, so the agent can tell the user (a model reported a
+    missing group test as 'null' without saying why)."""
+    if 1 < n_subjects < MIN_SUBJECTS:
+        return [
+            f"No group test: there are {n_subjects} subjects and a group test needs at least "
+            f"{MIN_SUBJECTS}; each subject is measured."
+        ]
+    return []
 
 
 def _describe(step: Step) -> str:
@@ -234,7 +245,7 @@ def run_analysis(params: RunInput, ctx: RunContext) -> AnalysisResult:
         status=status,
         spec=spec_path.relative_to(ctx.dataset).as_posix(),
         n_subjects=len(report.subjects),
-        notes=_notes(report.outcomes),
+        notes=_too_few(len(report.subjects)) + _notes(report.outcomes),
         waiting=waiting,
         failed=failed,
         next=next_step,

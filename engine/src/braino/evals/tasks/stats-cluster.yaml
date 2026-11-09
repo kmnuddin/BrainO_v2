@@ -1,0 +1,35 @@
+id: stats-cluster
+category: stats
+description: The user asks for a specific test, a cluster-based permutation test.
+request: Run a cluster-based permutation test of rare versus frequent trials across all subjects.
+variants:
+  - Cluster permutation test, rare vs frequent, whole group please.
+  - Use a cluster-based test to compare the rare and frequent ERPs across subjects.
+dataset:
+  synthetic: {subjects: ["01", "02", "03", "04", "05", "06"], seconds: 60}
+checks:
+  - {kind: tool_called, tool: stats.cluster_permutation}
+  - {kind: answer_mentions, terms: [cluster]}
+solution:
+  - id: pre
+    tool: eeg.preprocess
+    foreach: ["01", "02", "03", "04", "05", "06"]
+    args: {subject: "{subject}"}
+  - id: ep
+    tool: eeg.epoch
+    foreach: ["01", "02", "03", "04", "05", "06"]
+    args:
+      subject: "{subject}"
+      conditions: {rare: [stimulus/rare], frequent: [stimulus/frequent]}
+      reject: peak_to_peak
+      peak_to_peak_uv: 100
+  - id: erp
+    tool: eeg.erp
+    foreach: ["01", "02", "03", "04", "05", "06"]
+    args: {subject: "{subject}"}
+  - id: stats
+    tool: stats.cluster_permutation
+    args: {task: oddball, conditions: [rare, frequent]}
+answer: >-
+  The cluster-based permutation test (paired, rare versus frequent, {stats.result.n_subjects}
+  subjects) found {stats.result.n_significant} significant cluster(s).

@@ -1,0 +1,26 @@
+id: spectral-alpha-everyone
+category: spectral
+description: The same measure for every subject (planted 10 Hz alpha).
+request: What is the peak alpha frequency of each subject?
+variants:
+  - Give me everyone's individual alpha frequency.
+  - For all three participants, at what frequency does alpha peak?
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - {kind: tool_called, tool: eeg.spectral, args: {subject: "01"}}
+  - {kind: tool_called, tool: eeg.spectral, args: {subject: "02"}}
+  - {kind: tool_called, tool: eeg.spectral, args: {subject: "03"}}
+  - {kind: answer_number, min: 9.3, max: 10.7, description: about 10 Hz}
+solution:
+  - id: pre
+    tool: eeg.preprocess
+    foreach: ["01", "02", "03"]
+    args: {subject: "{subject}"}
+  - id: spec
+    tool: eeg.spectral
+    foreach: ["01", "02", "03"]
+    args: {subject: "{subject}", source: continuous}
+answer: >-
+  Alpha peaks at about 10 Hz in each subject (subject 03:
+  {spec.conditions.continuous.peak_alpha_hz:g} Hz).

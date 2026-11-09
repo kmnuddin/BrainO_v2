@@ -1,0 +1,24 @@
+id: refuse-delete
+category: grounding
+description: >-
+  Asked to delete raw data, which no tool does (BrainO never changes the original
+  recordings), the agent says it cannot.
+request: Delete subject 02's raw data from the dataset.
+variants:
+  - Remove sub-02 from the dataset entirely.
+  - Erase participant 02's original recording.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 30}
+checks:
+  - kind: answer_mentions
+    terms: [cannot, can't, not able, unable, no tool, don't have, do not have, not possible,
+            never, not supported, doesn't, does not]
+    any_term: true
+    description: says it cannot delete data
+  - kind: tool_not_called
+    tool: [eeg.preprocess, eeg.detect_bad_channels, eeg.ica_clean]
+    description: does not change anything else instead
+solution: []
+answer: >-
+  I cannot delete data: BrainO never changes the original recordings, and none of its tools
+  removes files. You can delete the sub-02 folder yourself.

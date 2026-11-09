@@ -1,0 +1,19 @@
+id: inspect-recording-details
+category: inspect
+description: Report the sampling rate and duration of the recordings from their metadata.
+request: What is the sampling rate of these recordings, and how long is each one?
+variants:
+  - At what rate was this EEG sampled, and how many seconds does each recording last?
+  - Give me the sampling frequency and the length of the recordings.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - {kind: tool_called, tool: dataset.inspect}
+  - {kind: answer_number, min: 250, max: 250, description: 250 Hz}
+  - {kind: answer_number, min: 59.9, max: 60.1, description: about 60 s}
+  - {kind: no_decision_requested}
+solution:
+  - {id: inspect, tool: dataset.inspect}
+answer: >-
+  The recordings are sampled at {inspect.recordings[0].sampling_rate_hz:g} Hz and each lasts
+  {inspect.recordings[0].duration_s:g} s.

@@ -50,6 +50,8 @@ MAX_STEPS = 60
 time (the 10-subject group test takes about 35)."""
 MAX_REPEATS = 2
 """Repeated calls in a row after which the model must answer."""
+MAX_STREAK = 4
+"""Calls in a row of one tool on one subject, after which another is skipped."""
 CONTEXT_RESERVE = 3
 """The model must answer once fewer than this many replies' worth of context is left."""
 DOCUMENTATION_TOOLS = frozenset({"docs.search"})
@@ -113,6 +115,9 @@ class LLMAgent:
         self._changes = 0  # successful calls that may change data, and applied decisions
         self._runs = 0  # successful calls
         self._noted = 0  # model replies logged
+        self._streak_key: tuple[str, str] | None = None  # tool and subject of the last calls
+        self._streak_count = 0  # calls in a row with that key
+        self._changes_of: dict[str, int] = {}  # changes made by each tool
 
     def solve(self, request: str, session: Session) -> AgentAnswer:
         """Work on a new request, in a new conversation."""
@@ -126,6 +131,8 @@ class LLMAgent:
         self._requests = [request]
         self._past = {}
         self._noted = 0
+        self._streak_key, self._streak_count = None, 0
+        self._changes_of = {}
         return self._run(session)
 
     def follow_up(self, request: str, session: Session) -> AgentAnswer:
@@ -160,7 +167,7 @@ class LLMAgent:
             self._note_replies(conv)
 
             if isinstance(step, CallTool):
-                skip = self._repeat(session, step)
+                skip = self._repeat(session, step) or self._streak(step)
                 if skip is not None:
                     repeats += 1
                     self._emit("skipped", skip, data={"tool": step.tool})
@@ -221,7 +228,7 @@ class LLMAgent:
                 f"the user already {verdict} the proposal this exact call made. The decision "
                 "is final: do not run it again, report it."
             )
-        if past.ok and past.changes == self._changes:
+        if past.ok and past.changes == self._changes_besides(step.tool):
             return (
                 "you already made this exact call and nothing has changed since; its result "
                 "is above. Use it, make a different call, or answer."
@@ -233,17 +240,40 @@ class LLMAgent:
             )
         return None
 
+    def _streak(self, step: CallTool) -> str | None:
+        """Why a call is not run: the same tool on the same subject too many times in a row.
+
+        A model checking line noise called eeg.spectral 25 times for one subject, adding a
+        band each time; no two calls were the same, so :meth:`_repeat` let them all run."""
+        key = (step.tool, repr(step.arguments.get("subject")))
+        if key != self._streak_key:
+            self._streak_key, self._streak_count = key, 0
+        if self._streak_count >= MAX_STREAK:
+            return (
+                f"you have called {step.tool} for this subject {self._streak_count} times in a "
+                "row. Use the results above, call another tool, or answer."
+            )
+        return None
+
+    def _changes_besides(self, tool: str) -> int:
+        """Changes made by other tools and by decisions. A tool's own calls do not make its
+        repeated call new: a model cycled eeg.qc_report over three subjects ten times, each
+        call writing a table, so every repeat looked like something had changed."""
+        return self._changes - self._changes_of.get(tool, 0)
+
     def _record(self, session: Session, step: CallTool, outcome: ToolOutcome) -> None:
+        self._streak_count += 1
         if outcome.ok:
             self._runs += 1
             risk = _risk(session, step.tool)
             if risk is not None and risk != Risk.READ:
                 self._changes += 1
+                self._changes_of[step.tool] = self._changes_of.get(step.tool, 0) + 1
         self._past[_key(session, step)] = _Past(
             ok=outcome.ok,
             error=outcome.error,
             proposal_id=outcome.proposal_id,
-            changes=self._changes,
+            changes=self._changes_besides(step.tool),
             runs=self._runs,
         )
 

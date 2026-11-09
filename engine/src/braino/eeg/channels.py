@@ -13,15 +13,19 @@ from collections.abc import Iterable, Sequence
 def match_channels(
     requested: Iterable[str], available: Sequence[str]
 ) -> tuple[list[str], list[str]]:
-    """``requested`` in the recording's spelling, and the names not found at all."""
+    """``requested`` in the recording's spelling, each once (a model listed Fz twice, and MNE
+    refuses to pick a channel twice), and the names not found at all."""
     by_lower = {name.lower(): name for name in available}
     found: list[str] = []
     missing: list[str] = []
     for name in requested:
         if name in available:
-            found.append(name)
+            match = name
         elif name.lower() in by_lower:
-            found.append(by_lower[name.lower()])
+            match = by_lower[name.lower()]
         else:
             missing.append(name)
+            continue
+        if match not in found:
+            found.append(match)
     return found, missing

@@ -1,0 +1,35 @@
+id: erp-channel-average
+category: erp
+description: Measure over several channels averaged together.
+request: >-
+  For subject 01, measure the rare-minus-frequent difference averaged over P3, Pz and P4,
+  from 300 to 500 ms.
+variants:
+  - Mean amplitude of sub-01's difference wave over the parietal channels P3, Pz and P4, 0.3 to 0.5 s.
+  - Average P3, Pz and P4 together and give me subject 01's rare minus frequent effect at 300-500 ms.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - kind: tool_called
+    tool: eeg.erp
+    args: {measures: {covers: [P3, Pz, P4]}}
+    description: measures over P3, Pz and P4
+  - {kind: answer_number, min: 1.5, max: 10, description: the difference in µV}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
+  - id: ep
+    tool: eeg.epoch
+    args:
+      subject: "01"
+      conditions: {rare: [stimulus/rare], frequent: [stimulus/frequent]}
+      reject: peak_to_peak
+      peak_to_peak_uv: 100
+  - id: erp
+    tool: eeg.erp
+    args:
+      subject: "01"
+      contrasts: [{name: difference, plus: rare, minus: frequent}]
+      measures: [{name: parietal, channels: [P3, Pz, P4], tmin: 0.3, tmax: 0.5}]
+answer: >-
+  Averaged over P3, Pz and P4 from 300 to 500 ms, the difference is
+  {erp.measures[waveform=difference].value_uv:.2f} µV.

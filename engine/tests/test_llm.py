@@ -405,6 +405,33 @@ def test_conversation_cut_off_reply(server: ScriptedServer) -> None:
     assert "cut off" in retry and "shorter" in retry
 
 
+def cut_off(content: str) -> tuple[int, dict[str, Any]]:
+    return 200, {"choices": [{"message": {"content": content}, "finish_reason": "length"}]}
+
+
+def test_an_answer_cut_off_twice_keeps_what_was_written(server: ScriptedServer) -> None:
+    """Better the answer so far than none: cut back to its last whole sentence, and marked."""
+    long = '{"action": "answer", "text": "Autoreject learns thresholds.\\nIt also repairs ep'
+    server.replies += [cut_off(long), cut_off(long)]
+    conv = Conversation(server.client(), "Hello", preload=[])
+    step = conv.next_step()
+    assert step == Answer(text="Autoreject learns thresholds. [the answer was cut off here "
+                               "for length]")  # fmt: skip
+    # A cut-off reply that is not an answer is still an error.
+    server.replies += [cut_off('{"action": "call", "tool": "x'), cut_off('{"action": "ca')]
+    with pytest.raises(StepError, match="cut off"):
+        conv.next_step()
+
+
+def test_partial_answer() -> None:
+    from braino.llm.conversation import partial_answer
+
+    cut = '{"action":"answer","text":"The first sentence is long. Two \\u00'
+    assert partial_answer(cut) == "The first sentence is long."
+    assert partial_answer('{"action": "answer", "text": "No full stop yet') == "No full stop yet"
+    assert partial_answer('{"action":"call","tool":"x"') is None
+
+
 def test_conversation_decisions(server: ScriptedServer) -> None:
     server.replies += [{"action": "decide", "proposal_id": "run-2", "message": "Mark T8 bad?"}]
     conv = Conversation(
@@ -460,6 +487,33 @@ def test_no_two_questions_in_a_row(server: ScriptedServer) -> None:
         for r in server.requests
     ]
     assert "ask" in actions[0] and "ask" not in actions[1]
+
+
+def test_questions_are_limited_per_request(server: ScriptedServer) -> None:
+    """A small model asked the same question 13 times, with calls in between; after
+    MAX_QUESTIONS it may not ask again, until the next request."""
+    from braino.llm.conversation import MAX_QUESTIONS
+
+    def actions(request: dict[str, Any]) -> list[str]:
+        schema = request["response_format"]["json_schema"]["schema"]
+        return [o["properties"]["action"]["const"] for o in schema["anyOf"]]
+
+    conv = Conversation(server.client(), "Hello", preload=["dataset.inspect"])
+    call = {"action": "call", "tool": "dataset.inspect", "arguments": {}}
+    for _ in range(MAX_QUESTIONS):
+        server.replies += [{"action": "ask", "question": "Which?"}, call]
+        conv.next_step()
+        conv.add_user_reply("Any.")
+        conv.next_step()
+        conv.add_result({"n_subjects": 3})
+    assert "cannot ask more questions" in conv.messages[-3]["content"]
+    server.replies += [{"action": "answer", "text": "ok"}]
+    conv.next_step()
+    assert "ask" in actions(server.requests[0]) and "ask" not in actions(server.requests[-1])
+    conv.follow_up("And subject 02?")
+    server.replies += [{"action": "answer", "text": "ok"}]
+    conv.next_step()
+    assert "ask" in actions(server.requests[-1])
 
 
 def test_conversation_user_replies_and_long_results(server: ScriptedServer) -> None:

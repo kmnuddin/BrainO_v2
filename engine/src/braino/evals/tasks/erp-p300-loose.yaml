@@ -1,0 +1,36 @@
+id: erp-p300-loose
+category: erp
+description: >-
+  A loosely worded ERP question with no channel or window given: the agent chooses sensible
+  ones (Pz, around 300-500 ms) and reports the size.
+request: Is there a P300 in subject 02? How big is it?
+variants:
+  - Does subject 02 show a P3 to the rare stimuli? Give me the amplitude.
+  - How strong is sub-02's oddball effect?
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - kind: tool_called
+    tool: eeg.epoch
+    args: {conditions: {covers: [stimulus/rare]}}
+    description: epochs the rare events
+  - {kind: tool_called, tool: eeg.erp}
+  - {kind: answer_number, min: 2.5, max: 12, description: the P3 in µV}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "02"}}
+  - id: ep
+    tool: eeg.epoch
+    args:
+      subject: "02"
+      conditions: {rare: [stimulus/rare], frequent: [stimulus/frequent]}
+      reject: peak_to_peak
+      peak_to_peak_uv: 100
+  - id: erp
+    tool: eeg.erp
+    args:
+      subject: "02"
+      contrasts: [{name: difference, plus: rare, minus: frequent}]
+      measures: [{name: P3, channels: [Pz], tmin: 0.3, tmax: 0.5}]
+answer: >-
+  Yes: at Pz from 300 to 500 ms, rare trials are
+  {erp.measures[waveform=difference].value_uv:.2f} µV more positive than frequent ones.

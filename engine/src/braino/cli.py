@@ -1001,6 +1001,15 @@ def eval_run(
     output: Annotated[
         Path | None, typer.Option("--output", "-o", help="Write the report (JSON) here")
     ] = None,
+    repeat: Annotated[
+        int,
+        typer.Option(
+            "--repeat",
+            min=1,
+            help="Runs of each task, going through its wordings in turn; the report gives "
+            "each task's pass rate",
+        ),
+    ] = 1,
 ) -> None:
     """Run the evaluation tasks with an agent and score them.
 
@@ -1019,7 +1028,8 @@ def eval_run(
 
     def line(result: Any) -> None:
         mark = "PASS" if result.passed else "FAIL"
-        typer.echo(f"{mark}  {result.id:<32} score {result.score:.2f}  {result.seconds:6.1f} s")
+        name = result.id if repeat == 1 else f"{result.id} #{result.run}"
+        typer.echo(f"{mark}  {name:<32} score {result.score:.2f}  {result.seconds:6.1f} s")
         for c in result.checks:
             if not c.passed:
                 flag = "required" if c.required else "optional"
@@ -1043,15 +1053,28 @@ def eval_run(
                 return LLMAgent(client, max_steps=max_steps, ctx_size=ctx_size, on_event=printer)
 
         report = run_suite(
-            selected, factory, workdir=workdir, tier=tier, model=model, progress=line
+            selected,
+            factory,
+            workdir=workdir,
+            tier=tier,
+            model=model,
+            progress=line,
+            repeat=repeat,
         )
     passed = sum(t.passed for t in report.tasks)
+    runs = "tasks" if repeat == 1 else f"task runs ({len(selected)} tasks x {repeat})"
     typer.echo(
-        f"{report.agent}: {passed} of {len(report.tasks)} tasks passed "
+        f"{report.agent}: {passed} of {len(report.tasks)} {runs} passed "
         f"({report.pass_rate:.0%}), mean score {report.mean_score:.2f}, {report.seconds:.0f} s"
     )
     for name, c in report.by_category.items():
         typer.echo(f"  {name:<14} {c.passed}/{c.tasks}")
+    if repeat > 1:
+        unreliable = {n: s for n, s in report.by_task.items() if s.passed < s.runs}
+        if unreliable:
+            typer.echo("Tasks that did not pass every run:")
+            for name, s in unreliable.items():
+                typer.echo(f"  {name:<32} {s.passed}/{s.runs}")
     if output is not None:
         report.save(output)
         typer.echo(f"report written to {output}", err=True)
@@ -1073,10 +1096,17 @@ def eval_compare(
     a, b = result.pass_rate
     typer.echo(f"pass rate {a:.0%} -> {b:.0%}; mean score {result.mean_score[0]:.2f} -> "
                f"{result.mean_score[1]:.2f}")  # fmt: skip
+    repeated = old.repeat > 1 or new.repeat > 1
     for label, ids in (("fixed", result.fixed), ("broken", result.broken),
                        ("only in the earlier report", result.only_before),
                        ("only in the later report", result.only_now)):  # fmt: skip
-        if ids:
+        if not ids:
+            continue
+        if repeated and label in ("fixed", "broken"):
+            label = "pass more often" if label == "fixed" else "pass less often"
+            shown = [f"{i} ({result.rates[i][0]:.0%} -> {result.rates[i][1]:.0%})" for i in ids]
+            typer.echo(f"{label}: {', '.join(shown)}")
+        else:
             typer.echo(f"{label}: {', '.join(ids)}")
     if result.broken:
         raise typer.Exit(code=1)

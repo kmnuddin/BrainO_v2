@@ -167,7 +167,11 @@ def apply_reference(raw: Any, reference: str | list[str]) -> str | list[str]:
         return "average_with_eog"
     reference, missing = match_channels(reference, eeg)
     if missing:
-        raise ValueError(f"reference channels not among the EEG channels: {', '.join(missing)}")
+        raise ValueError(
+            f"reference channels not among the EEG channels: {', '.join(missing)}; the EEG "
+            f"channels are {', '.join(eeg)}. Other channels are not the same reference: "
+            "ask which reference to use instead"
+        )
     bad = [ch for ch in reference if ch in raw.info["bads"]]
     if bad:
         raise ValueError(f"reference channels are marked bad: {', '.join(bad)}")

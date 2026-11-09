@@ -164,8 +164,8 @@ def test_measure_errors(recording: mne.io.BaseRaw) -> None:
 
 def test_channel_names_match_whatever_their_case(recording: mne.io.BaseRaw) -> None:
     """A model wrote 'PZ' and 'FZ': the plan check accepted them, so the tools must too."""
-    assert match_channels(["PZ", "fz", "Cz", "M1"], ["Fz", "Cz", "Pz"]) == (
-        ["Pz", "Fz", "Cz"],
+    assert match_channels(["PZ", "fz", "Cz", "M1", "Pz"], ["Fz", "Cz", "Pz"]) == (
+        ["Pz", "Fz", "Cz"],  # each once: MNE refuses to pick a channel twice
         ["M1"],
     )
     epochs, _ = make_epochs(recording, EpochParams(conditions=CONDITIONS, reject="none"))

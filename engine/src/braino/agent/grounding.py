@@ -49,9 +49,13 @@ def numbers_in(text: str) -> list[tuple[float, int]]:
 
 
 def numbers_from_session(session: Session) -> Iterator[float]:
-    """Every number in the tool results, decisions and user replies of the session."""
+    """Every number in the tool results, decisions and user replies of the session, and in the
+    arguments of the calls that ran: the settings used ("from 300 to 500 ms") are facts about
+    what was done, which the answer may state."""
     for call in session.calls:
         yield from leaves(call.result)
+        if call.ok:
+            yield from leaves(call.arguments)
     for decision in session.decisions:
         yield from leaves(decision.applied)
         yield from leaves(decision.edits)

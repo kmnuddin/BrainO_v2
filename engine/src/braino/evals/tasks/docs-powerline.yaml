@@ -1,0 +1,21 @@
+id: docs-powerline
+category: docs
+description: A BIDS question answered from the specification that ships with BrainO.
+request: Is PowerLineFrequency a required field in a BIDS EEG sidecar?
+variants:
+  - Does the BIDS EEG JSON have to say the power-line frequency?
+  - In BIDS, must eeg.json include PowerLineFrequency?
+dataset:
+  synthetic: {subjects: ["01"], seconds: 30}
+checks:
+  - {kind: tool_called, tool: docs.search}
+  - {kind: answer_mentions, terms: [required]}
+  - kind: answer_not_mentions
+    terms: [not required, optional]
+    description: does not call it optional
+  - {kind: max_calls, count: 3, required: false}
+solution:
+  - {id: docs, tool: docs.search, args: {query: "PowerLineFrequency EEG sidecar", source: bids}}
+answer: >-
+  Yes. PowerLineFrequency is REQUIRED in the EEG sidecar: the frequency of the power grid (50
+  or 60 Hz) where the data were recorded (BIDS specification, EEG).

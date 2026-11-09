@@ -1,0 +1,22 @@
+id: inspect-vague
+category: inspect
+description: A vague question about the data is answered by inspecting it, without analysis.
+request: What's in this dataset?
+variants:
+  - Give me an overview of the data I loaded.
+  - Tell me about this data.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - {kind: tool_called, tool: dataset.inspect}
+  - {kind: answer_number, min: 3, max: 3, description: says there are 3 subjects}
+  - {kind: answer_mentions, terms: [oddball]}
+  - {kind: no_decision_requested}
+  - kind: tool_not_called
+    tool: [eeg.preprocess, eeg.epoch, analysis.erp_comparison, analysis.spectral_comparison]
+    description: runs no analysis
+solution:
+  - {id: inspect, tool: dataset.inspect}
+answer: >-
+  An EEG dataset with {inspect.n_subjects} subjects, each with one recording of the
+  {inspect.tasks[0]} task.

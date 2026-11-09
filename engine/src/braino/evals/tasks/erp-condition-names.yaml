@@ -1,0 +1,40 @@
+id: erp-condition-names
+category: grounding
+description: >-
+  The user names conditions the data do not use (targets, standards): the agent maps them to
+  the events there are, asking if unsure, rather than inventing events.
+request: Compare the target and standard trials in subject 01 at Pz, 300 to 500 ms.
+variants:
+  - What's the target-minus-standard difference at Pz for sub-01 (300-500 ms)?
+  - For subject 01, how do targets differ from standards at Pz between 0.3 and 0.5 s?
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+user:
+  replies: [Targets are the rare stimuli and standards the frequent ones.]
+  default_reply: Targets are the rare stimuli and standards the frequent ones.
+checks:
+  - kind: tool_called
+    tool: eeg.epoch
+    args: {conditions: {covers: [stimulus/rare, stimulus/frequent]}}
+    description: uses the rare events as targets and the frequent as standards
+  - {kind: answer_number, min: 3, max: 12, description: the difference in µV}
+solution:
+  - {id: inspect, tool: dataset.inspect}
+  - {ask: "The data have rare and frequent stimuli. Are the targets the rare ones?"}
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
+  - id: ep
+    tool: eeg.epoch
+    args:
+      subject: "01"
+      conditions: {target: [stimulus/rare], standard: [stimulus/frequent]}
+      reject: peak_to_peak
+      peak_to_peak_uv: 100
+  - id: erp
+    tool: eeg.erp
+    args:
+      subject: "01"
+      contrasts: [{name: difference, plus: target, minus: standard}]
+      measures: [{name: P3, channels: [Pz], tmin: 0.3, tmax: 0.5}]
+answer: >-
+  Targets (rare stimuli) minus standards (frequent) at Pz, 300-500 ms:
+  {erp.measures[waveform=difference].value_uv:.2f} µV.

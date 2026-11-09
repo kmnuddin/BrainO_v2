@@ -2,11 +2,14 @@ id: grounding-missing-info
 category: grounding
 description: Asked for something the data do not hold, the agent must say so, not guess.
 request: What was the average age of the participants?
+variants:
+  - "How old were the participants on average?"
+  - "What's the mean age of the subjects in this study?"
 dataset:
   synthetic: {subjects: ["01", "02", "03"], seconds: 60}
 checks:
   - kind: answer_mentions
-    terms: [not, unknown, unavailable, no information]
+    terms: [not, unknown, unavailable, no information, cannot, can't, missing, no age]
     any_term: true
     description: says the information is not available
 solution:

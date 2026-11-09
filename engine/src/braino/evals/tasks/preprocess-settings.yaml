@@ -4,6 +4,9 @@ description: Turn a request in words into the right preprocessing settings.
 request: >-
   Preprocess subject 01: band-pass filter from 1 to 40 Hz, notch out the power-line noise, and
   use the average reference.
+variants:
+  - "Filter subject 01 at 1-40 Hz with a line-noise notch, average reference."
+  - "For sub-01: 1 Hz high-pass, 40 Hz low-pass, remove mains noise, re-reference to the average."
 dataset:
   synthetic: {subjects: ["01", "02", "03"], seconds: 60}
 checks:

@@ -1,0 +1,17 @@
+id: inspect-trial-counts
+category: inspect
+description: Count one subject's trials of each kind from the dataset's events.
+request: How many rare and how many frequent trials does subject 02 have?
+variants:
+  - Trial counts for sub-02 please, rare versus frequent.
+  - In subject 02's recording, how many stimulus/rare and stimulus/frequent events are there?
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - {kind: tool_called, tool: dataset.inspect}
+  - {kind: answer_number, min: 15, max: 15, description: 15 rare trials}
+  - {kind: answer_number, min: 41, max: 41, description: 41 frequent trials}
+  - {kind: no_decision_requested}
+solution:
+  - {id: inspect, tool: dataset.inspect}
+answer: Subject 02 has 15 rare and 41 frequent trials.

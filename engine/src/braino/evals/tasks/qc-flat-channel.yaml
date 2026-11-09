@@ -1,0 +1,17 @@
+id: qc-flat-channel
+category: qc
+description: Find a planted flat channel (O1) when asked loosely what is wrong.
+request: Is anything wrong with subject 01's recording?
+variants:
+  - Does sub-01's data look OK?
+  - Before I analyse subject 01, are there any problems with the recording I should know about?
+dataset:
+  synthetic: {subjects: ["01", "02"], seconds: 60, flat: [O1]}
+checks:
+  - {kind: tool_called, tool: eeg.qc_report, args: {subject: "01"}}
+  - {kind: answer_mentions, terms: [O1]}
+  - kind: no_decision_requested
+    description: a quality screen changes nothing, so the agent asks for no decision
+solution:
+  - {id: qc, tool: eeg.qc_report, args: {subject: "01"}}
+answer: Subject 01's channel {qc.flat[0]} is flat.

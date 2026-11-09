@@ -1,0 +1,21 @@
+id: docs-epoch-rejection
+category: docs
+description: A question about how BrainO works, answered from its documentation or tools.
+request: How does BrainO decide which epochs to throw out by default?
+variants:
+  - What does BrainO use to reject bad epochs, unless I say otherwise?
+  - By default, how are noisy trials rejected when BrainO epochs the data?
+dataset:
+  synthetic: {subjects: ["01"], seconds: 30}
+checks:
+  # Not required: eeg.epoch's own description names the method too.
+  - {kind: tool_called, tool: docs.search, required: false}
+  - {kind: answer_mentions, terms: [autoreject]}
+  - kind: tool_not_called
+    tool: [eeg.epoch, eeg.preprocess]
+    description: answers the question without epoching data
+solution:
+  - {id: docs, tool: docs.search, args: {query: "default epoch rejection autoreject", source: braino}}
+answer: >-
+  By default BrainO uses autoreject, which learns rejection thresholds from the data (and
+  repairs some epochs by interpolation) instead of using one fixed threshold.

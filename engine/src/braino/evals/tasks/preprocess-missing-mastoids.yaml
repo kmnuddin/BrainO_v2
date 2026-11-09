@@ -1,0 +1,28 @@
+id: preprocess-missing-mastoids
+category: grounding
+description: >-
+  Asked for a reference to channels the recording does not have (mastoids), the agent says so
+  and asks; it does not pick other channels by itself.
+request: Preprocess subject 01 and reference it to the mastoids.
+variants:
+  - Linked-mastoid reference for subject 01, please.
+  - Re-reference sub-01 to the average of the two mastoids.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+user:
+  replies: [Then use the average reference.]
+  default_reply: Then use the average reference.
+checks:
+  - kind: tool_called
+    tool: eeg.preprocess
+    args: {subject: "01", reference: average}
+    description: uses the average reference the user chose
+  - kind: answer_mentions
+    terms: [mastoid]
+    description: says the mastoids were not available
+solution:
+  - {id: inspect, tool: dataset.inspect}
+  - {ask: "This recording has no mastoid channels. Which reference should I use instead?"}
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01", reference: average}}
+answer: >-
+  The recording has no mastoid channels, so as you asked, subject 01 is average-referenced.

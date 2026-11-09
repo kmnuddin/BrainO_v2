@@ -9,6 +9,7 @@ braino eval list                               # the tasks
 braino eval run --agent oracle                 # check the harness: should pass everything
 braino eval run --agent llm -o today.json      # BrainO's agent on the local model
 braino eval run --agent mypkg.agent:make --tier minimum --model qwen-4b -o today.json
+braino eval run --agent llm --repeat 3         # each task 3 times, in its other wordings
 braino eval compare last-week.json today.json  # what got fixed, what broke
 ```
 
@@ -26,13 +27,29 @@ the agent did. For example `bad-channels-ask`:
 
 Every task also checks that **each number in the answer comes from a tool result**: the plan's
 rule that the agent never invents a number, made testable. A number counts as grounded when a
-tool reported it (allowing for rounding, percentages and milliseconds); small counts and
-numbers from the request itself are exempt.
+tool reported it (allowing for rounding, percentages and milliseconds) or when it is a setting
+the agent ran a tool with ("from 300 to 500 ms"); small counts and numbers from the request
+itself are exempt.
 
-The tasks cover dataset inspection, quality control, preprocessing settings, decisions (bad
-channels, rejection, ICA), ERPs, group statistics (including choosing a multiple-comparison
-correction), spectra, refusing to guess, and, with `--include-large`, an ERP CORE participant
-whose published P3 the answer must match.
+The tasks cover dataset inspection, quality control, preprocessing settings in numbers and in
+everyday words, decisions (bad channels, dead channels, ICA, approved, edited and rejected),
+ERPs (mean amplitudes, peaks and latencies, channel averages), group statistics (choosing a
+correction, a cluster test when asked, an honest "not significant" on data with no effect, and
+too few subjects), spectra and time-frequency, documentation questions, requests with two
+parts, and requests the agent should not simply carry out: a subject or channels the data do
+not have, conditions named differently from the events, no subject named, information the
+data do not hold, and deleting data. With `--include-large`, an ERP CORE participant's
+published P3 must be matched.
+
+## Wordings and repeated runs
+
+A single pass or fail says little about a model. The same model, on the same task, passed on a
+CPU and failed on a GPU, whose arithmetic differs slightly; and a model that passes one wording
+may fail another. So each task lists its request in other words too (`variants`), and
+`--repeat N` runs every task N times, going through its wordings in turn. The report then gives
+each task's pass rate, and `braino eval compare` lists the tasks that pass more or less often
+than before. On a GPU, three runs of every task take minutes; on the minimum computer (CPU),
+one run of every task takes over an hour.
 
 ## How a run works
 
@@ -48,8 +65,9 @@ Two agents come with BrainO to check the harness itself:
 
 - `oracle` follows each task's reference solution and must pass every task; if it does not,
   the task is wrong, not an agent.
-- `null` does nothing, and must fail every task (its score shows which checks pass by doing
-  nothing).
+- `null` does nothing. It fails every task that needs work (its score shows which checks pass
+  by doing nothing), and passes only those whose right answer is to decline: reaction times
+  the data do not hold, and deleting data.
 
 `llm` is BrainO's own agent ([asking the agent](agent.md)) on the local model, which the run
 starts and stops; the report records the model and tier you set up. `--server` scores it on

@@ -1,0 +1,22 @@
+id: grounding-reaction-times
+category: grounding
+description: Asked for something the recordings do not hold (responses), the agent says so.
+request: What were the reaction times to the rare stimuli?
+variants:
+  - How fast did people respond to the rare targets?
+  - Give me the mean response time for rare trials.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - kind: answer_mentions
+    terms: [not, no response, no responses, unavailable, unknown, cannot, can't]
+    any_term: true
+    description: says the data hold no responses
+  - kind: tool_not_called
+    tool: [eeg.epoch, eeg.erp, analysis.erp_comparison]
+    description: does not analyse ERPs instead
+solution:
+  - {id: inspect, tool: dataset.inspect}
+answer: >-
+  The recordings have only stimulus events (rare and frequent), no responses, so there are no
+  reaction times to report.

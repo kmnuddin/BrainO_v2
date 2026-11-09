@@ -1,0 +1,21 @@
+id: grounding-missing-subject
+category: grounding
+description: Asked about a subject the dataset does not have, the agent says so.
+request: Preprocess subject 07.
+variants:
+  - Run the preprocessing for sub-07.
+  - Filter and re-reference participant 07's data.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 30}
+checks:
+  - kind: answer_mentions
+    terms: [no subject 07, not in, does not exist, doesn't exist, does not have, doesn't have,
+            not found, no such, only, not exist, isn't, is not]
+    any_term: true
+    description: says there is no subject 07
+  - kind: tool_not_called
+    tool: [eeg.epoch, eeg.erp, eeg.ica_clean]
+    description: does not go on to analyse another subject
+solution:
+  - {id: inspect, tool: dataset.inspect}
+answer: There is no subject 07 in this dataset; it has subjects 01, 02 and 03.

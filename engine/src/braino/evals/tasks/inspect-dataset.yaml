@@ -2,6 +2,9 @@ id: inspect-dataset
 category: inspect
 description: Describe a dataset from its metadata.
 request: How many subjects are in this dataset, and which tasks were recorded?
+variants:
+  - "How many participants and which tasks does this dataset have?"
+  - "Tell me the number of subjects and the task names."
 dataset:
   synthetic: {subjects: ["01", "02", "03"], seconds: 60}
 checks:

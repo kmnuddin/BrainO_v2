@@ -1,0 +1,35 @@
+id: erp-template-group
+category: stats
+description: A group ERP comparison through the template - plan, approval, run.
+request: >-
+  Compare the rare and frequent ERPs across all subjects at Pz from 300 to 500 ms using your
+  standard pipeline, and tell me whether the difference is significant.
+variants:
+  - Set up and run the standard rare-vs-frequent ERP analysis for the whole group, measured at Pz, 300-500 ms.
+  - Use the ERP comparison pipeline on everyone - rare minus frequent at Pz, 0.3 to 0.5 s. Is it significant?
+dataset:
+  synthetic: {subjects: ["01", "02", "03", "04", "05", "06"], seconds: 60}
+checks:
+  - {kind: decision_requested, tool: analysis.erp_comparison}
+  - {kind: tool_called, tool: analysis.run}
+  - {kind: answer_mentions, terms: [significant]}
+  - kind: answer_not_mentions
+    terms: [not significant, no significant]
+    description: does not report the planted effect as absent
+solution:
+  - id: plan
+    tool: analysis.erp_comparison
+    args:
+      condition_a: rare
+      events_a: [stimulus/rare]
+      condition_b: frequent
+      events_b: [stimulus/frequent]
+      test_scope: measured
+      channels: [Pz]
+      tmin: 0.3
+      tmax: 0.5
+  - {decide: plan}
+  - {id: run, tool: analysis.run, args: {name: erp-rare-vs-frequent}}
+answer: >-
+  The rare-minus-frequent difference at Pz (300-500 ms) is significant across the
+  {run.n_subjects} subjects (FDR-corrected).

@@ -1,0 +1,20 @@
+id: inspect-two-questions
+category: inspect
+description: One message with two questions, answered with two different tools.
+request: How many subjects are there, and does subject 01 have power-line noise?
+variants:
+  - Two things, please - the number of subjects, and whether sub-01 has line noise.
+  - Count the participants for me, and check subject 01 for mains interference.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 30, line_noise_uv: 20}
+checks:
+  - {kind: tool_called, tool: dataset.inspect, required: false}
+  - {kind: tool_called, tool: eeg.qc_report, args: {subject: "01"}}
+  - {kind: answer_number, min: 3, max: 3, description: 3 subjects}
+  - {kind: answer_number, min: 49.5, max: 50.5, description: line noise at 50 Hz}
+solution:
+  - {id: inspect, tool: dataset.inspect}
+  - {id: qc, tool: eeg.qc_report, args: {subject: "01"}}
+answer: >-
+  There are {inspect.n_subjects} subjects, and subject 01 has power-line noise at
+  {qc.line_freq_hz:g} Hz.

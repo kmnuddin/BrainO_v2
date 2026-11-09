@@ -1,0 +1,26 @@
+id: tfr-rare
+category: spectral
+description: A question about power over time after an event needs a time-frequency analysis.
+request: How does alpha power change over time after the rare stimuli in subject 01?
+variants:
+  - Time-frequency analysis of sub-01's rare trials - what happens to alpha?
+  - Is there an alpha decrease after the rare stimuli in subject 01? Look at it over time.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - {kind: order, before: eeg.epoch, after: eeg.tfr}
+  - {kind: tool_called, tool: eeg.tfr, args: {subject: "01"}}
+  - {kind: answer_mentions, terms: [alpha]}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
+  - id: ep
+    tool: eeg.epoch
+    args:
+      subject: "01"
+      conditions: {rare: [stimulus/rare], frequent: [stimulus/frequent]}
+      reject: peak_to_peak
+      peak_to_peak_uv: 100
+  - {id: tfr, tool: eeg.tfr, args: {subject: "01", conditions: [rare]}}
+answer: >-
+  I computed time-frequency power after the rare stimuli in subject 01 (baseline-corrected,
+  in dB); the alpha band shows the change summarised in the result.

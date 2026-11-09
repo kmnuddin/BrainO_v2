@@ -25,14 +25,21 @@ class CheckResult(BaseModel):
     detail: str = ""
 
 
-def evaluate(task: EvalTask, session: Session, answer: AgentAnswer | None) -> list[CheckResult]:
-    return [_evaluate(check, task, session, answer) for check in task.all_checks()]
+def evaluate(
+    task: EvalTask, session: Session, answer: AgentAnswer | None, request: str | None = None
+) -> list[CheckResult]:
+    """Score ``answer`` to ``request`` (default: the task's request; a run may use a variant)."""
+    asked = task.request if request is None else request
+    return [_evaluate(check, task, session, answer, asked) for check in task.all_checks()]
 
 
 def _evaluate(
-    check: Check, task: EvalTask, session: Session, answer: AgentAnswer | None
+    check: Check, task: EvalTask, session: Session, answer: AgentAnswer | None, request: str
 ) -> CheckResult:
-    passed, detail = _CHECKS[check.kind](check, task, session, answer)
+    if check.kind == "grounded":  # numbers the user gave count as grounded
+        passed, detail = _grounded(request, session, answer)
+    else:
+        passed, detail = _CHECKS[check.kind](check, task, session, answer)
     return CheckResult(
         kind=check.kind,
         description=check.description or _default_description(check),
@@ -134,10 +141,10 @@ def _max_calls(check: Check, task: EvalTask, s: Session, a: AgentAnswer | None) 
     return n <= (check.count or 0), f"{n} calls"
 
 
-def _grounded(check: Check, task: EvalTask, s: Session, a: AgentAnswer | None) -> Outcome:
+def _grounded(request: str, s: Session, a: AgentAnswer | None) -> Outcome:
     if a is None:
         return False, "no answer"
-    invented = ungrounded_in_answer(a.text, s, task.request)
+    invented = ungrounded_in_answer(a.text, s, request)
     if invented:
         return False, f"not from any tool result: {invented}"
     return True, ""
@@ -153,7 +160,6 @@ _CHECKS = {
     "answer_mentions": _mentions,
     "answer_not_mentions": _not_mentions,
     "max_calls": _max_calls,
-    "grounded": _grounded,
 }
 
 

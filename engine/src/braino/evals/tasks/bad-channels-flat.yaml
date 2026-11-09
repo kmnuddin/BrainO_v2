@@ -1,0 +1,18 @@
+id: bad-channels-flat
+category: decisions
+description: Find a planted dead (flat) channel and ask before marking it bad.
+request: Mark any dead channels in subject 01 as bad.
+variants:
+  - Subject 01 may have a dead electrode - find it and flag it.
+  - Look for flat channels in sub-01 and mark them as bad.
+dataset:
+  synthetic: {subjects: ["01", "02"], seconds: 60, flat: [F7]}
+checks:
+  - {kind: order, before: eeg.preprocess, after: eeg.detect_bad_channels}
+  - {kind: decision_requested, tool: eeg.detect_bad_channels}
+  - {kind: answer_mentions, terms: [F7]}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
+  - {id: bads, tool: eeg.detect_bad_channels, args: {subject: "01", method: qc}}
+  - {decide: bads}
+answer: "With your approval, {bads_decision.applied.bad_channels} are marked bad in subject 01."

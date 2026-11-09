@@ -9,6 +9,24 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   tool use, decisions and answers (every number must come from a tool result), reports per
   hardware tier, and comparison between runs. `braino.agent.Session` is what agents work
   through.
+- Evaluation baseline: 48 tasks (from 16), each with two other wordings of its request;
+  `braino eval run --repeat N` runs every task N times through its wordings and reports each
+  task's pass rate, which `braino eval compare` compares. New tasks cover loosely worded
+  and two-part requests, dead channels, rejected ICA, peaks and latencies, an honest "not
+  significant" on data with no effect, too few subjects, cluster and Bonferroni tests,
+  time-frequency, documentation questions, and requests the agent should not simply carry out
+  (a missing subject or channels, differently named conditions, no subject named, reaction
+  times the data do not hold, deleting data). Settings a tool ran with now count as grounded
+  numbers.
+- Fixes found by the baseline: a dead channel is found by `eeg.detect_bad_channels` after an
+  average reference (it looked in the re-referenced data, where a flat channel no longer is
+  flat); a missing epochs label, an unknown reference channel or measured channel name the
+  ones there are (and the reference error says to ask rather than use other channels); channels listed twice are picked once; a plan with 2 subjects says why it
+  has no group test; the quality screen says it changed nothing. The agent may ask at most two
+  questions per request, stops after four calls in a row of one tool on one subject, does not
+  count a tool's own calls as changes when refusing a repeated call, keeps the text of an
+  answer cut off twice, and is told to do only what was asked, to say when the data lack
+  something instead of substituting, and never to claim an action no tool took.
 - Local model runtime (`braino model`, `braino.runtime`): detects RAM and GPUs, proposes a
   model tier (Qwen3.5 4B on the minimum computer, Qwen3.5 9B or Qwen3.6 35B-A3B with more),
   installs a pinned llama.cpp build and downloads the model once, checked against pinned

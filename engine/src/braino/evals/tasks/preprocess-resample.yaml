@@ -1,0 +1,17 @@
+id: preprocess-resample
+category: preprocessing
+description: Resample, keeping the default filters.
+request: Downsample subject 01 to 125 Hz, and keep the default filters.
+variants:
+  - Resample sub-01 to 125 Hz; otherwise the usual preprocessing.
+  - Preprocess subject 01 as usual but bring the sampling rate down to 125 Hz.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - kind: tool_called
+    tool: eeg.preprocess
+    args: {subject: "01", resample_hz: 125.0, l_freq: 0.1, h_freq: 40.0}
+    description: resamples to 125 Hz with the default 0.1-40 Hz filters
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01", resample_hz: 125}}
+answer: Subject 01 is preprocessed and resampled to {pre.sfreq_hz:g} Hz.

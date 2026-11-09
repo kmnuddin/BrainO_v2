@@ -16,6 +16,7 @@ Needs the ``[eeg]`` extra; ``pyprep`` also needs PyPREP.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
@@ -66,12 +67,17 @@ def find_bad_channels(
     line_freq: float | None = None,
     correlation_max_bad_time: float = CORRELATION_MAX_BAD_TIME,
     leave_out_blinks: bool = True,
+    flat_before: Sequence[str] = (),
 ) -> BadChannelResult:
     """Find bad EEG channels in ``raw`` (unchanged). Channels already marked bad stay bad.
 
     With ``leave_out_blinks``, blinks (found in the EOG channels, or else in Fp1/Fp2) and the
     time around them are left out, so that channels near the eyes are not marked bad for
     showing blinks: ICA removes blinks, and needs those channels to do so.
+
+    ``flat_before``: channels flat in the recording before it was re-referenced. In ``raw``
+    after an average reference, a dead channel carries minus the average and no longer looks
+    flat, so the caller finds it in the original recording.
     """
     eeg = [
         ch for ch, kind in zip(raw.ch_names, raw.get_channel_types(), strict=True) if kind == "eeg"
@@ -92,7 +98,8 @@ def find_bad_channels(
     # as given: after re-referencing they would carry minus the average and no longer look
     # flat. They and the channels already marked bad are left out of the comparison.
     data = raw.copy().pick(eeg).load_data(verbose="error")
-    flat = [ch for ch in flat_channels(data) if ch not in already]
+    found_flat = set(flat_channels(data)) | set(flat_before)
+    flat = [ch for ch in eeg if ch in found_flat and ch not in already]
     reasons: dict[str, list[str]] = {ch: ["flat"] for ch in flat}
     usable = [ch for ch in eeg if ch not in flat and ch not in already]
     notes: list[str] = []

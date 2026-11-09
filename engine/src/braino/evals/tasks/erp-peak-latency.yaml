@@ -1,0 +1,33 @@
+id: erp-peak-latency
+category: erp
+description: Measure a peak and its latency rather than a mean amplitude (planted peak ~400 ms).
+request: When does subject 01's rare-minus-frequent difference peak at Pz, and how large is the peak?
+variants:
+  - What is the peak latency of the P3 at Pz for subject 01 (rare minus frequent)?
+  - Find the latency and amplitude of the largest positive peak of sub-01's difference wave at Pz.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - kind: tool_called
+    tool: eeg.erp
+    args: {measures: {covers: [peak_positive]}}
+    description: measures the positive peak
+  - {kind: answer_number, min: 280, max: 520, description: the peak latency in ms}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
+  - id: ep
+    tool: eeg.epoch
+    args:
+      subject: "01"
+      conditions: {rare: [stimulus/rare], frequent: [stimulus/frequent]}
+      reject: peak_to_peak
+      peak_to_peak_uv: 100
+  - id: erp
+    tool: eeg.erp
+    args:
+      subject: "01"
+      contrasts: [{name: difference, plus: rare, minus: frequent}]
+      measures: [{name: P3, channels: [Pz], tmin: 0.2, tmax: 0.7, kind: peak_positive}]
+answer: >-
+  The difference at Pz peaks at {erp.measures[waveform=difference].latency_ms:g} ms, at
+  {erp.measures[waveform=difference].value_uv:.2f} µV.

@@ -2,6 +2,9 @@ id: qc-noisy-channel
 category: qc
 description: Find a channel with planted broadband noise (T8) with the quality screen.
 request: Check the data quality of subject 02. Are any channels noisy?
+variants:
+  - "Are there noisy electrodes in sub-02?"
+  - "How does subject 02's data quality look - any bad channels?"
 dataset:
   synthetic: {subjects: ["01", "02"], seconds: 60, noisy: [T8]}
 checks:

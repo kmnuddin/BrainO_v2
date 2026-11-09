@@ -1,0 +1,21 @@
+id: qc-every-subject
+category: qc
+description: Screen every subject when asked about all of them (planted noise at T8).
+request: Check the data quality of every subject.
+variants:
+  - Run a quality check on all the participants.
+  - Which subjects have data-quality problems?
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60, noisy: [T8]}
+checks:
+  - {kind: tool_called, tool: eeg.qc_report, args: {subject: "01"}}
+  - {kind: tool_called, tool: eeg.qc_report, args: {subject: "02"}}
+  - {kind: tool_called, tool: eeg.qc_report, args: {subject: "03"}}
+  - {kind: answer_mentions, terms: [T8]}
+  - {kind: no_decision_requested}
+solution:
+  - id: qc
+    tool: eeg.qc_report
+    foreach: ["01", "02", "03"]
+    args: {subject: "{subject}"}
+answer: All three subjects have a noisy channel, {qc.noisy[0].channel}.

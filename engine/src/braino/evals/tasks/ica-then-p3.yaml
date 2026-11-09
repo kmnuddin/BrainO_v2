@@ -1,0 +1,36 @@
+id: ica-then-p3
+category: erp
+description: Two steps in one request, in order - remove blinks (a decision), then measure.
+request: >-
+  Remove the eye blinks from subject 01, then measure the P3 at Pz (rare minus frequent,
+  300 to 500 ms).
+variants:
+  - First clean sub-01's blinks with ICA, then give me the rare-minus-frequent amplitude at Pz, 0.3-0.5 s.
+  - After removing blink artifacts from subject 01, how large is the P3 at Pz between 300 and 500 ms?
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60, blinks: 40}
+checks:
+  - {kind: decision_requested, tool: eeg.ica_clean}
+  - {kind: order, before: eeg.ica_clean, after: eeg.epoch}
+  - {kind: tool_called, tool: eeg.erp}
+  - {kind: answer_number, min: 3, max: 12, description: the P3 difference in µV}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
+  - {id: ica, tool: eeg.ica_clean, args: {subject: "01", labeler: eog}}
+  - {decide: ica}
+  - id: ep
+    tool: eeg.epoch
+    args:
+      subject: "01"
+      conditions: {rare: [stimulus/rare], frequent: [stimulus/frequent]}
+      reject: peak_to_peak
+      peak_to_peak_uv: 100
+  - id: erp
+    tool: eeg.erp
+    args:
+      subject: "01"
+      contrasts: [{name: difference, plus: rare, minus: frequent}]
+      measures: [{name: P3, channels: [Pz], tmin: 0.3, tmax: 0.5}]
+answer: >-
+  After removing the blink components, the P3 at Pz (300-500 ms) is
+  {erp.measures[waveform=difference].value_uv:.2f} µV.

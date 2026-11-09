@@ -267,6 +267,20 @@ def sha256(path: Path) -> str:
 def read_epochs(ctx: RunContext, recording: RecordingSummary, label: str) -> tuple[Any, Path]:
     import mne
 
-    path = require(derivative(ctx, recording, f"desc-{label}_epo.fif"), "eeg.epoch")
+    path = derivative(ctx, recording, f"desc-{label}_epo.fif")
+    if not path.is_file():
+        # A model named its epochs after the task ('oddball'), then asked for the default label.
+        prefix = f"{stem(recording)}desc-"
+        labels = sorted(
+            p.name.removeprefix(prefix).removesuffix("_epo.fif")
+            for p in path.parent.glob(f"{prefix}*_epo.fif")
+        )
+        if labels:
+            raise MissingStepError(
+                f"no epochs labelled {label!r} for this recording; it has epochs labelled "
+                f"{', '.join(repr(x) for x in labels)}: pass label={labels[0]!r}, or run "
+                f"eeg.epoch with label={label!r}"
+            )
+        require(path, "eeg.epoch")
     ctx.record_input(path)
     return mne.read_epochs(path, preload=True, verbose="error"), path

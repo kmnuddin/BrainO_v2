@@ -200,6 +200,18 @@ def test_bad_channel_decision_edits_and_reference(tmp_path: Path) -> None:
     assert epochs.source == "clean"
 
 
+@pytest.mark.parametrize("method", ["qc", "pyprep"])
+def test_a_dead_channel_is_found_after_an_average_reference(tmp_path: Path, method: str) -> None:
+    """After an average reference a dead channel carries minus the average and no longer looks
+    flat; the tool finds it in the original recording (an eval task found it missed)."""
+    root = write_dataset(tmp_path, ["01"], task=TASK, seconds=30.0, flat=["F7"])
+    ctx = RunContext(dataset_root=root)
+    run(ctx, "eeg.preprocess", "01")
+    proposal = run(ctx, "eeg.detect_bad_channels", "01", method=method, ransac=False)
+    assert "F7" in proposal.proposal["channels"]
+    assert proposal.proposal["reasons"]["F7"][0] == "flat"
+
+
 def test_decisions_on_an_old_preprocessing_are_refused(tmp_path: Path) -> None:
     root = write_dataset(tmp_path, ["01"], task=TASK, seconds=30.0)
     ctx = RunContext(dataset_root=root)

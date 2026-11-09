@@ -15,6 +15,8 @@ A task is a YAML file::
       - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
       - ...
     answer: "The difference at Pz is {erp.measures[waveform=difference].value_uv:.2f} µV."
+    variants:            # the same request in other words, for repeated runs
+      - How big is subject 01's P3 at Pz (rare minus frequent, 0.3-0.5 s)?
 
 Every task also checks, unless it says ``grounded: false``, that each number in the answer comes
 from a tool result: the agent must never invent a number.
@@ -154,6 +156,10 @@ class EvalTask(BaseModel):
     category: str
     description: str = ""
     request: str = Field(description="What the user asks the agent, in their words")
+    variants: list[str] = Field(
+        default_factory=list,
+        description="The same request in other words; repeated runs go through them in turn",
+    )
     dataset: DatasetSpec
     user: ScriptedUser = Field(default_factory=ScriptedUser)
     checks: list[Check] = Field(min_length=1)
@@ -161,6 +167,11 @@ class EvalTask(BaseModel):
     solution: list[SolutionStep] = Field(default_factory=list)
     answer: str = Field(default="", description="The oracle's answer, a template over results")
     large: bool = Field(default=False, description="Needs a large download (ERP CORE)")
+
+    def wording(self, run: int) -> str:
+        """The request of run ``run`` (from 0): the request, then each variant, in turn."""
+        options = [self.request, *self.variants]
+        return options[run % len(options)]
 
     def all_checks(self) -> list[Check]:
         checks = list(self.checks)

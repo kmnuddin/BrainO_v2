@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import pytest
 
@@ -33,6 +33,18 @@ def test_builtin_tasks_load_and_cover_the_categories() -> None:
     assert [t.id for t in select_tasks()] == [t.id for t in tasks if not t.large]
     with pytest.raises(TaskError, match="no task"):
         select_tasks(["nope"])
+
+
+def test_every_task_has_other_wordings() -> None:
+    """Repeated runs go through each task's wordings, so a pass rate says how the model copes
+    with how people ask, not with one sentence."""
+    for task in builtin_tasks():
+        if task.large:
+            continue
+        wordings = [task.request, *task.variants]
+        assert len(task.variants) >= 2, task.id
+        assert len(set(wordings)) == len(wordings), task.id
+        assert [task.wording(r) for r in range(4)] == [*wordings, task.request][:4]
 
 
 @pytest.mark.parametrize("task", builtin_tasks(), ids=lambda t: t.id)
@@ -224,13 +236,43 @@ def test_agent_errors_are_recorded(isolated_data: Path) -> None:
     assert (isolated_data / "erp-p3-one-subject" / "error.txt").is_file()
 
 
+class Recorder:
+    """Inspects the dataset and states the setting it used, recording each request."""
+
+    name = "recorder"
+    requests: ClassVar[list[str]] = []
+
+    def solve(self, request: str, session: Session) -> AgentAnswer:
+        Recorder.requests.append(request)
+        session.call("dataset.inspect", {"max_recordings": 17})
+        # 17 is in no result: it is the setting used, which the answer may state.
+        return AgentAnswer(text="I looked at up to 17 recordings: 3 subjects, task oddball.")
+
+
+def test_repeated_runs_go_through_the_wordings(isolated_data: Path) -> None:
+    from braino.evals import run_suite
+
+    task = next(t for t in builtin_tasks() if t.id == "inspect-dataset")
+    Recorder.requests = []
+    report = run_suite([task], lambda t: Recorder(), workdir=isolated_data / "rep", repeat=4)
+    assert Recorder.requests == [task.request, *task.variants, task.request]
+    assert [r.run for r in report.tasks] == [1, 2, 3, 4]
+    assert [r.request for r in report.tasks] == Recorder.requests
+    assert report.repeat == 4 and report.by_task["inspect-dataset"].runs == 4
+    assert all(r.passed for r in report.tasks), report.tasks[0].checks  # grounded by arguments
+    assert (isolated_data / "rep" / "inspect-dataset-4" / "transcript.json").is_file()
+    with pytest.raises(ValueError, match="at least 1"):
+        run_suite([task], lambda t: Recorder(), repeat=0)
+
+
 def test_reports_save_load_and_compare(tmp_path: Path) -> None:
     from braino.evals.runner import _report
 
-    def result(task_id: str, passed: bool) -> TaskResult:
+    def result(task_id: str, passed: bool, run: int = 1) -> TaskResult:
         return TaskResult(
-            id=task_id, category="x", passed=passed, score=1.0 if passed else 0.5, checks=[],
-            n_calls=1, n_failed_calls=0, n_decisions=0, seconds=0.1, answer="", error=None,
+            id=task_id, category="x", run=run, passed=passed, score=1.0 if passed else 0.5,
+            checks=[], n_calls=1, n_failed_calls=0, n_decisions=0, seconds=0.1, answer="",
+            error=None,
         )  # fmt: skip
 
     from datetime import UTC, datetime
@@ -244,6 +286,18 @@ def test_reports_save_load_and_compare(tmp_path: Path) -> None:
     diff = compare(before, now)
     assert diff.broken == ["a"] and diff.fixed == ["b"] and diff.only_now == ["c"]
     assert now.by_category["x"].passed == 2
+
+    # With repeated runs, tasks are compared by how often they pass.
+    three = _report([result("a", True, 1), result("a", False, 2), result("a", True, 3),
+                     result("b", True, 1), result("b", True, 2), result("b", True, 3)],
+                    "x", "qwen", "gpu", datetime.now(UTC), 1.0)  # fmt: skip
+    assert three.by_task["a"].pass_rate == 0.6667
+    diff = compare(three, now)
+    assert diff.broken == ["a"] and diff.fixed == []  # 67% -> 0%; b stays at 100%
+    assert diff.rates["a"] == (0.6667, 0.0)
+    # Reports written before by_task existed still compare.
+    old = EvalReport.model_validate({**before.model_dump(), "by_task": {}})
+    assert old.task_rates() == {"a": 1.0, "b": 0.0}
 
 
 def test_cli(isolated_data: Path) -> None:

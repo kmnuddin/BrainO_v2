@@ -29,6 +29,7 @@ from braino.llm.client import ChatClient, ChatReply, LLMError, Message
 from braino.llm.schemas import catalogue, render_cards
 from braino.llm.select import select_tools
 from braino.llm.steps import (
+    Answer,
     AskUser,
     LoadTools,
     RequestDecision,
@@ -53,17 +54,23 @@ nothing was changed).
 - "ask": ask the user when the request is unclear. Do not guess subjects, conditions, events \
 or channels: find them with tools, or ask.
 - "answer": your final reply to the request.
-To compare two conditions (ERPs or band power), for one subject or a group, use \
-analysis.erp_comparison or analysis.spectral_comparison rather than each step: they plan a \
-tested pipeline, the user approves the plan (decide), then analysis.run runs it.
+To compare two conditions of trials (e.g. rare vs frequent; ERPs or band power), for one \
+subject or a group, use analysis.erp_comparison or analysis.spectral_comparison rather than \
+each step: they plan a tested pipeline, the user approves the plan (decide), then \
+analysis.run runs it. They do not compare frequency bands, or show power over time \
+(eeg.tfr).
 For a question about methods, BIDS, MNE or how BrainO works, look it up with docs.search and \
 answer from the passages it returns, naming their source; do not answer it from memory.
 Rules: every number in an answer must come from a tool result. Report what the tools found, \
 including warnings. If a tool fails, read its error: if another tool must run first, run it, \
 then retry; otherwise fix the call or explain the problem. Never repeat a call that failed \
-unchanged. If the information asked for is not in the dataset, answer that it is not \
-available. Keep the answer short: the main results, with numbers exactly as the tools gave \
+unchanged. Keep the answer short: the main results, with numbers exactly as the tools gave \
 them.
+Do only what was asked: answer a question without changing data, and suggest further steps \
+instead of running them. If the dataset lacks what was asked (a subject, channels, events, \
+responses), say so: do not use something else in its place unless the user agrees. Only the \
+tools act: if none does what is asked (e.g. deleting data), say you cannot, and never say you \
+did what no tool did. Run tools yourself; never ask the user to.
 
 All tools (load a tool before calling it):
 {catalogue}"""
@@ -114,6 +121,7 @@ class Conversation:
         self.pending: list[str] = []
         self.steps: list[Step] = []
         self.replies: list[ChatReply] = []
+        self.questions = 0  # questions asked about the current request
         names = select_tools(request, self.tools) if preload is None else list(preload)
         if names:
             self._append({"role": "assistant", "content": _dump(LoadTools(tools=names))})
@@ -141,7 +149,9 @@ class Conversation:
             # otherwise ask again and again, or ask to approve what the user just decided.
             last = self.steps[-1] if self.steps else None
             just_asked = isinstance(last, AskUser | RequestDecision)
-            can_ask = self.can_ask and not just_asked and not final
+            can_ask = (
+                self.can_ask and not just_asked and not final and self.questions < MAX_QUESTIONS
+            )
             loaded: list[Tool] = [] if final else self.loaded
             loadable: list[str] = [] if final else self.loadable
             pending: list[str] = [] if final else self.pending
@@ -157,6 +167,12 @@ class Conversation:
             self._append({"role": "assistant", "content": reply.content})
             try:
                 if reply.finish_reason == "length":
+                    partial = partial_answer(reply.content)
+                    if repaired and partial:
+                        # Cut off twice: the answer written so far beats no answer at all.
+                        kept = Answer(text=f"{partial} [{CUT_OFF_NOTE}]")
+                        self.steps.append(kept)
+                        return kept
                     # A small model writing a group result can list every value; asked only to
                     # reply again, it wrote the same long answer and was cut off again.
                     raise StepError(
@@ -215,12 +231,18 @@ class Conversation:
             self._load(named)
 
     def add_user_reply(self, reply: str) -> None:
-        """The user's answer to an ``ask`` step."""
-        self.add_result(f"The user replied: {reply}")
+        """The user's answer to an ``ask`` step. After ``MAX_QUESTIONS`` for one request, the
+        model may not ask again (a small model asked the same question 13 times)."""
+        self.questions += 1
+        text = f"The user replied: {reply}"
+        if self.questions >= MAX_QUESTIONS:
+            text += " You cannot ask more questions about this request: use what you have."
+        self.add_result(text)
 
     def follow_up(self, request: str) -> None:
         """A new request from the user, after the answer to the previous one. The tools its
         words point to are loaded, as for the first request."""
+        self.questions = 0
         self._append({"role": "user", "content": request})
         new = [n for n in select_tools(request, self.tools) if n in self.loadable]
         if new:
@@ -251,6 +273,35 @@ def _tool(content: str) -> Message:
     # by Qwen's template, but accepted by every OpenAI-compatible server (a "tool" message
     # must otherwise answer a native tool call).
     return {"role": "user", "content": f"<tool_response>\n{content}\n</tool_response>"}
+
+
+CUT_OFF_NOTE = "the answer was cut off here for length"
+MAX_QUESTIONS = 2
+"""Questions the model may ask the user about one request."""
+
+_ANSWER_START = re.compile(r'^\s*\{\s*"action"\s*:\s*"answer"\s*,\s*"text"\s*:\s*"')
+
+
+def partial_answer(content: str) -> str | None:
+    """The text of an answer cut off mid-reply (``{"action":"answer","text":"...``), cut back
+    to its last whole sentence or line, or None if the reply is not an answer."""
+    start = _ANSWER_START.match(content)
+    if start is None:
+        return None
+    raw = content[start.end() :]
+    # Decode the JSON string as far as it goes: drop an unfinished escape at the end.
+    for trim in range(8):
+        try:
+            text = json.loads(f'"{raw[: len(raw) - trim]}"')
+            break
+        except json.JSONDecodeError:
+            continue
+    else:
+        return None
+    ends = [text.rfind(mark) for mark in (". ", ".\n", "\n")]
+    end = max(ends)
+    text = text[: end + 1] if end > len(text) // 2 else text
+    return text.strip() or None
 
 
 def _mentions(text: str, tool_name: str) -> bool:

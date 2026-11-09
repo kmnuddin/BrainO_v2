@@ -3,6 +3,9 @@ category: stats
 description: Run the per-subject chain for every subject, then a group test.
 request: >-
   Across all subjects, is the P3 at Pz (rare minus frequent trials, 300 to 500 ms) significant?
+variants:
+  - "Is the rare-minus-frequent difference at Pz between 300 and 500 ms significant at the group level?"
+  - "Group test: P3 at Pz, rare vs frequent, 0.3-0.5 s, all subjects. Significant or not?"
 dataset:
   synthetic: {subjects: ["01", "02", "03", "04", "05", "06"], seconds: 60}
 checks:

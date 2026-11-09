@@ -1,0 +1,26 @@
+id: qc-unspecified-subject
+category: grounding
+description: >-
+  The request names no subject: the agent asks which (the user says all of them) or checks
+  them all, but does not pick one by itself.
+request: Run the quality check.
+variants:
+  - Can you QC the data?
+  - Check for bad data.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60, noisy: [T8]}
+user:
+  replies: [All of them, please.]
+  default_reply: All of them, please.
+checks:
+  - {kind: tool_called, tool: eeg.qc_report, args: {subject: "01"}}
+  - {kind: tool_called, tool: eeg.qc_report, args: {subject: "02"}}
+  - {kind: tool_called, tool: eeg.qc_report, args: {subject: "03"}}
+  - {kind: no_decision_requested}
+solution:
+  - {ask: "Which subjects should I check?"}
+  - id: qc
+    tool: eeg.qc_report
+    foreach: ["01", "02", "03"]
+    args: {subject: "{subject}"}
+answer: All three subjects have a noisy channel, {qc.noisy[0].channel}.

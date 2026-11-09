@@ -101,7 +101,10 @@ def measure(evoked: Any, spec: Measure, waveform: str) -> MeasureValue:
 
     channels, missing = match_channels(spec.channels, evoked.ch_names)
     if missing:
-        raise ValueError(f"measure {spec.name!r}: no channel {', '.join(missing)}")
+        raise ValueError(
+            f"measure {spec.name!r}: no channel {', '.join(missing)}; the channels are "
+            f"{', '.join(evoked.ch_names)}"
+        )
     times = evoked.times
     if spec.tmin < times[0] - 1e-9 or spec.tmax > times[-1] + 1e-9:
         raise ValueError(

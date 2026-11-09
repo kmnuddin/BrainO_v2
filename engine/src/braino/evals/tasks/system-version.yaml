@@ -1,0 +1,16 @@
+id: system-version
+category: inspect
+description: A question about BrainO itself is answered from system.info.
+request: Which version of BrainO am I running?
+variants:
+  - What BrainO version is this?
+  - Tell me the BrainO and Python versions on this computer.
+dataset:
+  synthetic: {subjects: ["01"], seconds: 30}
+checks:
+  - {kind: tool_called, tool: system.info}
+  - {kind: max_calls, count: 2, required: false}
+  - {kind: no_decision_requested}
+solution:
+  - {id: info, tool: system.info}
+answer: This is BrainO {info.braino_version}.

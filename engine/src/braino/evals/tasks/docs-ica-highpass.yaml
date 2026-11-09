@@ -4,6 +4,9 @@ description: >-
   A methods question is answered from MNE's tutorials or BrainO's guide, with the cutoff
   they give.
 request: Why is the data high-pass filtered before ICA, and at what cutoff?
+variants:
+  - "What high-pass should the data have before ICA, and why?"
+  - "Why do people filter at 1 Hz before running ICA?"
 dataset:
   synthetic: {subjects: ["01"], seconds: 30}
 checks:
@@ -15,7 +18,7 @@ checks:
     max: 1
     description: the 1 Hz cutoff
   - kind: answer_mentions
-    terms: [drift, slow]
+    terms: [drift, drifts, slow, low-frequency]
     any_term: true
     description: says the high-pass removes slow drifts
   - kind: tool_not_called

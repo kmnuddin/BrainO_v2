@@ -2,6 +2,9 @@ id: preprocess-reference-channels
 category: preprocessing
 description: Reference to chosen channels.
 request: Preprocess subject 01 with the usual filters, but reference it to the mean of P7 and P8.
+variants:
+  - "Re-reference subject 01 to the average of P7 and P8, default filters otherwise."
+  - "For sub-01, use P7 and P8 as the reference."
 dataset:
   synthetic: {subjects: ["01", "02", "03"], seconds: 60}
 checks:

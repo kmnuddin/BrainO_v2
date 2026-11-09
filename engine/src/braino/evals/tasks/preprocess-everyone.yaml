@@ -1,0 +1,19 @@
+id: preprocess-everyone
+category: preprocessing
+description: Apply the same settings to every subject.
+request: Preprocess all subjects with a 0.5 to 30 Hz band-pass.
+variants:
+  - Band-pass everyone's data between 0.5 and 30 Hz.
+  - Filter the whole dataset, 0.5-30 Hz, every subject.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 30}
+checks:
+  - {kind: tool_called, tool: eeg.preprocess, args: {subject: "01", l_freq: 0.5, h_freq: 30.0}}
+  - {kind: tool_called, tool: eeg.preprocess, args: {subject: "02", l_freq: 0.5, h_freq: 30.0}}
+  - {kind: tool_called, tool: eeg.preprocess, args: {subject: "03", l_freq: 0.5, h_freq: 30.0}}
+solution:
+  - id: pre
+    tool: eeg.preprocess
+    foreach: ["01", "02", "03"]
+    args: {subject: "{subject}", l_freq: 0.5, h_freq: 30.0}
+answer: Subjects 01, 02 and 03 are band-passed from 0.5 to 30 Hz.

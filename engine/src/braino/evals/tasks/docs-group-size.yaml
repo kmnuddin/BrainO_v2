@@ -4,6 +4,9 @@ description: >-
   A question about how BrainO works is answered from its own documentation, without
   running an analysis.
 request: How many subjects does BrainO need before it will run a group test?
+variants:
+  - "What's the minimum number of participants for a group analysis in BrainO?"
+  - "Can BrainO run a group test with only two subjects?"
 dataset:
   synthetic: {subjects: ["01", "02"], seconds: 30}
 checks:

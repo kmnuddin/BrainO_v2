@@ -1,0 +1,20 @@
+id: preprocess-loose-words
+category: preprocessing
+description: Turn filter settings described in everyday words into numbers.
+request: Clean up subject 02 a bit - get rid of the slow drifts and everything above 30 Hz.
+variants:
+  - For subject 02, high-pass to remove drift and low-pass at 30 Hz.
+  - Filter sub-02 so that only 0.1 to 30 Hz is left.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - kind: tool_called
+    tool: eeg.preprocess
+    args: {subject: "02", l_freq: {range: [0.01, 2.0]}, h_freq: 30.0}
+    description: preprocesses subject 02 with a high-pass and a 30 Hz low-pass
+  - kind: tool_not_called
+    tool: [eeg.ica_clean, eeg.detect_bad_channels]
+    description: does only what was asked
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "02", l_freq: 0.1, h_freq: 30.0}}
+answer: Subject 02 is filtered from 0.1 to 30 Hz and average-referenced.

@@ -2,6 +2,9 @@ id: bad-channels-rejected
 category: decisions
 description: When the user rejects a proposal, the agent must say nothing was marked.
 request: Find the bad channels in subject 02 and mark them.
+variants:
+  - "Subject 02 might have some broken electrodes. Find them and flag them as bad."
+  - "Detect and mark the bad channels of sub-02."
 dataset:
   synthetic: {subjects: ["01", "02"], seconds: 60, noisy: [T8]}
 user: {decisions: reject}

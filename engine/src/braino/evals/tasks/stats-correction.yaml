@@ -2,6 +2,9 @@ id: stats-correction
 category: stats
 description: Testing every channel and time point needs a multiple-comparison correction.
 request: Test rare versus frequent trials across subjects at every channel and time point.
+variants:
+  - "Compare rare and frequent trials across the group at all channels and times."
+  - "Run a whole-scalp, whole-epoch group test of rare versus frequent."
 dataset:
   synthetic: {subjects: ["01", "02", "03", "04", "05", "06"], seconds: 60}
 checks:

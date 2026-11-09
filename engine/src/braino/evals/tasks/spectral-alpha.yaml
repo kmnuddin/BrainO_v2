@@ -2,6 +2,9 @@ id: spectral-alpha
 category: spectral
 description: Find a planted 10 Hz alpha rhythm.
 request: What is the peak alpha frequency of subject 01's EEG?
+variants:
+  - "At what frequency does subject 01's alpha peak?"
+  - "Find sub-01's individual alpha frequency."
 dataset:
   synthetic: {subjects: ["01", "02", "03"], seconds: 60}
 checks:

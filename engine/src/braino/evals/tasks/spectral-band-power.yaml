@@ -1,0 +1,20 @@
+id: spectral-band-power
+category: spectral
+description: Band power of named bands, from the continuous recording.
+request: How much alpha and how much theta power does subject 01 have?
+variants:
+  - Give me sub-01's theta and alpha band power.
+  - Compare the alpha and theta power in subject 01's EEG.
+dataset:
+  synthetic: {subjects: ["01", "02", "03"], seconds: 60}
+checks:
+  - {kind: tool_called, tool: eeg.spectral, args: {subject: "01"}}
+  - {kind: answer_mentions, terms: [alpha, theta]}
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
+  - {id: spec, tool: eeg.spectral, args: {subject: "01", source: continuous}}
+answer: >-
+  Subject 01's mean alpha power is
+  {spec.conditions.continuous.bands[band=alpha].mean_absolute_uv2:g} µV² and theta power
+  {spec.conditions.continuous.bands[band=theta].mean_absolute_uv2:g} µV² (averaged over
+  channels).

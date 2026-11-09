@@ -613,6 +613,25 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
 21. **Baseline evaluation on the minimum tier** (CPU, ~4B model), then LoRA fine-tuning on the HPC
     only where the evals show gaps; fine-tuned models are published as GGUF files for users to
     download.
+    *Baseline done; fine-tuning not started. The eval grew from 16 to 48 tasks, each with
+    three wordings, and `braino eval run --repeat N` reports each task's pass rate. Fixing
+    the tools and prompts first raised the 4B (Qwen3.5 Q4, on the GPU) from 79% to 91% of
+    144 runs (48 tasks × 3). Fixes: a dead channel missed after an average reference, error
+    messages that name the channels or labels that exist, a quality screen that says it
+    changed nothing, a reason for no group test with 2 subjects, two questions per request,
+    a stop after four calls in a row of one tool on one subject, and prompt rules (only what
+    was asked, no substitutes without asking, no claimed actions). Final baseline: 4B on
+    the GPU 91% (131/144); 35B-A3B on the GPU 90% (129/144, 40 minutes); 4B on the CPU
+    (minimum tier) 92% of a single pass (44/48, 106 minutes; about 20 s a step). The 35B
+    is not better than the 4B on these tasks. Gaps left, the same for both models, as
+    candidates for fine-tuning: settings asked for but left at the template's defaults
+    (Bonferroni written as FDR, a peak measured as a mean); a one-subject question answered
+    from the group test; time-frequency asked for, and band power computed instead;
+    reaction times treated as an ERP question; a missing subject or channel not mentioned
+    in the final answer after the user agreed to an alternative; bad channels proposed by
+    a quality question; and, once, a retry asked of the user after a stale-file error.
+    Substituting channels for missing mastoids (O1/O2, P7/P8) stopped once the reference
+    error said to ask (35B: asks in 3/3 runs).*
 
 **Stage E — M1.5 Desktop app.**
 

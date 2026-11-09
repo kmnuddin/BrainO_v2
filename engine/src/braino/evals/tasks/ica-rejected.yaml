@@ -1,0 +1,22 @@
+id: ica-rejected
+category: decisions
+description: When the user rejects the ICA proposal, the agent says nothing was removed.
+request: Remove the eye blinks from subject 01's recording.
+variants:
+  - Clean the blinks out of sub-01 with ICA.
+  - Subject 01 has a lot of blinks; can you get rid of them?
+dataset:
+  synthetic: {subjects: ["01", "02"], seconds: 60, blinks: 40}
+user: {decisions: reject}
+checks:
+  - {kind: decision_requested, tool: eeg.ica_clean}
+  - kind: answer_mentions
+    terms: [rejected, declined, not removed, were not removed, nothing was removed,
+            no components were removed, not applied, unchanged]
+    any_term: true
+    description: says the proposal was rejected and nothing removed
+solution:
+  - {id: pre, tool: eeg.preprocess, args: {subject: "01"}}
+  - {id: ica, tool: eeg.ica_clean, args: {subject: "01", labeler: eog}}
+  - {decide: ica}
+answer: You rejected the proposal, so no ICA components were removed from subject 01.

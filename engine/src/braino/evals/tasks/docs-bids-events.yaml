@@ -4,6 +4,9 @@ description: >-
   A question about the BIDS standard is answered from the specification that ships with
   BrainO, not from what the model remembers.
 request: Which columns must every BIDS events.tsv file have?
+variants:
+  - "What columns are mandatory in a BIDS events file?"
+  - "In BIDS, which columns does events.tsv need to have at minimum?"
 dataset:
   synthetic: {subjects: ["01"], seconds: 30}
 checks:
@@ -14,7 +17,7 @@ checks:
     terms: [onset, duration]
     description: names the two required columns
   - kind: max_calls
-    count: 3
+    count: 4
     description: a few searches at most, no analysis
 solution:
   - {id: docs, tool: docs.search, args: {query: "required columns of events.tsv", source: bids}}

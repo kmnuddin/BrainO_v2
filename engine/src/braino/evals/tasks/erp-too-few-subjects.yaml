@@ -1,0 +1,26 @@
+id: erp-too-few-subjects
+category: stats
+description: >-
+  A group test needs at least 3 subjects; with 2, the agent says so instead of claiming a
+  result.
+request: Is the P3 at Pz significant across subjects (rare minus frequent, 300 to 500 ms)?
+variants:
+  - Run a group test of the rare-minus-frequent difference at Pz, 0.3-0.5 s.
+  - Across participants, is there a significant P3 at Pz?
+dataset:
+  synthetic: {subjects: ["01", "02"], seconds: 60}
+checks:
+  - kind: answer_mentions
+    terms: [at least 3, at least three, three subjects, 3 subjects, only 2, only two, two subjects,
+            2 subjects, too few, not enough]
+    any_term: true
+    description: says 2 subjects are too few for a group test
+  - kind: answer_not_mentions
+    terms: [is significant, was significant, significant effect]
+    unless: [not, cannot, can't, "no"]
+    description: claims no significant result
+solution:
+  - {id: inspect, tool: dataset.inspect}
+answer: >-
+  The dataset has only {inspect.n_subjects} subjects, and a group test needs at least 3, so I
+  cannot test this across subjects.
