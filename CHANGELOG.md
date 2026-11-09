@@ -27,6 +27,10 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   count a tool's own calls as changes when refusing a repeated call, keeps the text of an
   answer cut off twice, and is told to do only what was asked, to say when the data lack
   something instead of substituting, and never to claim an action no tool took.
+- The ERP template's `measure` and `correction` and the spectral template's `correction` are
+  required settings, as `test_scope` is: the model left them at their defaults when asked for
+  a peak or a Bonferroni correction. When the user agrees to an alternative for something
+  the data lack, the agent's answer still says what was missing and what was used.
 - Local model runtime (`braino model`, `braino.runtime`): detects RAM and GPUs, proposes a
   model tier (Qwen3.5 4B on the minimum computer, Qwen3.5 9B or Qwen3.6 35B-A3B with more),
   installs a pinned llama.cpp build and downloads the model once, checked against pinned

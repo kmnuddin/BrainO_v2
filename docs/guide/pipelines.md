@@ -65,7 +65,7 @@ BrainO validated on ERP CORE.
 
 | Template | What it does |
 |---|---|
-| `erp-comparison` | preprocess (0.1–30 Hz), epoch both conditions, average, measure the difference wave (mean or peak) in a window at some channels, and, with 3 subjects or more, test it across subjects (mass-univariate with FDR by default, or a cluster test), at the measured channels and window or, with `"test_scope": "all"`, at every channel and time point |
+| `erp-comparison` | preprocess (0.1–30 Hz), epoch both conditions, average, measure the difference wave (mean or peak) in a window at some channels, and, with 3 subjects or more, test it across subjects (mass-univariate with the correction you choose, or a cluster test), at the measured channels and window or, with `"test_scope": "all"`, at every channel and time point |
 | `spectral-comparison` | preprocess (1–45 Hz), epoch both conditions, band power (alpha by default) per condition, and a corrected group test of the spectra in the band |
 
 Both can add ICA (`"ica": true`) and bad-channel detection (`"bad_channels": true`), whose
@@ -76,7 +76,7 @@ braino pipeline templates      # the templates and their settings
 braino pipeline template erp-comparison --dataset study_bids -o p3.yaml --settings \
   '{"condition_a": "rare", "events_a": ["stimulus/rare"], "condition_b": "frequent",
     "events_b": ["stimulus/frequent"], "test_scope": "measured", "channels": ["Pz"],
-    "tmin": 0.3, "tmax": 0.6}'
+    "tmin": 0.3, "tmax": 0.6, "measure": "mean", "correction": "fdr"}'
 braino pipeline run p3.yaml --dataset study_bids
 ```
 
@@ -125,7 +125,8 @@ from braino.pipelines.templates import build
 spec = build("erp-comparison", {"condition_a": "rare", "events_a": ["stimulus/rare"],
                                 "condition_b": "frequent", "events_b": ["stimulus/frequent"],
                                 "test_scope": "measured", "channels": ["Pz"],
-                                "tmin": 0.3, "tmax": 0.6}, Path("study_bids"))
+                                "tmin": 0.3, "tmax": 0.6, "measure": "mean",
+                                "correction": "fdr"}, Path("study_bids"))
 for finding in check_plan(spec, dataset=Path("study_bids")).findings:
     print(finding)
 ```

@@ -631,7 +631,13 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     in the final answer after the user agreed to an alternative; bad channels proposed by
     a quality question; and, once, a retry asked of the user after a stale-file error.
     Substituting channels for missing mastoids (O1/O2, P7/P8) stopped once the reference
-    error said to ask (35B: asks in 3/3 runs).*
+    error said to ask (35B: asks in 3/3 runs). Then the ERP template's `measure` and
+    `correction` and the spectral template's `correction` became required, and the prompt
+    says an answer names what was missing after the user agrees to an alternative: on the
+    4B (GPU, 48 × 3) a peak is measured as a peak (erp-peak-latency 67% → 100%) and
+    Bonferroni is used when asked; overall 90% (129/144), within one run per task of the
+    91% before. The 4B still leaves the missing mastoids out of the answer in two of three
+    wordings, so that stays with the fine-tuning candidates.*
 
 **Stage E — M1.5 Desktop app.**
 

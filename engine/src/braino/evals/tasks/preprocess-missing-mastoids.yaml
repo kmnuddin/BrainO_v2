@@ -18,7 +18,8 @@ checks:
     args: {subject: "01", reference: average}
     description: uses the average reference the user chose
   - kind: answer_mentions
-    terms: [mastoid]
+    terms: [mastoid, mastoids]
+    any_term: true
     description: says the mastoids were not available
 solution:
   - {id: inspect, tool: dataset.inspect}

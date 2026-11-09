@@ -68,7 +68,8 @@ unchanged. Keep the answer short: the main results, with numbers exactly as the 
 them.
 Do only what was asked: answer a question without changing data, and suggest further steps \
 instead of running them. If the dataset lacks what was asked (a subject, channels, events, \
-responses), say so: do not use something else in its place unless the user agrees. Only the \
+responses), say so: do not use something else in its place unless the user agrees, and then \
+the answer still says what was missing and what was used instead. Only the \
 tools act: if none does what is asked (e.g. deleting data), say you cannot, and never say you \
 did what no tool did. Run tools yourself; never ask the user to.
 

@@ -37,7 +37,10 @@ ERP: dict[str, Any] = {
     "channels": ["Pz"],
     "tmin": 0.3,
     "tmax": 0.5,
+    "measure": "mean",
+    "correction": "fdr",
 }
+SPECTRAL: dict[str, Any] = {**RARE, **FREQUENT, "correction": "fdr"}
 FAST: dict[str, Any] = {"reject": "peak_to_peak", "peak_to_peak_uv": 100.0}
 
 
@@ -179,7 +182,7 @@ def test_erp_template_steps() -> None:
 
 def test_spectral_template_steps() -> None:
     template = get_template("spectral-comparison")
-    settings = SpectralComparisonSettings.model_validate({**RARE, **FREQUENT, "band": "theta",
+    settings = SpectralComparisonSettings.model_validate({**SPECTRAL, "band": "theta",
                                                           "fmin": 4, "fmax": 8})  # fmt: skip
     s = template.build(settings, "oddball", ["01", "02", "03"])
     assert s.step("spectra").args["bands"] == {"theta": [4.0, 8.0]}
@@ -200,7 +203,7 @@ def test_settings_are_checked() -> None:
     with pytest.raises(ValidationError, match="not 'all': test_scope 'all'"):
         ErpComparisonSettings.model_validate({**ERP, "test_scope": "all", "channels": ["all"]})
     with pytest.raises(ValidationError, match="above the low-pass"):
-        SpectralComparisonSettings.model_validate({**RARE, **FREQUENT, "fmax": 60})
+        SpectralComparisonSettings.model_validate({**SPECTRAL, "fmax": 60})
     with pytest.raises(TemplateError, match="no template 'nope'"):
         get_template("nope")
 
@@ -345,7 +348,7 @@ def test_decision_steps_in_a_plan_wait_for_the_user(dataset: Path) -> None:
 
 def test_spectral_comparison_runs(dataset: Path) -> None:
     ctx = RunContext(dataset_root=dataset, run_id="r1")
-    proposal = _plan(ctx, "analysis.spectral_comparison", **RARE, **FREQUENT, **FAST,
+    proposal = _plan(ctx, "analysis.spectral_comparison", **SPECTRAL, **FAST,
                      subjects=["01", "02", "03"])  # fmt: skip
     result = _run(ctx, _approve(ctx, proposal.proposal_id)["name"])
     assert result.status == "complete" and result.unit == "µV²"

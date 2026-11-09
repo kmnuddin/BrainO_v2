@@ -105,7 +105,12 @@ class ErpComparisonSettings(_Common):
     tmin: float = Field(description="Start of the measurement window, s (e.g. 0.3)")
     tmax: float = Field(description="End of the measurement window, s (e.g. 0.6)")
     measure: Literal["mean", "peak_positive", "peak_negative"] = Field(
-        default="mean", description="'mean' amplitude, or the positive or negative peak"
+        description="'mean' amplitude in the window, or the positive or negative peak (its "
+        "amplitude and latency; when asked for a peak or when something peaks)"
+    )
+    correction: Literal["fdr", "bonferroni", "max_stat"] = Field(
+        description="Multiple-comparison correction of the 'mass_univariate' test: 'fdr' "
+        "unless the user names another"
     )
     epoch_tmin: float = Field(default=-0.2, description="Epoch start, s")
     epoch_tmax: float = Field(default=0.8, description="Epoch end, s")
@@ -115,9 +120,6 @@ class ErpComparisonSettings(_Common):
         default="mass_univariate",
         description="Group test: 'mass_univariate' (t-test at each point, corrected) or "
         "'cluster_permutation' (clusters of neighbouring points)",
-    )
-    correction: Literal["fdr", "bonferroni", "max_stat"] = Field(
-        default="fdr", description="Multiple-comparison correction of 'mass_univariate'"
     )
 
     @model_validator(mode="after")
@@ -139,6 +141,10 @@ ALL_CHANNELS = frozenset({"all", "*", "every", "all channels"})
 
 
 class SpectralComparisonSettings(_Common):
+    # Required, so the model has to choose: a small model leaves optional fields as they are.
+    correction: Literal["fdr", "bonferroni", "max_stat"] = Field(
+        description="Multiple-comparison correction: 'fdr' unless the user names another"
+    )
     band: str = Field(default="alpha", pattern=r"^[a-z][a-z0-9_]*$", description="Band name")
     fmin: float = Field(default=8.0, gt=0, description="Lower edge of the band, Hz")
     fmax: float = Field(default=13.0, gt=0, description="Upper edge of the band, Hz")
@@ -147,9 +153,6 @@ class SpectralComparisonSettings(_Common):
     epoch_tmax: float = Field(default=1.0, description="Epoch end, s (1 s gives 1 Hz bins)")
     l_freq: float = Field(default=1.0, ge=0, description="High-pass, Hz")
     h_freq: float = Field(default=45.0, gt=0, description="Low-pass, Hz")
-    correction: Literal["fdr", "bonferroni", "max_stat"] = Field(
-        default="fdr", description="Multiple-comparison correction"
-    )
 
     @model_validator(mode="after")
     def _band(self) -> SpectralComparisonSettings:
