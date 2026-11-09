@@ -524,6 +524,7 @@ def test_cli_agent_lists_unverified_numbers(server: ScriptedServer, tmp_path: Pa
 
 
 def test_cli_eval_with_the_llm_agent(server: ScriptedServer, tmp_path: Path) -> None:
+    pytest.importorskip("mne")  # makes the task's synthetic dataset when it is not cached
     server.replies += [_call("dataset.inspect"), _answer("The dataset has 3 subjects.")]
     out = tmp_path / "report.json"
     result = runner.invoke(

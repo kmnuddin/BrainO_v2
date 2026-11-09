@@ -3,6 +3,7 @@ docs.search tool, the CLI, and the agent looking something up."""
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import re
 from collections.abc import Iterator, Sequence
@@ -37,6 +38,11 @@ from braino.knowledge.sources import (
 from braino.runtime.catalog import catalog
 from braino.tools import registry
 from braino.tools.docs import DocsSearchOutput
+
+#: Vectors need numpy, which comes with the eeg extra; the core install searches by keywords.
+needs_numpy = pytest.mark.skipif(
+    importlib.util.find_spec("numpy") is None, reason="needs numpy (the eeg extra)"
+)
 
 # --- cutting documents ---------------------------------------------------------------------
 
@@ -278,6 +284,7 @@ def _index(embedder: FakeEmbedder | None) -> DocsIndex:
     return build(PASSAGES, embedder)
 
 
+@needs_numpy
 def test_keyword_search_and_two_passages_per_section() -> None:
     index = _index(None)
     hits = index.search("columns of the events file")
@@ -288,6 +295,7 @@ def test_keyword_search_and_two_passages_per_section() -> None:
     assert index.search("nothing matches zebra") == []
 
 
+@needs_numpy
 def test_search_by_meaning_finds_other_words() -> None:
     embedder = FakeEmbedder()
     index = _index(embedder)
@@ -302,6 +310,7 @@ def test_search_by_meaning_finds_other_words() -> None:
     assert index.search("ocular artifacts", embedder=other) == []
 
 
+@needs_numpy
 def test_search_goes_on_by_keywords_when_the_model_fails() -> None:
     class Broken(FakeEmbedder):
         def embed_query(self, text: str) -> list[float]:
@@ -313,6 +322,7 @@ def test_search_goes_on_by_keywords_when_the_model_fails() -> None:
     assert hits[0].passage.id == "b" and hits[0].semantic_rank is None
 
 
+@needs_numpy
 def test_save_load_and_reuse_vectors(tmp_path: Path) -> None:
     embedder = FakeEmbedder()
     index = _index(embedder)
@@ -334,6 +344,7 @@ def test_save_load_and_reuse_vectors(tmp_path: Path) -> None:
 # --- the shipped index ---------------------------------------------------------------------
 
 
+@needs_numpy
 def test_the_shipped_index() -> None:
     index = knowledge.default_index()
     counts = {s.source: s.passages for s in index.meta.sources}
@@ -422,6 +433,7 @@ def test_docs_search_tool() -> None:
     assert "try other words" in (empty.note or "")
 
 
+@needs_numpy
 def test_the_search_uses_the_session_embedder() -> None:
     index = knowledge.default_index()
 

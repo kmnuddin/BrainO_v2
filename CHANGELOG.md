@@ -75,10 +75,13 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   tool): an index of BrainO's guide and tools, the BIDS specification 1.11.2 and MNE-Python
   1.13.2's EEG tutorials, built from pinned releases and shipped with BrainO. Search combines
   keywords (BM25) and meaning (Qwen3-Embedding 0.6B on the CPU, downloaded by `braino model
-  setup`; keywords alone without it). The agent answers questions about methods, BIDS, MNE
+  setup`; keywords alone without it, or without numpy in an install without the `eeg` extra). The agent answers questions about methods, BIDS, MNE
   and BrainO from the passages, naming the source. `braino docs build` updates the index,
   embedding only changed passages.
 - `eeg.epoch` warns when a condition loses half or more of its epochs.
+- BIDS import adds the "not measured" note for template electrode positions every time: the
+  files it wrote were found by comparing file times with a finer clock, which sometimes
+  missed them.
 - The synthetic EEG generator moved to `braino.datasets.synthetic`.
 
 ## 0.1.0

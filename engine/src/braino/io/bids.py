@@ -9,8 +9,9 @@ Needs the ``[eeg]`` extra.
 from __future__ import annotations
 
 import json
+import os
 import re
-import time
+import tempfile
 import warnings
 from datetime import UTC, datetime
 from pathlib import Path
@@ -123,7 +124,7 @@ def write_bids(
     # write one that differs from the existing file; so the template notes BrainO added are
     # taken out for the write and put back afterwards.
     notes_taken_out = _take_out_template_notes(Path(data_file.directory))
-    started = time.time_ns()
+    started = _file_clock(root)
     try:
         with warnings.catch_warnings():
             # Trigger and other non-voltage channels have no BrainVision unit; expected.
@@ -158,6 +159,19 @@ def write_bids(
         line_freq_source=source,
         notes=notes,
     )
+
+
+def _file_clock(folder: Path) -> int:
+    """The time a file written in ``folder`` now gets, in ns. File times come from a coarser
+    clock than ``time.time_ns()`` (on Linux and Windows) and can be earlier than it, so files
+    written after it could look older; a file's own time is compared like with like."""
+    folder.mkdir(parents=True, exist_ok=True)
+    fd, name = tempfile.mkstemp(dir=folder, prefix=".braino-clock-")
+    try:
+        return os.fstat(fd).st_mtime_ns
+    finally:
+        os.close(fd)
+        os.unlink(name)
 
 
 def _template_note(template: str) -> str:

@@ -104,9 +104,12 @@ class DocsIndex:
         passages = [Passage.model_validate(p) for p in data["passages"]]
         vectors = None
         if (directory / VECTORS_FILE).is_file():
-            import numpy as np
-
-            vectors = np.load(directory / VECTORS_FILE)
+            try:
+                import numpy as np
+            except ImportError:  # the core install: search by keywords alone
+                np = None  # type: ignore[assignment]
+            if np is not None:
+                vectors = np.load(directory / VECTORS_FILE)
         return cls(meta, passages, vectors)
 
     def save(self, directory: Path = DATA_DIR) -> None:
