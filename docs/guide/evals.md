@@ -99,3 +99,28 @@ def make() -> MyAgent:
 ```bash
 braino eval run --agent mymodule:make --tier minimum
 ```
+
+## Training data for fine-tuning
+
+Where the evaluation shows the model getting something wrong that tools and prompts cannot
+fix, the model is fine-tuned (for development; users download the finished model).
+`braino train data` makes the examples:
+
+```bash
+braino train families                         # the kinds of episodes, and their weights
+braino train data -n 1000 --seed 1 -o data/   # train.jsonl, valid.jsonl, report.json
+```
+
+Each episode is a request with a scripted way to handle it, played through the real agent
+loop by a teacher in place of the model: the tools run on synthetic datasets (with planted
+problems, other event names, 50 or 60 Hz mains), a scripted user answers and decides, and
+the answer is written from the actual results. An example is kept only if its checks pass,
+every number in its answer comes from a tool, and nothing went wrong on the way (no error
+sent back, no call skipped). The examples are therefore the very conversations the model
+sees, with the same system prompt, tool descriptions and steps; when those change, make the
+data again.
+
+The evaluation is held out: training requests are worded differently and use other settings,
+and a request that matches an evaluation task's wording is never used. The training scripts
+(LoRA on the HPC or a local GPU, merging and GGUF conversion) are in `training/` in the
+repository.

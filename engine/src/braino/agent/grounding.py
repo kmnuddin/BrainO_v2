@@ -76,9 +76,14 @@ def ungrounded(text: str, sources: Iterable[float]) -> list[float]:
 
 
 def ungrounded_in_answer(text: str, session: Session, request: str = "") -> list[float]:
-    """The numbers in an answer that no tool result, decision, reply or the request gave."""
-    sources = list(numbers_from_session(session)) + [n for n, _ in numbers_in(request)]
-    return ungrounded(text, sources)
+    """The numbers in an answer that no tool result, decision, reply or the request gave.
+    Any digits the user typed count, also inside a name: asked about "sub-24", the answer may
+    say there is no subject 24."""
+    from_request = [float(d) for d in _DIGITS.findall(request)]
+    return ungrounded(text, [*numbers_from_session(session), *from_request])
+
+
+_DIGITS = re.compile(r"\d+(?:\.\d+)?")
 
 
 def same(value: float, decimals: int, source: float) -> bool:

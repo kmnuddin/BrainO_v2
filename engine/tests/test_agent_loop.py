@@ -170,6 +170,9 @@ def test_ungrounded_numbers(tmp_path: Path) -> None:
     assert ungrounded_in_answer("Sampled at 250 Hz, 25000% of 1 Hz", session) == []
     assert ungrounded_in_answer("Sampled at 251 Hz", session) == [251.0]
     assert ungrounded_in_answer("Use 30 epochs", session, "Use 30 epochs") == []
+    # A subject the user names as "sub-24" may be named back as "subject 24".
+    assert ungrounded_in_answer("There is no subject 24.", session, "QC sub-24.") == []
+    assert ungrounded_in_answer("There is no subject 24.", session, "QC sub-25.") == [24.0]
 
 
 # --- the loop -----------------------------------------------------------------------------

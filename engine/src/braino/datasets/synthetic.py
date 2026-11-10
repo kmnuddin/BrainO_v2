@@ -23,6 +23,7 @@ EEG = [
 P3_UV = 8.0
 P3_WINDOW = (0.3, 0.5)
 EVENT_SPACING_S = 1.0
+LINE_FREQ = 50.0
 
 
 def _positions() -> dict[str, Any]:
@@ -54,8 +55,14 @@ def make_raw(
     flat: list[str] | None = None,
     noisy: list[str] | None = None,
     line_noise_uv: float = 0.0,
+    line_freq: float | None = None,
+    events: dict[str, str] | None = None,
 ) -> mne.io.RawArray:
-    """One synthetic recording (see the module docstring)."""
+    """One synthetic recording (see the module docstring). ``line_freq`` is the mains
+    frequency (50 Hz by default); ``events`` renames the event descriptions, e.g.
+    ``{"rare": "Stimulus/S  2", "frequent": "Stimulus/S  1"}``."""
+    mains = LINE_FREQ if line_freq is None else line_freq
+    names = {kind: (events or {}).get(kind, f"stimulus/{kind}") for kind in ("rare", "frequent")}
     rng = np.random.default_rng(seed)
     n = int(seconds * SFREQ)
     times = np.arange(n) / SFREQ
@@ -93,7 +100,7 @@ def make_raw(
     data += blink_weights()[:, None] * eye[None]
     veog = eye + 4e-6 * rng.standard_normal(n)
     if line_noise_uv:
-        data += line_noise_uv * 1e-6 * np.sin(2 * np.pi * 50 * times)
+        data += line_noise_uv * 1e-6 * np.sin(2 * np.pi * mains * times)
 
     for ch in flat or []:
         data[EEG.index(ch)] = 0.0
@@ -104,9 +111,9 @@ def make_raw(
     raw = mne.io.RawArray(np.vstack([data, veog[None]]), info, verbose="error")
     raw.set_montage("colin27_1020", on_missing="ignore")
     raw.set_annotations(
-        mne.Annotations(onset=onsets, duration=0.0, description=[f"stimulus/{k}" for k in kinds])
+        mne.Annotations(onset=onsets, duration=0.0, description=[names[k] for k in kinds])
     )
-    raw.info["line_freq"] = 50.0
+    raw.info["line_freq"] = mains
     return raw
 
 
@@ -117,5 +124,5 @@ def write_dataset(root: Path, subjects: list[str], *, task: str = "oddball", **k
     for subject in subjects:
         raw = make_raw(seed=int(subject), **kwargs)
         recording = Recording(raw, FORMATS["fif"], Path("synthetic.fif"), (Path("synthetic.fif"),))
-        write_bids(recording, root, subject=subject, task=task, line_freq=50.0)
+        write_bids(recording, root, subject=subject, task=task, line_freq=raw.info["line_freq"])
     return root

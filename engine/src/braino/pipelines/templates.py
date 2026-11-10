@@ -365,7 +365,13 @@ def _summary(
 def _summarize_erp(s: ErpComparisonSettings, report: PipelineReport) -> dict[str, Any]:
     values: dict[str, dict[str, float]] = {}
     for subject, result in _subject_results(report, "erp").items():
-        values[subject] = {m["waveform"]: m["value_uv"] for m in result.get("measures", [])}
+        row: dict[str, float] = {}
+        for m in result.get("measures", []):
+            row[m["waveform"]] = m["value_uv"]
+            # A peak has a latency too: "when does it peak" is half the question.
+            if m.get("latency_ms") is not None:
+                row[f"{m['waveform']}_latency_ms"] = m["latency_ms"]
+        values[subject] = row
     return _summary(values, "µV", report)
 
 

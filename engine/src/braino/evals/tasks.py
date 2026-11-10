@@ -56,6 +56,10 @@ class SyntheticData(BaseModel):
     noisy: list[str] = Field(default_factory=list)
     flat: list[str] = Field(default_factory=list)
     line_noise_uv: float = 0.0
+    line_freq: float | None = Field(default=None, description="Mains frequency; 50 Hz if not set")
+    events: dict[Literal["rare", "frequent"], str] | None = Field(
+        default=None, description="Other event descriptions than stimulus/rare, stimulus/frequent"
+    )
 
 
 class ErpCoreData(BaseModel):

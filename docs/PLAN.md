@@ -638,6 +638,20 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     Bonferroni is used when asked; overall 90% (129/144), within one run per task of the
     91% before. The 4B still leaves the missing mastoids out of the answer in two of three
     wordings, so that stays with the fine-tuning candidates.*
+    *Training data done (`braino.training`, `braino train data`, `training/`). Episodes of
+    21 kinds are played through the real agent loop by a teacher in place of the model, on
+    synthetic datasets with planted problems, other event names and 50 or 60 Hz mains; the
+    scripted user answers and decides, and the answer is written from the actual results.
+    An example is kept only when its checks pass, its numbers are grounded and nothing was
+    sent back or skipped, so the examples are the conversations the model sees at run time.
+    The evaluation is held out (no request matches an evaluation wording). 1,000 episodes
+    gave 972 examples (875 train, 97 valid) in 25 minutes: 1.4-10.2k tokens each (median
+    3.7k), 4.0M tokens, 223k of them the agent's steps, on which the loss is computed.
+    Building it found two bugs: `analysis.run` gave a peak's amplitude but not its latency,
+    and the grounding check refused "subject 24" when the user had written "sub-24". The
+    scripts fine-tune Qwen3.5 4B (a hybrid of linear and full attention, with a vision tower
+    left untouched) with LoRA rank 16 on the language model, bf16 or fp16 (V100) or 4-bit,
+    then merge and convert to GGUF. Next: a pilot run on the local GPU, then the eval.*
 
 **Stage E — M1.5 Desktop app.**
 

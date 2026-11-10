@@ -79,6 +79,12 @@ The main entry points. Every tool is also callable through the registry (see
 
 ::: braino.evals.tasks.EvalTask
 
+::: braino.training.episodes.Episode
+
+::: braino.training.episodes.run_episode
+
+::: braino.training.build.build
+
 ## Importing
 
 ::: braino.io.importer.import_recording

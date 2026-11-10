@@ -1112,6 +1112,65 @@ def eval_compare(
         raise typer.Exit(code=1)
 
 
+# --- training data (development) ----------------------------------------------------------
+
+train_app = typer.Typer(
+    help="Make training data for fine-tuning the agent's model (for development).",
+    no_args_is_help=True,
+)
+app.add_typer(train_app, name="train")
+
+
+@train_app.command("families")
+def train_families() -> None:
+    """List the families of training episodes and their sampling weights."""
+    from braino.training.families import FAMILIES, WEIGHTS
+
+    for name, family in FAMILIES.items():
+        doc = (family.__doc__ or "").strip().splitlines()
+        typer.echo(f"{name:22s} weight {WEIGHTS.get(name, 1.0):g}  {doc[0] if doc else ''}")
+
+
+@train_app.command("data")
+def train_data(
+    output: Annotated[Path, typer.Option("--output", "-o", help="Folder for the JSONL files")],
+    n: Annotated[int, typer.Option("-n", min=1, help="Episodes to play")] = 400,
+    seed: Annotated[int, typer.Option(help="Random seed")] = 0,
+    families: Annotated[
+        str | None, typer.Option(help="Comma-separated families; default all")
+    ] = None,
+    valid: Annotated[float, typer.Option(min=0.0, max=0.5, help="Share kept for validation")] = 0.1,
+    workdir: Annotated[Path | None, typer.Option(help="Keep each episode's data here")] = None,
+) -> None:
+    """Play episodes through the agent loop with a teacher in place of the model, and write
+    the clean ones as train.jsonl and valid.jsonl, with report.json. The evaluation's
+    tasks are held out."""
+    from braino.training import build, split, write_jsonl
+
+    names = [f.strip() for f in families.split(",")] if families else None
+
+    def progress(i: int, outcome: Any) -> None:
+        status = "ok  " if hasattr(outcome, "messages") else "skip"
+        reason = "" if status == "ok  " else f"  ({outcome.reason[:100]})"
+        typer.echo(f"{i + 1:5d} {status} {outcome.family:20s} {outcome.request[:70]}{reason}")
+
+    try:
+        examples, report = build(n, seed=seed, families=names, workdir=workdir, progress=progress)
+    except ValueError as exc:
+        _fail(str(exc))
+    train, held = split(examples, valid, seed=seed)
+    output.mkdir(parents=True, exist_ok=True)
+    write_jsonl(train, output / "train.jsonl")
+    write_jsonl(held, output / "valid.jsonl")
+    (output / "report.json").write_text(report.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    typer.echo(f"{len(examples)} of {n} episodes kept: {len(train)} train, {len(held)} valid")
+    for family, count in report.kept.items():
+        refused = report.rejected.get(family, 0)
+        typer.echo(f"  {family:22s} {count}" + (f"  ({refused} refused)" if refused else ""))
+    if report.held_out_clashes:
+        typer.echo(f"{len(report.held_out_clashes)} requests matched evaluation tasks, skipped")
+
+
 # --- documentation search -----------------------------------------------------------------
 
 docs_app = typer.Typer(

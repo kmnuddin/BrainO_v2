@@ -88,7 +88,8 @@ class AnalysisResult(BaseModel):
     n_subjects: int
     unit: str
     per_subject: list[dict[str, Any]] = Field(
-        description="Each subject's values per condition and difference, with epochs kept"
+        description="Each subject's values per condition and difference (a peak's latency as "
+        "'<waveform>_latency_ms'), with epochs kept"
     )
     mean: dict[str, float] = Field(description="Mean over the subjects with values")
     group_test: dict[str, Any] | None = Field(description="The group test's result, if run")

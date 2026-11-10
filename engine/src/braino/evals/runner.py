@@ -172,7 +172,8 @@ def prepare_dataset(spec: DatasetSpec) -> Path:
 
         return fetch(spec.erpcore.task, spec.erpcore.subjects)
     assert spec.synthetic is not None
-    recipe = spec.synthetic.model_dump(mode="json")
+    # Settings left unset are left out, so a new optional setting keeps the cached datasets.
+    recipe = spec.synthetic.model_dump(mode="json", exclude_none=True)
     key = hashlib.sha256(json.dumps(recipe, sort_keys=True).encode()).hexdigest()[:16]
     root = data_root() / "evals" / f"synthetic-{key}"
     done = root / ".complete"

@@ -1,0 +1,11 @@
+# Fine-tuning only (development); BrainO itself never needs these.
+# Install PyTorch for your GPU first (https://pytorch.org): CUDA 12.8 or later for RTX 50xx.
+torch>=2.7
+transformers>=5.0          # Qwen3.5 (qwen3_5) support
+peft>=0.17
+bitsandbytes>=0.46         # 4-bit base for QLoRA (--load-4bit)
+accelerate>=1.8
+jinja2>=3.1
+# Optional, Linux: fast kernels for Qwen3.5's linear-attention layers (much faster training).
+# flash-linear-attention
+# causal-conv1d

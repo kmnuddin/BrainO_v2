@@ -346,6 +346,17 @@ def test_decision_steps_in_a_plan_wait_for_the_user(dataset: Path) -> None:
     assert done.status == "complete" and done.group_test is not None
 
 
+def test_a_peak_comes_with_its_latency(dataset: Path) -> None:
+    """Asked when a difference peaks, the plan's result must say when, not only how high."""
+    ctx = RunContext(dataset_root=dataset, run_id="r1")
+    settings = {**ERP, **FAST, "measure": "peak_positive", "subjects": ["01"]}
+    result = _run(ctx, _approve(ctx, _plan(ctx, **settings).proposal_id)["name"])
+    row = result.per_subject[0]
+    assert 300 <= row["rare_minus_frequent_latency_ms"] <= 500  # the planted P3
+    assert "rare_minus_frequent_latency_ms" in result.mean
+    assert result.group_test is None  # one subject
+
+
 def test_spectral_comparison_runs(dataset: Path) -> None:
     ctx = RunContext(dataset_root=dataset, run_id="r1")
     proposal = _plan(ctx, "analysis.spectral_comparison", **SPECTRAL, **FAST,
