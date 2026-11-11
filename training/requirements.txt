@@ -6,6 +6,7 @@ peft>=0.17
 bitsandbytes>=0.46         # 4-bit base for QLoRA (--load-4bit)
 accelerate>=1.8
 jinja2>=3.1
-# Optional, Linux: fast kernels for Qwen3.5's linear-attention layers (much faster training).
-# flash-linear-attention
-# causal-conv1d
+# Fast kernels for Qwen3.5's linear-attention layers: much faster training, less memory.
+flash-linear-attention>=0.6
+triton-windows<3.7; sys_platform == "win32"   # Triton for those kernels on Windows
+# causal-conv1d   # optional (Linux, builds from source); its PyTorch fallback is cheap

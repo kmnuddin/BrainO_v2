@@ -28,11 +28,14 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   answer cut off twice, and is told to do only what was asked, to say when the data lack
   something instead of substituting, and never to claim an action no tool took.
 - Training data for fine-tuning the agent's model (`braino train data`, `braino.training`):
-  episodes of 21 kinds (inspection, quality, preprocessing, decisions, ERPs, spectra,
-  time-frequency, documentation, and requests for data the dataset lacks or actions no tool
-  takes), played through the real agent loop by a teacher in place of the model, kept only
-  when clean, with the evaluation held out. Scripts in `training/` fine-tune Qwen3.5 4B with
-  LoRA (bf16, fp16 on V100, or 4-bit), merge the adapter and convert it to GGUF.
+  episodes of 22 kinds (inspection, quality, preprocessing, decisions, ICA followed by an
+  ERP, ERPs, spectra, time-frequency, documentation, and requests for data the dataset lacks
+  or actions no tool takes), played through the real agent loop by a teacher in place of the
+  model, kept only when clean, with the evaluation held out. Scripts in `training/` fine-tune
+  Qwen3.5 4B with LoRA (bf16, fp16 on V100, or 4-bit), merge the adapter and convert it to
+  GGUF. On a 16 GB GPU the longest examples (10k tokens) peak at 8 GB: logits only where
+  the loss is taken, memory-efficient attention, the fast linear-attention kernels (Triton
+  on Windows) and a bf16 embedding table.
 - `analysis.run` reports a peak's latency (`<waveform>_latency_ms`) when the ERP template
   measures a peak; before, "when does it peak" could not be answered from a plan.
 - The grounding check counts every number the user typed, also inside a name: asked about

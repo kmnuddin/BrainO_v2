@@ -651,7 +651,21 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     and the grounding check refused "subject 24" when the user had written "sub-24". The
     scripts fine-tune Qwen3.5 4B (a hybrid of linear and full attention, with a vision tower
     left untouched) with LoRA rank 16 on the language model, bf16 or fp16 (V100) or 4-bit,
-    then merge and convert to GGUF. Next: a pilot run on the local GPU, then the eval.*
+    then merge and convert to GGUF.*
+
+    *Fine-tuning rounds, Qwen3.5 4B, 4-bit base on an RTX 5060 Ti (16 GB), 2 epochs, about
+    2.7 h each; every model quantised to Q4_K_M and run 48 tasks × 3 on the GPU (base 88%):*
+    - *Round 1 (875 examples): 90%, within run-to-run noise. Better on documentation,
+      missing subjects, reaction times, two-part requests and band power; worse on the loose
+      P300 (a 300-600 ms window), ICA then P3 (no ICA decision asked), the flat channel and the
+      cluster test. Quality questions were answered from the channels file without measuring.*
+    - *Round 2 (881 examples; quality answers say the channels file is not a measurement,
+      more mastoid wordings, the loose P3 at Pz 300-500 ms, a new ICA-then-ERP kind, more
+      time-frequency wordings): 88%. Fixed ICA then P3, time-frequency, the unnamed subject and
+      reaction times, but "find the dead electrode" now runs the quality screen instead of
+      proposing bad channels (1/3), the mastoid answer names M1/M2 without the word "mastoid"
+      (0/3), and the cluster test's answer leaves out "cluster" (0/3).
+      No round is yet a clear gain over the base, so the CPU eval waits.*
 
 **Stage E — M1.5 Desktop app.**
 

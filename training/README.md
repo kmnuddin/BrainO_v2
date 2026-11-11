@@ -39,9 +39,15 @@ python train_lora.py --data data/ --out runs/r1
   vision tower is left alone. The loss covers only the agent's steps (render.py).
 - bf16 on RTX 30xx and later; fp16 with loss scaling on V100 (no bf16). Below 20 GB of GPU
   memory the base is loaded in 4 bits (QLoRA).
-- Qwen3.5 mixes full attention with linear attention (Gated DeltaNet). Without the
-  `flash-linear-attention` kernels (Linux), transformers falls back to a slower PyTorch
-  implementation; training still works.
+- Qwen3.5 mixes full attention with linear attention (Gated DeltaNet). Install the
+  `flash-linear-attention` kernels (with `triton-windows` on Windows): without them
+  transformers falls back to a PyTorch implementation that is several times slower and needs
+  more memory.
+- On a 16 GB GPU (RTX 5060 Ti, 4-bit base) a step peaks at about 8 GB for the longest
+  examples (10k tokens) and takes about 5 s for a typical one (3.7k tokens). The bf16 base
+  does not fit at these lengths. The script caps PyTorch at 85% of GPU memory
+  (`--memory-fraction`): past it, PyTorch frees its cached blocks instead of spilling into
+  system RAM (Windows drivers allow that), which makes training several times slower.
 
 On the HPC, `hpc/train.slurm` runs the same steps as a batch job.
 

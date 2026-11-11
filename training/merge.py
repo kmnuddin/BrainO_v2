@@ -13,12 +13,14 @@ CPU in about 10 GB of RAM. Then, from a llama.cpp checkout at the build BrainO p
 from __future__ import annotations
 
 import argparse
+import shutil
 from pathlib import Path
 
 import torch
+from huggingface_hub import hf_hub_download
 from peft import PeftModel
 from train_lora import BASE, REVISION
-from transformers import AutoModelForImageTextToText, AutoProcessor, AutoTokenizer
+from transformers import AutoModelForImageTextToText
 
 
 def main() -> None:
@@ -34,10 +36,28 @@ def main() -> None:
     )
     model = PeftModel.from_pretrained(model, args.adapter).merge_and_unload()
     model.save_pretrained(args.out, safe_serialization=True)
-    AutoTokenizer.from_pretrained(args.base, revision=args.revision).save_pretrained(args.out)
-    # The processor files (image and video settings) are part of the architecture llama.cpp reads.
-    AutoProcessor.from_pretrained(args.base, revision=args.revision).save_pretrained(args.out)
+    copy_base_files(args.base, args.revision, args.out)
     print(f"merged model saved to {args.out}")
+
+
+BASE_FILES = (
+    "preprocessor_config.json",
+    "video_preprocessor_config.json",
+    "tokenizer.json",
+    "tokenizer_config.json",
+    "vocab.json",
+    "merges.txt",
+    "chat_template.jinja",
+)
+"""Files copied unchanged from the base. The tokenizer is not trained, and saved again by
+transformers 5 it names a class (Qwen3_5Tokenizer) that llama.cpp's converter, pinned to
+transformers 4, does not know. The image and video settings are part of the architecture
+llama.cpp reads; loading the processor would need Pillow and torchvision."""
+
+
+def copy_base_files(base: str, revision: str, out: Path) -> None:
+    for name in BASE_FILES:
+        shutil.copyfile(hf_hub_download(base, name, revision=revision), out / name)
 
 
 if __name__ == "__main__":

@@ -283,11 +283,33 @@ def qc_subject(rng: random.Random) -> Episode:
             f"QC {who} please.",
             f"Does {who} have flat or noisy electrodes?",
             f"Is there mains interference in {who}'s EEG?",
+            f"Is {who}'s data fine to analyse?",
+            f"Should I worry about anything in {who}'s EEG before the analysis?",
+            f"Anything off with {who}?",
+            f"How good is the recording of {who}?",
+            f"Can I trust {who}'s recording, or are there bad channels?",
+            f"Check {who} for problems before I start.",
         ]
     )
+    # Half look at the dataset first, as a model often does. Its summary lists the channels
+    # marked bad in the channels file, which only says what someone noted: the quality
+    # screen measures the signals, and the answer comes from it.
+    look_first = rng.random() < 0.5
 
     def answer(r: Results) -> str:
-        return qc_findings(r["qc"], label) + QC_NEXT
+        text = qc_findings(r["qc"], label) + QC_NEXT
+        if not look_first:
+            return text
+        rec = next(x for x in r["ds"]["recordings"] if x["subject"] == label)
+        marked = (
+            f"marks {listing(rec['bad_channels'])} as bad"
+            if rec["bad_channels"]
+            else "marks no channel as bad"
+        )
+        return (
+            f"The dataset's channels file {marked}, but that is only what was noted at "
+            f"recording; the quality screen measured the signals. {text}"
+        )
 
     checks = [
         Check(kind="tool_called", tool="eeg.qc_report", args={"subject": label}),
@@ -296,11 +318,13 @@ def qc_subject(rng: random.Random) -> Episode:
     ]
     if ch:
         checks.append(Check(kind="answer_mentions", terms=[ch]))
+    script: list[Action] = [inspect()] if look_first else []
+    script += [Call("eeg.qc_report", {"subject": label}, id="qc"), Say(answer)]
     return Episode(
         family="qc",
         request=request,
         dataset=dataset(subjects, seconds=rng.choice([30, 60]), **planted),
-        script=[Call("eeg.qc_report", {"subject": label}, id="qc"), Say(answer)],
+        script=script,
         checks=checks,
     )
 
@@ -329,6 +353,10 @@ def qc_many(rng: random.Random) -> Episode:
                 "Are there noisy channels?",
                 "Do a quality check.",
                 "Is the EEG any good?",
+                "Look for bad channels.",
+                "Screen the recordings for problems.",
+                "Find anything wrong with the data.",
+                "Are the signals OK?",
             ]
         )
         all_of_them = rng.random() < 0.6
@@ -429,9 +457,14 @@ def preprocess_settings(rng: random.Random) -> Episode:
     )
 
 
+#: The reference the user asks for, the channels tried, and the word the answer uses: the
+#: user's word, whichever channels stand for it (A1 and A2 are mastoid or ear channels).
 MISSING_REFERENCES: list[tuple[str, list[str], str]] = [
     ("the mastoids", ["M1", "M2"], "mastoid"),
+    ("the mastoids", ["A1", "A2"], "mastoid"),
     ("linked mastoids", ["TP9", "TP10"], "mastoid"),
+    ("linked mastoids", ["A1", "A2"], "mastoid"),
+    ("the mean of both mastoids", ["M1", "M2"], "mastoid"),
     ("the earlobes", ["A1", "A2"], "earlobe"),
     ("linked ears", ["A1", "A2"], "ear"),
     ("the nose tip", ["Nz"], "nose"),
@@ -448,6 +481,8 @@ def preprocess_missing_reference(rng: random.Random) -> Episode:
             f"Preprocess {who} and reference to {words}.",
             f"Re-reference {who} to {words}.",
             f"I need {who} referenced to {words}, with the usual filters.",
+            f"Use {words} as the reference for {who}.",
+            f"Filter {who} and set the reference to {words}.",
         ]
     )
     choice = rng.choice(["average", "average", "Cz", "pair"])
@@ -797,6 +832,91 @@ def ica(rng: random.Random) -> Episode:
     )
 
 
+def ica_then_erp(rng: random.Random) -> Episode:
+    """Clean the blinks, wait for the decision, then measure an ERP on the cleaned data."""
+    subjects = labels(rng, rng.randint(1, 3))
+    label = rng.choice(subjects)
+    who = sub(rng, label)
+    events, (a, b) = rng.choice(NAMED_EVENTS)
+    channels = _channels(rng)
+    tmin, tmax = rng.choice(WINDOWS)
+    where = listing(channels) if len(channels) == 1 else f"the average of {listing(channels)}"
+    win = window_words(rng, tmin, tmax)
+    request = rng.choice(
+        [
+            f"Remove {who}'s blinks with ICA and then give me the {a} minus {b} amplitude at "
+            f"{where}, {win}.",
+            f"Run ICA on {who} to take out eye artifacts, then measure {a} versus {b} at "
+            f"{where} ({win}).",
+            f"Once the ocular artifacts are cleaned from {who}, what is the {a}-minus-{b} "
+            f"difference at {where} {win}?",
+            f"Clean {who}'s eye movements first, then measure the P3 ({a} minus {b}) at {where}, "
+            f"{win}.",
+        ]
+    )
+    labeler = rng.choice(["eog", "iclabel"])
+    diff = f"{a}_minus_{b}"
+
+    def message(r: Results) -> str:
+        prop = r["ica"]["proposal"]
+        comps = {c["index"]: c for c in prop["components"]}
+        chosen = [
+            f"{i} ({comps[i]['label']}, p {comps[i]['probability']:g})" for i in prop["exclude"]
+        ]
+        return (
+            f"ICA on subject {label} proposes removing component(s) {listing(chosen)}. Approve "
+            "to remove them before I epoch and measure, edit the list, or reject."
+        )
+
+    def answer(r: Results) -> str:
+        removed = r["ica_decision"]["applied"]["removed"]
+        value = next(m for m in r["erp"]["measures"] if m["waveform"] == diff)
+        n = r["erp"]["n_trials"]
+        return (
+            f"With your approval, {len(removed)} ICA component(s) were removed from subject "
+            f"{label}. On the cleaned data, the mean {a}-minus-{b} difference at {where}, "
+            f"{ms(tmin)}-{ms(tmax)} ms, is {value['value_uv']:g} µV ({n[a]} {a} and {n[b]} {b} "
+            f"epochs).{notes_text(r['erp'].get('notes', []), 1)}"
+        )
+
+    return Episode(
+        family="ica-then-erp",
+        request=request,
+        dataset=dataset(subjects, seconds=60, events=events, blinks=rng.choice([30, 40])),
+        script=[
+            Call("eeg.preprocess", {"subject": label}, id="pre"),
+            Call("eeg.ica_clean", {"subject": label, "labeler": labeler}, id="ica"),
+            Decide("ica", message),
+            Call(
+                "eeg.epoch",
+                {
+                    "subject": label,
+                    "conditions": {a: [events["rare"]], b: [events["frequent"]]},
+                    "reject": "peak_to_peak",
+                    "peak_to_peak_uv": 100.0,
+                },
+                id="ep",
+            ),
+            Call(
+                "eeg.erp",
+                {
+                    "subject": label,
+                    "contrasts": [{"name": diff, "plus": a, "minus": b}],
+                    "measures": [{"name": "P3", "channels": channels, "tmin": tmin, "tmax": tmax}],
+                },
+                id="erp",
+            ),
+            Say(answer),
+        ],
+        checks=[
+            Check(kind="decision_requested", tool="eeg.ica_clean"),
+            Check(kind="order", before="eeg.ica_clean", after="eeg.epoch"),
+            Check(kind="tool_called", tool="eeg.erp", args={"subject": label}),
+        ],
+        user=ScriptedUser(decisions="approve"),
+    )
+
+
 # --- ERPs ----------------------------------------------------------------------------------
 
 CHANNEL_SETS = [["Pz"], ["Pz"], ["Cz"], ["P3", "Pz", "P4"], ["CP"], ["Pz", "Cz"]]
@@ -831,9 +951,23 @@ def erp_one_subject(rng: random.Random) -> Episode:
     channels = _channels(rng)
     tmin, tmax = rng.choice(WINDOWS)
     peak = rng.random() < 0.35
+    # A loosely worded P3 question names no channel or window: the usual Pz, 300-500 ms.
+    loose = not peak and rng.random() < 0.35
+    if loose:
+        channels, (tmin, tmax) = ["Pz"], (0.3, 0.5)
     where = listing(channels) if len(channels) == 1 else f"the average of {listing(channels)}"
     win = window_words(rng, tmin, tmax)
-    if peak:
+    if loose:
+        request = rng.choice(
+            [
+                f"Does {who} have a P300 effect? How large is it?",
+                f"Measure the P3 of {who}.",
+                f"What's the size of {who}'s P3?",
+                f"Is the {a} vs {b} P3 effect there in {who}, and how big?",
+                f"How large is the P300 difference between {a} and {b} trials for {who}?",
+            ]
+        )
+    elif peak:
         request = rng.choice(
             [
                 f"Where does {who}'s {a}-minus-{b} difference peak at {where} ({win}), and how "
@@ -841,7 +975,7 @@ def erp_one_subject(rng: random.Random) -> Episode:
                 f"Find the peak latency and amplitude of the {a} vs {b} difference in {who} at "
                 f"{where}, {win}.",
                 f"For {who}, what is the latency of the largest positive deflection of {a} minus "
-                f"{b} at {where} in {win}?",
+                f"{b} at {where}, {win}?",
             ]
         )
     else:
@@ -886,6 +1020,8 @@ def erp_one_subject(rng: random.Random) -> Episode:
                 f"In subject {label}, the mean {a}-minus-{b} difference{at} is {row[diff]:g} "
                 f"{run['unit']} ({a} {row[a]:g}, {b} {row[b]:g}){trials}."
             )
+        if loose:
+            text += " I used Pz and 300-500 ms, the usual P3 channel and window."
         return text + notes_text(run.get("notes", []), 1)
 
     return Episode(
@@ -1346,6 +1482,11 @@ def time_frequency(rng: random.Random) -> Episode:
             f"Show the time course of {band} activity following the {which} trials of {who}.",
             f"Is there a {band} desynchronisation after the {which} stimuli in {who}?",
             f"Time-frequency analysis of {who}'s {which} epochs: what happens in {band}?",
+            f"Does {band} power drop after the {which} stimuli in {who}? Show it across time.",
+            f"Track {band} power through the {which} epochs of {who}.",
+            f"When after the {which} events does {who}'s {band} activity change most?",
+            f"What happens to {band} over the course of {who}'s {which} trials?",
+            f"Describe {band} power over time after the {which} stimuli for {who}.",
         ]
     )
 
@@ -1357,8 +1498,8 @@ def time_frequency(rng: random.Random) -> Episode:
         direction = "an increase" if row["value"] > 0 else "a decrease"
         return (
             f"After the {which} stimuli in subject {label} ({tfr['n_epochs'][which]} epochs), the "
-            f"largest {band} change is {direction} of {row['value']:g} {tfr['unit']} relative to "
-            f"baseline at {row['time_ms']:g} ms ({row['freq_hz']:g} Hz), strongest at "
+            f"largest {band} change is {row['value']:g} {tfr['unit']} relative to baseline "
+            f"({direction}) at {row['time_ms']:g} ms ({row['freq_hz']:g} Hz), strongest at "
             f"{row['strongest_channel']}.{notes_text(tfr.get('notes', []), 1)}"
         )
 
@@ -1568,6 +1709,7 @@ FAMILIES: dict[str, Family] = {
     "refuse": refuse,
     "bad-channels": bad_channels,
     "ica": ica,
+    "ica-then-erp": ica_then_erp,
     "erp-one-subject": erp_one_subject,
     "erp-group": erp_group,
     "erp-too-few": erp_two_subjects,
@@ -1582,18 +1724,21 @@ FAMILIES: dict[str, Family] = {
 }
 
 #: Episodes per family relative to the others: more for what the evaluation found the model
-#: getting wrong.
+#: getting wrong (the base model, and after round 1 the fine-tuned one: answering a quality
+#: question from the dataset summary, band power for power over time, dropping the user's
+#: word for the reference, and stopping after ICA when an ERP was asked for too).
 WEIGHTS: dict[str, float] = {
     "erp-one-subject": 2.0,
     "erp-group": 2.0,
-    "tfr": 2.0,
+    "tfr": 2.5,
     "band-power": 1.5,
-    "missing-reference": 1.5,
+    "missing-reference": 2.0,
     "missing-subject": 1.5,
     "missing-info": 1.5,
     "condition-names": 1.5,
-    "qc": 1.5,
-    "qc-many": 1.0,
+    "qc": 2.0,
+    "qc-many": 1.5,
+    "ica-then-erp": 1.5,
     "system": 0.3,
     "docs": 0.8,
 }
