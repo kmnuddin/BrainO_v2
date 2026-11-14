@@ -36,6 +36,9 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   GGUF. On a 16 GB GPU the longest examples (10k tokens) peak at 8 GB: logits only where
   the loss is taken, memory-efficient attention, the fast linear-attention kernels (Triton
   on Windows) and a bf16 embedding table.
+- A cluster permutation test's result names itself a cluster test ("cluster-based permutation
+  test: one-sample t-test against 0"): the agent's answer repeats the name, and "t-test" alone
+  hid that the test was over clusters.
 - `analysis.run` reports a peak's latency (`<waveform>_latency_ms`) when the ERP template
   measures a peak; before, "when does it peak" could not be answered from a plan.
 - The grounding check counts every number the user typed, also inside a name: asked about

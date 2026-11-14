@@ -272,24 +272,40 @@ QC_NEXT = (
 def qc_subject(rng: random.Random) -> Episode:
     subjects = labels(rng, rng.randint(1, 3))
     label = rng.choice(subjects)
-    _, planted, ch = _qc_planted(rng)
+    kind, planted, ch = _qc_planted(rng)
     who = sub(rng, label)
-    request = rng.choice(
+    # Asked about mains noise and its frequency, the quality screen answers; the spectrum
+    # (eeg.spectral) stops below the line frequency.
+    line_question = rng.choice(
         [
-            f"Is {who}'s recording clean?",
-            f"Run a quality check on {who}.",
-            f"Any problems with the data of {who}?",
-            f"Look at the signal quality of {who}: anything wrong?",
-            f"QC {who} please.",
-            f"Does {who} have flat or noisy electrodes?",
-            f"Is there mains interference in {who}'s EEG?",
-            f"Is {who}'s data fine to analyse?",
-            f"Should I worry about anything in {who}'s EEG before the analysis?",
-            f"Anything off with {who}?",
-            f"How good is the recording of {who}?",
-            f"Can I trust {who}'s recording, or are there bad channels?",
-            f"Check {who} for problems before I start.",
+            f"Is there mains hum in {who}'s data? At what frequency?",
+            f"Does {who}'s EEG pick up power-line interference, and at which frequency?",
+            f"What frequency is the electrical noise in {who}'s recording?",
+            f"Any 50 or 60 Hz noise in {who}?",
+            f"Is {who}'s recording contaminated by the mains? Which frequency is it?",
+            f"Tell me whether {who} has line noise and at what frequency.",
         ]
+    )
+    request = (
+        line_question
+        if kind == "line" and rng.random() < 0.7
+        else rng.choice(
+            [
+                f"Is {who}'s recording clean?",
+                f"Run a quality check on {who}.",
+                f"Any problems with the data of {who}?",
+                f"Look at the signal quality of {who}: anything wrong?",
+                f"QC {who} please.",
+                f"Does {who} have flat or noisy electrodes?",
+                f"Is there mains interference in {who}'s EEG?",
+                f"Is {who}'s data fine to analyse?",
+                f"Should I worry about anything in {who}'s EEG before the analysis?",
+                f"Anything off with {who}?",
+                f"How good is the recording of {who}?",
+                f"Can I trust {who}'s recording, or are there bad channels?",
+                f"Check {who} for problems before I start.",
+            ]
+        )
     )
     # Half look at the dataset first, as a model often does. Its summary lists the channels
     # marked bad in the channels file, which only says what someone noted: the quality
@@ -498,6 +514,7 @@ def preprocess_missing_reference(rng: random.Random) -> Episode:
     else:
         reply, reference, used = "Take T7 and T8 instead.", ["T7", "T8"], "the mean of T7 and T8"
     missing = listing(channels)
+    article = "an" if term[0] in "aeiou" else "a"
     script: list[Action] = [
         Call(
             "eeg.preprocess", {"subject": label, "reference": channels}, id="try", expect_error=True
@@ -510,9 +527,10 @@ def preprocess_missing_reference(rng: random.Random) -> Episode:
         Call("eeg.preprocess", {"subject": label, "reference": reference}, id="pre"),
         Say(
             lambda r: (
-                f"Subject {label}'s recording has no {term} channel ({missing}), so as you chose I "
-                f"referenced it to {used} instead. Preprocessing: {'; '.join(r['pre']['steps'])}; "
-                f"saved as {r['pre']['output']}."
+                f"Subject {label}'s recording has no {term} channel ({missing}), so "
+                f"{article} {term} reference was not possible; as you chose, I referenced it "
+                f"to {used} instead of the {term} reference. Preprocessing: "
+                f"{'; '.join(r['pre']['steps'])}; saved as {r['pre']['output']}."
             )
         ),
     ]
@@ -708,12 +726,19 @@ def bad_channels(rng: random.Random) -> Episode:
     label = rng.choice(subjects)
     who = sub(rng, label)
     ch = rng.choice(PROBLEM_CHANNELS)
+    flat = rng.random() < 0.4
     request = rng.choice(
         [
             f"Find the broken electrodes in {who} and mark them bad.",
             f"Which channels of {who} should be marked bad? Mark them.",
             f"Flag the bad channels of {who}.",
             f"Detect bad channels for {who} and interpolate them later.",
+            f"{capital(who)} might have a broken electrode; track it down and mark it bad.",
+            f"One of {who}'s channels seems dead. Find it and flag it as bad.",
+            f"Mark {who}'s faulty electrodes as bad.",
+            f"Set the bad channels for {who}.",
+            f"There could be a flat electrode in {who}: find and mark it.",
+            f"Find the noisy or dead channels of {who} and mark them bad.",
         ]
     )
     verdict = rng.choice(["approve", "approve", "edit", "reject"])
@@ -760,16 +785,22 @@ def bad_channels(rng: random.Random) -> Episode:
         checks.append(Check(kind="answer_mentions", terms=["nothing was changed"]))
     else:
         checks.append(Check(kind="answer_mentions", terms=[ch]))
+    checks.append(Check(kind="tool_not_called", tool="eeg.qc_report"))
+    # Asked to mark channels, the agent proposes them for approval; the quality screen only
+    # reports. Some look at the dataset first, as in the quality examples.
+    script: list[Action] = [inspect()] if rng.random() < 0.4 else []
+    script += [
+        Call("eeg.preprocess", {"subject": label}, id="pre"),
+        Call("eeg.detect_bad_channels", {"subject": label, "method": method}, id="bads"),
+        Decide("bads", message),
+        Say(answer),
+    ]
+    planted: dict[str, Any] = {"flat": [ch]} if flat else {"noisy": [ch]}
     return Episode(
         family="bad-channels",
         request=request,
-        dataset=dataset(subjects, seconds=60, noisy=[ch]),
-        script=[
-            Call("eeg.preprocess", {"subject": label}, id="pre"),
-            Call("eeg.detect_bad_channels", {"subject": label, "method": method}, id="bads"),
-            Decide("bads", message),
-            Say(answer),
-        ],
+        dataset=dataset(subjects, seconds=60, **planted),
+        script=script,
         checks=checks,
         user=user,
     )
@@ -1057,7 +1088,7 @@ def erp_group(rng: random.Random) -> Episode:
     tmin, tmax = rng.choice(WINDOWS)
     where = listing(channels) if len(channels) == 1 else f"the average of {listing(channels)}"
     win = window_words(rng, tmin, tmax)
-    style = rng.choice(["default", "named", "named", "cluster", "everywhere"])
+    style = rng.choice(["default", "named", "named", "cluster", "cluster", "cluster", "everywhere"])
     correction, test, scope = "fdr", "mass_univariate", "measured"
     asked = ""
     if style == "named":
@@ -1070,7 +1101,15 @@ def erp_group(rng: random.Random) -> Episode:
         )
     elif style == "cluster":
         test = "cluster_permutation"
-        asked = rng.choice([" with a cluster permutation test", ", using a cluster-based test"])
+        asked = rng.choice(
+            [
+                " with a cluster permutation test",
+                ", using a cluster-based test",
+                " (cluster-based permutation, please)",
+                " with clusters over channels and time",
+                ", by cluster permutation",
+            ]
+        )
     elif style == "everywhere":
         scope = "all"
         asked = rng.choice(
@@ -1150,6 +1189,8 @@ def erp_group(rng: random.Random) -> Episode:
     ]
     if style == "named":
         checks.append(Check(kind="answer_mentions", terms=[CORRECTIONS[correction]]))
+    elif style == "cluster":
+        checks.append(Check(kind="answer_mentions", terms=["cluster"]))
     return Episode(
         family="erp-group",
         request=request,
@@ -1345,14 +1386,26 @@ def band_power(rng: random.Random) -> Episode:
     subjects = labels(rng, rng.randint(1, 3))
     label = rng.choice(subjects)
     who = sub(rng, label)
-    wanted = sorted(rng.sample(BANDS, rng.choice([1, 2, 2, 3])), key=BANDS.index)
-    request = rng.choice(
-        [
-            f"How strong is {listing(wanted)} power in {who}?",
-            f"Give me the {listing(wanted)} band power of {who}'s whole recording.",
-            f"What does {who}'s power spectrum look like in the {listing(wanted)} band(s)?",
+    wanted = sorted(rng.sample(BANDS, rng.choice([1, 2, 2, 2, 3])), key=BANDS.index)
+    # Asked in any order; the answer gives every band asked for, by name.
+    said = wanted[::-1] if rng.random() < 0.5 else wanted
+    requests = [
+        f"How strong is {listing(said)} power in {who}?",
+        f"Give me the {listing(said)} band power of {who}'s whole recording.",
+        f"What does {who}'s power spectrum look like in the {listing(said)} band(s)?",
+        f"What is {who}'s {listing(said)} power?",
+        f"Measure {listing(said)} power for {who}.",
+        f"I'd like the {listing(said)} band power for {who}.",
+    ]
+    if len(said) == 2:
+        x, y = said
+        requests += [
+            f"How much {x} does {who} have, and how much {y}?",
+            f"Compare {who}'s {x} power with their {y} power.",
+            f"{capital(x)} and {y} power of {who}, please.",
+            f"Is there more {x} or more {y} in {who}'s EEG?",
         ]
-    )
+    request = rng.choice(requests)
 
     def answer(r: Results) -> str:
         c = r["spec"]["conditions"]["continuous"]
@@ -1370,15 +1423,17 @@ def band_power(rng: random.Random) -> Episode:
         )
         return f"Subject {label}, whole recording, mean over channels: {'; '.join(parts)}.{peak}"
 
+    script: list[Action] = [inspect()] if rng.random() < 0.4 else []
+    script += [
+        Call("eeg.preprocess", {"subject": label, "l_freq": 1.0, "h_freq": 45.0}, id="pre"),
+        Call("eeg.spectral", {"subject": label, "source": "continuous"}, id="spec"),
+        Say(answer),
+    ]
     return Episode(
         family="band-power",
         request=request,
         dataset=dataset(subjects, seconds=60),
-        script=[
-            Call("eeg.preprocess", {"subject": label, "l_freq": 1.0, "h_freq": 45.0}, id="pre"),
-            Call("eeg.spectral", {"subject": label, "source": "continuous"}, id="spec"),
-            Say(answer),
-        ],
+        script=script,
         checks=[
             Check(kind="tool_called", tool="eeg.spectral", args={"subject": label}),
             Check(kind="answer_mentions", terms=wanted),
@@ -1726,12 +1781,16 @@ FAMILIES: dict[str, Family] = {
 #: Episodes per family relative to the others: more for what the evaluation found the model
 #: getting wrong (the base model, and after round 1 the fine-tuned one: answering a quality
 #: question from the dataset summary, band power for power over time, dropping the user's
-#: word for the reference, and stopping after ICA when an ERP was asked for too).
+#: word for the reference, and stopping after ICA when an ERP was asked for too). After round
+#: 2: running the quality screen when asked to mark bad channels, and a cluster test's answer
+#: that never said "cluster". After round 3: one band of two asked for, and mains noise
+#: looked for in the spectrum.
 WEIGHTS: dict[str, float] = {
+    "bad-channels": 2.0,
     "erp-one-subject": 2.0,
     "erp-group": 2.0,
     "tfr": 2.5,
-    "band-power": 1.5,
+    "band-power": 2.5,
     "missing-reference": 2.0,
     "missing-subject": 1.5,
     "missing-info": 1.5,

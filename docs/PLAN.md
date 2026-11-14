@@ -664,8 +664,21 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
       time-frequency wordings): 88%. Fixed ICA then P3, time-frequency, the unnamed subject and
       reaction times, but "find the dead electrode" now runs the quality screen instead of
       proposing bad channels (1/3), the mastoid answer names M1/M2 without the word "mastoid"
-      (0/3), and the cluster test's answer leaves out "cluster" (0/3).
-      No round is yet a clear gain over the base, so the CPU eval waits.*
+      (0/3), and the cluster test's answer leaves out "cluster" (0/3).*
+    - *Round 3 (887 examples; marking bad channels always goes through the proposal, with
+      more wordings and flat channels; the missing reference named twice in the answer; three
+      times the cluster tests; the cluster tool's result names itself a cluster test): 94%
+      (136 of 144 runs). The three round-2 regressions pass every run; the 8 failures are
+      single runs of 8 different tasks. Validation loss 0.635 → 0.0037. On the CPU (minimum
+      tier), base 89%, round 3 94%; round 3's median run is 64 s against the base's 87 s.
+      Missing mastoids went from 0/3 to 3/3; band power dropped to 1/3 (its answer leaves
+      out "theta"). Round 3 is the candidate for the shipped 4B model.*
+    - *Round 4 (890 examples; two-band power questions in more wordings, mains-noise
+      questions answered from the quality screen): 91% on the GPU (131 of 144), below round
+      3. Band power and line noise stayed at 2/3; "find the dead electrode" fell back to 1/3
+      and the reaction-time refusal ran tools first (0/3). The rounds now differ by about the
+      run-to-run noise, so round 3 stays the candidate and further rounds need a larger eval
+      or several training seeds to tell apart.*
 
 **Stage E — M1.5 Desktop app.**
 

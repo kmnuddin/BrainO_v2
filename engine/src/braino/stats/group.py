@@ -200,10 +200,12 @@ def cluster_test(
     if len(group.data) > 2:
         raise ValueError("cluster tests here compare one condition with 0, or two conditions")
     x = group.data[0] if len(group.data) == 1 else group.data[0] - group.data[1]
-    test = (
+    # Named as a cluster test: a model's answer repeats this, and "t-test" alone hid that the
+    # test was over clusters.
+    test = "cluster-based permutation test: " + (
         "one-sample t-test against 0"
         if len(group.data) == 1
-        else (f"paired t-test: {group.conditions[0]} vs {group.conditions[1]}")
+        else (f"paired t-test, {group.conditions[0]} vs {group.conditions[1]}")
     )
     # MNE wants channels last: subjects x axes x channels.
     moved = np.moveaxis(x, 1, -1)
