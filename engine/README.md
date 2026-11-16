@@ -3,7 +3,7 @@
 The Python analysis engine behind BrainO: data import, EEG/fMRI analysis, statistics and the local
 AI analysis agent. It can be used on its own from Python or the command line.
 
-> Status: alpha (v0.1). Documentation: <https://kmnuddin.github.io/BrainO_v2/>. Roadmap:
+> Status: alpha (v0.2). Documentation: <https://kmnuddin.github.io/BrainO_v2/>. Roadmap:
 > [`docs/PLAN.md`](https://github.com/kmnuddin/BrainO_v2/blob/main/docs/PLAN.md).
 
 ## Install (development)
@@ -60,12 +60,27 @@ braino eval list                                       # agent evaluation tasks
 braino eval run --agent oracle -o report.json          # score an agent (see the docs)
 ```
 
+## The AI agent
+
+Ask in your own words; the agent works through the same tools, on a local model, and asks you
+before every decision.
+
 ```bash
-braino model hardware          # CPU, RAM, GPUs, and the model tier BrainO proposes
+braino model hardware          # CPU, RAM, GPUs, and where BrainO proposes to run the model
 braino model setup             # install llama.cpp, download the model once, benchmark it
+braino agent --dataset study_bids "Is subject 01's recording clean?"
+braino agent --dataset study_bids  # type requests one by one
 braino model status            # chosen model, installed files, measured speed
-braino model serve             # run the model server in the foreground (development)
+braino docs search "is PowerLineFrequency required"   # the documentation the agent reads
 ```
+
+The model is BrainO Qwen3.5 4B, Qwen3.5 4B fine-tuned on BrainO's tools (2.5 GB, Apache-2.0,
+[on Hugging Face](https://huggingface.co/kmnuddin/braino-qwen3.5-4b-GGUF)), run by
+[llama.cpp](https://github.com/ggml-org/llama.cpp) on `127.0.0.1` with a per-session key. It
+needs no GPU: 16 GB of RAM is enough, and a GPU makes it several times faster. Nothing is sent
+to an AI service. Every number in the agent's answer is checked against the tool results, and
+every step is in the run's provenance record. On BrainO's agent evaluation (48 tasks, each in
+three wordings) it passes 94% on the CPU and 96% on a GPU.
 
 ## Tools
 

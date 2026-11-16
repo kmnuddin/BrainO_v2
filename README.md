@@ -12,9 +12,9 @@ interactive 3D visualisation.
 - Runs entirely on your own computer: no server, no account, no GPU needed (16 GB RAM is
   enough; a GPU only makes the agent faster)
 
-> **Status:** alpha. The EEG engine (v0.1: import, analysis pipeline, provenance and script
-> export, validated against ERP CORE) is usable from Python and the command line; the agent,
-> app and viewer are in development. See the roadmap.
+> **Status:** alpha. The EEG engine (import, analysis pipeline, provenance and script export,
+> validated against ERP CORE) and, since v0.2, the local AI agent are usable from Python and
+> the command line; the desktop app and the 3D viewer are in development. See the roadmap.
 
 | | |
 |---|---|
@@ -31,6 +31,9 @@ interactive 3D visualisation.
 pip install "braino[eeg]"
 braino pipeline list                                  # built-in analyses
 braino validate erpcore P3 --subjects 001,002,003     # reproduce a published effect
+
+braino model setup                                    # the local AI model, once (2.5 GB)
+braino agent --dataset study_bids "Compare the P3 of rare and frequent trials at Pz"
 ```
 
 For development:

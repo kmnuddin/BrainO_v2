@@ -427,6 +427,13 @@ def test_server_starts_serves_and_stops(
     assert "--device" in args and "--no-webui" in args and "--api-key" in args
 
 
+def test_api_key_is_never_read_as_an_option(model_file: Path) -> None:
+    # A key starting with "-" was read by the server's argument parser as another option.
+    keys = {LlamaServer(model_file, binary=FAKE_COMMAND).api_key for _ in range(200)}
+    assert len(keys) == 200
+    assert all(k.isalnum() and not k.startswith("-") and len(k) >= 32 for k in keys)
+
+
 def test_gpu_placement_leaves_offloading_to_llama_cpp(model_file: Path) -> None:
     command = LlamaServer(model_file, binary=FAKE_COMMAND, placement="partial").command()
     assert "--device" not in command and "--n-gpu-layers" not in command

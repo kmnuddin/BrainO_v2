@@ -79,7 +79,9 @@ class LlamaServer:
         self.alias = alias or self.model.stem
         self.extra_args = list(extra_args)
         self.log_path = log_path or data_root() / "runtime" / "logs" / "llama-server.log"
-        self.api_key = secrets.token_urlsafe(24)
+        # Hex, so the key never starts with "-": an argument parser would read such a key
+        # as an option, not as the value of --api-key.
+        self.api_key = secrets.token_hex(24)
         self.load_seconds: float | None = None
         self._process: subprocess.Popen[bytes] | None = None
         self._log: Any = None

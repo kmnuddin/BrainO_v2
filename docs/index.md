@@ -11,9 +11,10 @@ It is built on [MNE-Python](https://mne.tools), [MNE-BIDS](https://mne.tools/mne
 [mne-icalabel](https://mne.tools/mne-icalabel/), and is the engine of a larger platform with a
 local AI analysis agent and a desktop app (see the [roadmap](PLAN.md)).
 
-!!! note "Status: alpha (v0.1)"
-    The EEG engine, its command line and its Python API are usable; the AI agent, the desktop
-    app and the 3D viewer are in development. Interfaces may still change between 0.x releases.
+!!! note "Status: alpha (v0.2)"
+    The EEG engine, its command line, its Python API and the local AI agent are usable; the
+    desktop app and the 3D viewer are in development. Interfaces may still change between 0.x
+    releases.
 
 ## What it does
 
@@ -21,8 +22,11 @@ local AI analysis agent and a desktop app (see the [roadmap](PLAN.md)).
   and Persyst recordings into BIDS, removing names, dates and other personal details on the
   way. [More](guide/importing.md)
 - **Analyse** with typed *tools*: one function per step, with a JSON schema for its parameters.
-  The same tools are used from Python, the command line and (later) the AI agent.
+  The same tools are used from Python, the command line and the AI agent.
   [More](guide/analysis.md)
+- **Ask the agent** in your own words: it works through the tools on a local model fine-tuned
+  for BrainO, on a CPU with 16 GB of RAM or a GPU, and asks you before every decision. Nothing
+  leaves your computer. [More](guide/agent.md)
 - **Decide** what the results rest on: steps that drop data (bad channels, ICA components) only
   *propose*; a person approves, edits or rejects, and the decision is recorded.
 - **Pipelines** declared in YAML run over a whole dataset, skipping steps whose inputs and
@@ -40,6 +44,8 @@ pip install "braino[eeg]"
 ```
 
 Python 3.11 or newer. The `eeg` extra installs the scientific stack; without it, the core
-(tools, provenance, pipelines specs, command line) still installs and imports.
+(tools, provenance, pipelines specs, command line) still installs and imports. For the agent,
+`braino model setup` then installs llama.cpp and downloads the model once (about 3 GB with the
+documentation search model).
 
 Next: [Getting started](getting-started.md).

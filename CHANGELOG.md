@@ -5,6 +5,15 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
 
 ## Unreleased
 
+## 0.2.0
+
+The local AI agent: ask in your own words and it analyses an EEG dataset through BrainO's
+tools, on your own computer, asking you before every decision. It runs a model fine-tuned for
+BrainO (Qwen3.5 4B, 2.5 GB) with llama.cpp, on a CPU with 16 GB of RAM or on a GPU; nothing is
+sent to an AI service. Start with `braino model setup`, then `braino agent --dataset <bids>`.
+
+- The server's per-session API key is hexadecimal: a random key that started with "-" was
+  read as an option by the server's argument parser.
 - Agent evaluation harness (`braino eval`): tasks with known answers, scored checks on
   tool use, decisions and answers (every number must come from a tool result), reports per
   hardware tier, and comparison between runs. `braino.agent.Session` is what agents work

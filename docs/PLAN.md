@@ -330,9 +330,9 @@ Durations assume one developer working full-time; part-time roughly doubles them
 The detailed order of work within milestone 1. Near-term stages are specified in more detail than
 later ones; later stages will be refined as they come closer.
 
-**Progress (2026-10-27):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
-done except the XDF reader, Stage C (M1.2 Pipeline, v0.1) done, awaiting publication. Next:
-Stage D. Plan changed on 2026-10-27: BrainO is a desktop application on the user's own computer
+**Progress (2026-11-16):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
+done except the XDF reader, Stage C (M1.2 Pipeline) released as v0.1.0, Stage D (M1.3 Local
+AI, M1.4 Evaluation and the fine-tuned 4B) done and prepared as v0.2.0. Next: Stage E. Plan changed on 2026-10-27: BrainO is a desktop application on the user's own computer
 only, with no server or paid GPU (minimum: no GPU, 16 GB RAM); Stages D and E were adjusted.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
