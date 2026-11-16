@@ -679,6 +679,13 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
       and the reaction-time refusal ran tools first (0/3). The rounds now differ by about the
       run-to-run noise, so round 3 stays the candidate and further rounds need a larger eval
       or several training seeds to tell apart.*
+    - *Seeds and a larger eval (48 tasks × 5, GPU): base 90.0%; round 3 trained with seeds
+      0, 1, 2: 95.8%, 95.0%, 92.1% (mean 94.3%, sd 2.0); round 4: 91.7%, 92.9%, 93.3% (mean
+      92.6%, sd 0.9). Fine-tuning beats the base with every seed; round 3 against round 4 is
+      within the seed spread. Round 4 fixed band power (53% → 87% of runs) but lost "find the
+      dead electrode" (100% → 53%) and the reaction-time refusal (87% → 33%). A single
+      training is about ±2 points from its data's mean, so a data change is judged on the
+      mean of three seeds. Round 3, seed 0, is the model to ship.*
 
 **Stage E — M1.5 Desktop app.**
 
