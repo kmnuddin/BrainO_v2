@@ -148,9 +148,12 @@ in four layers on top of Qwen:
 
    | Tier | User's computer | Example Qwen model | Expectation |
    |---|---|---|---|
-   | **Minimum (default)** | No GPU, 16 GB RAM | Qwen3.5 4B (2.6 GB) | Full agent on the CPU; slower answers. The design target |
-   | More RAM | No GPU, 32 GB+ RAM | Qwen3.6 35B-A3B, mixture of experts with ~3B active (19 GB) | Better planning; MoE keeps CPU speed close to a small model |
-   | Consumer GPU | 6–12 GB VRAM, or Apple silicon | Qwen3.5 9B on the GPU, or the 35B-A3B with its experts in RAM | Faster, and a larger model |
+   | **Minimum (default)** | No GPU, 16 GB RAM | BrainO Qwen3.5 4B, fine-tuned (2.5 GB) | Full agent on the CPU; slower answers. The design target |
+   | More RAM (by hand) | No GPU, 32 GB+ RAM | Qwen3.6 35B-A3B, mixture of experts with ~3B active (19 GB) | MoE keeps CPU speed close to a small model; not better than the 4B on the evals |
+   | Consumer GPU | 6–12 GB VRAM, or Apple silicon | The fine-tuned 4B on the GPU (the 9B, or the 35B-A3B with its experts in RAM, by hand) | Several times faster |
+
+   *Since 2026-11-16 the fine-tuned 4B is proposed on every computer: it passes more of the
+   agent evaluation than the 35B-A3B.*
 
    The agent is designed and evaluated for the minimum tier: larger models make it better, but
    nothing may depend on them. On a CPU, reading the prompt is the slow part, so the agent sends
@@ -686,6 +689,12 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
       dead electrode" (100% → 53%) and the reaction-time refusal (87% → 33%). A single
       training is about ±2 points from its data's mean, so a data change is judged on the
       mean of three seeds. Round 3, seed 0, is the model to ship.*
+    - *Published (2026-11-16) as
+      [kmnuddin/braino-qwen3.5-4b-GGUF](https://huggingface.co/kmnuddin/braino-qwen3.5-4b-GGUF)
+      (revision 3cacbed, Apache-2.0, with a model card), and pinned in the catalog in place of
+      the plain Qwen3.5 4B. It is proposed on every computer (on the GPU when there is one),
+      since the 35B-A3B did not beat even the plain 4B; the 9B and 35B-A3B stay available
+      with `--model`. Stage D is done.*
 
 **Stage E — M1.5 Desktop app.**
 

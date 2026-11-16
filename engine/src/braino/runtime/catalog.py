@@ -77,7 +77,9 @@ class ModelSpec(PinnedModel):
     active_params_b: float = Field(description="Parameters used per token (less for MoE)")
     moe: bool
     cpu_ok: bool = Field(description="Fast enough to recommend on a CPU alone")
-    quality: int = Field(description="Higher is a stronger model")
+    quality: int = Field(
+        description="Higher is better at BrainO's tasks, as the agent evaluation measured it"
+    )
 
 
 class EmbeddingSpec(PinnedModel):

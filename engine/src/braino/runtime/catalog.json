@@ -36,18 +36,18 @@
   "models": [
     {
       "id": "qwen3.5-4b",
-      "name": "Qwen3.5 4B Instruct (Q4_K_M)",
+      "name": "BrainO Qwen3.5 4B, fine-tuned for BrainO's tools (Q4_K_M)",
       "params_b": 4,
       "active_params_b": 4,
       "moe": false,
       "cpu_ok": true,
-      "quality": 1,
+      "quality": 3,
       "licence": "Apache-2.0",
-      "repo": "unsloth/Qwen3.5-4B-GGUF",
-      "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
-      "file": "Qwen3.5-4B-Q4_K_M.gguf",
-      "size": 2740937888,
-      "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4"
+      "repo": "kmnuddin/braino-qwen3.5-4b-GGUF",
+      "revision": "3cacbed7c2a4afdf6931fdba1dfb1702907067b2",
+      "file": "braino-qwen3.5-4b-Q4_K_M.gguf",
+      "size": 2708804064,
+      "sha256": "4c9c1fcaa2cf41a5da6842a97c6ed111ed53ed63991209edb06bfdb5c5810571"
     },
     {
       "id": "qwen3.5-9b",
@@ -56,7 +56,7 @@
       "active_params_b": 9,
       "moe": false,
       "cpu_ok": false,
-      "quality": 2,
+      "quality": 1,
       "licence": "Apache-2.0",
       "repo": "unsloth/Qwen3.5-9B-GGUF",
       "revision": "3885219b6810b007914f3a7950a8d1b469d598a5",
@@ -71,7 +71,7 @@
       "active_params_b": 3,
       "moe": true,
       "cpu_ok": true,
-      "quality": 3,
+      "quality": 2,
       "licence": "Apache-2.0",
       "repo": "ggml-org/Qwen3.6-35B-A3B-GGUF",
       "revision": "7878dc9a905c7c9379e5e8d6a1aa9affdd6839c5",

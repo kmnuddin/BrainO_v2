@@ -1,10 +1,14 @@
 """Which model to run on this computer, and where: the hardware tiers of the plan.
 
-- ``minimum``: no GPU, 16 GB RAM: Qwen3.5 4B on the CPU (the design target).
-- ``more-ram``: no GPU, 32 GB+ RAM: Qwen3.6 35B-A3B (mixture of experts) on the CPU.
-- ``gpu``: a GPU with its own memory, or Apple silicon: the strongest model that fits on the
-  GPU, or a mixture of experts split between GPU (shared layers) and RAM (experts).
+- ``minimum``: no GPU, 16 GB RAM: the 4B model on the CPU (the design target).
+- ``more-ram``: no GPU, 32 GB+ RAM, running a larger model on the CPU (chosen by hand).
+- ``gpu``: a GPU with its own memory, or Apple silicon: the model on the GPU, or a mixture of
+  experts split between GPU (shared layers) and RAM (experts).
 - ``below-minimum``: less than 16 GB RAM and no GPU: the 4B model, with a warning.
+
+The model proposed is the best that fits, ranked by the agent evaluation: the 4B fine-tuned
+for BrainO passes more tasks than the larger models, so it is proposed on every computer, on
+the GPU when there is one. The larger models stay available by hand.
 
 The recommendation leaves ``RESERVE_GB`` of RAM for the operating system, the app and the
 analyses themselves, and ``CONTEXT_GB`` for the model's working memory (its context). The user
@@ -118,8 +122,8 @@ def tier_of(hw: Hardware, option: Option, cat: Catalog | None = None) -> Tier:
         return "gpu"
     if hw.memory_gb is not None and hw.memory_gb < MIN_RAM_GB:
         return "below-minimum"
-    smallest = min(m.quality for m in cat.models)
-    return "more-ram" if cat.model(option.model).quality > smallest else "minimum"
+    smallest = min(m.size for m in cat.models)
+    return "more-ram" if cat.model(option.model).size > smallest else "minimum"
 
 
 def option_for(hw: Hardware, model_id: str, cat: Catalog | None = None) -> Option | None:

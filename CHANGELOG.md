@@ -36,6 +36,14 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
   GGUF. On a 16 GB GPU the longest examples (10k tokens) peak at 8 GB: logits only where
   the loss is taken, memory-efficient attention, the fast linear-attention kernels (Triton
   on Windows) and a bf16 embedding table.
+- The minimum tier's model is BrainO Qwen3.5 4B, Qwen3.5 4B fine-tuned on BrainO's tools
+  ([kmnuddin/braino-qwen3.5-4b-GGUF](https://huggingface.co/kmnuddin/braino-qwen3.5-4b-GGUF),
+  pinned by revision and SHA-256; the model id stays `qwen3.5-4b`). On the agent evaluation
+  it passes 94% on the CPU against 89% for the plain model, and 95.8% against 90.0% on a GPU.
+  `braino model setup` downloads it once; the plain model's file can be deleted. It is
+  proposed on every computer, on the GPU when there is one: the 35B-A3B, which larger
+  computers were offered before, did not beat even the plain 4B (90% against 91%). The 9B and
+  35B-A3B can still be chosen with `--model`.
 - A cluster permutation test's result names itself a cluster test ("cluster-based permutation
   test: one-sample t-test against 0"): the agent's answer repeats the name, and "t-test" alone
   hid that the test was over clusters.

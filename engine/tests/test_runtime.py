@@ -191,15 +191,15 @@ def _hw(
         (_hw(15.7), "minimum", "qwen3.5-4b", "cpu", "cpu"),
         (_hw(15.7, ("Intel(R) UHD Graphics 630", 1.0)), "minimum", "qwen3.5-4b", "cpu", "cpu"),
         (_hw(8.0), "below-minimum", "qwen3.5-4b", "cpu", "cpu"),
-        (_hw(31.8, os="linux"), "more-ram", "qwen3.6-35b-a3b", "cpu", "cpu"),
-        (_hw(15.7, ("NVIDIA GeForce RTX 4060", 8.0)), "gpu", "qwen3.5-9b", "gpu", "cuda"),
-        (_hw(31.8, ("NVIDIA GeForce GTX 1080 Ti", 11.0)), "gpu", "qwen3.6-35b-a3b", "partial",
-         "cuda"),
+        # The fine-tuned 4B is proposed everywhere: it beat the larger models on the evals.
+        (_hw(31.8, os="linux"), "minimum", "qwen3.5-4b", "cpu", "cpu"),
+        (_hw(15.7, ("NVIDIA GeForce RTX 4060", 8.0)), "gpu", "qwen3.5-4b", "gpu", "cuda"),
+        (_hw(31.8, ("NVIDIA GeForce GTX 1080 Ti", 11.0)), "gpu", "qwen3.5-4b", "gpu", "cuda"),
         (_hw(15.7, ("AMD Radeon RX 6600", 6.0), os="linux"), "gpu", "qwen3.5-4b", "gpu",
          "vulkan"),
-        (_hw(16.0, ("Apple M2", 16.0), os="macos", arch="arm64"), "gpu", "qwen3.5-9b", "gpu",
+        (_hw(16.0, ("Apple M2", 16.0), os="macos", arch="arm64"), "gpu", "qwen3.5-4b", "gpu",
          "metal"),
-        (_hw(64.0, ("Apple M3 Max", 64.0), os="macos", arch="arm64"), "gpu", "qwen3.6-35b-a3b",
+        (_hw(64.0, ("Apple M3 Max", 64.0), os="macos", arch="arm64"), "gpu", "qwen3.5-4b",
          "gpu", "metal"),
     ],
 )  # fmt: skip
@@ -210,6 +210,19 @@ def test_recommendation_by_tier(
     assert (rec.tier, rec.model, rec.placement, rec.backend) == (tier, model, placement, backend)
     assert rec.reasons
     assert bool(rec.warnings) == (tier == "below-minimum")
+
+
+def test_larger_models_by_hand_and_their_tier() -> None:
+    from braino.runtime.tiers import option_for, tier_of
+
+    big_cpu = _hw(31.8, os="linux")
+    moe = option_for(big_cpu, "qwen3.6-35b-a3b")
+    assert moe is not None and moe.placement == "cpu"
+    assert tier_of(big_cpu, moe) == "more-ram"
+    card = _hw(31.8, ("NVIDIA GeForce GTX 1080 Ti", 11.0))
+    split = option_for(card, "qwen3.6-35b-a3b")
+    assert split is not None and split.placement == "partial"
+    assert recommend(card).options[0].model == "qwen3.5-4b"
 
 
 def test_choose_a_model_by_hand() -> None:

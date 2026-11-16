@@ -13,19 +13,28 @@ braino model status     # what is set up, and how fast it is
 
 ## Which model, on which computer
 
-BrainO detects the RAM and the GPU (if there is one with its own memory) and proposes a tier.
-Every tier works; larger ones answer better or faster.
+BrainO detects the RAM and the GPU (if there is one with its own memory) and proposes where to
+run the model. On every computer it proposes the same model, BrainO Qwen3.5 4B: Qwen3.5 4B
+fine-tuned for BrainO
+([kmnuddin/braino-qwen3.5-4b-GGUF](https://huggingface.co/kmnuddin/braino-qwen3.5-4b-GGUF)).
+Trained on conversations with BrainO's tools, it passes more of the agent evaluation than
+the models without that training: 94% on the CPU and 96% on a GPU, against about 90% for
+the plain 4B and for the much larger 35B-A3B. The training is described in `training/` and on the model's page.
 
-| Tier | Computer | Model | Download |
+| Tier | Computer | Where the 4B runs | Download |
 |---|---|---|---|
-| `minimum` | no GPU, 16 GB RAM | Qwen3.5 4B, on the CPU | 2.6 GB |
-| `more-ram` | no GPU, 32 GB RAM or more | Qwen3.6 35B-A3B, on the CPU | 19 GB |
-| `gpu` | a GPU with 6 GB or more, or a Mac with Apple silicon | the strongest model that fits: Qwen3.5 9B on an 8 GB GPU, or the 35B-A3B split between GPU and RAM | 2.6–19 GB |
+| `minimum` | no GPU, 16 GB RAM or more | on the CPU | 2.5 GB |
+| `gpu` | a GPU with 6 GB or more, or a Mac with Apple silicon | on the GPU, several times faster | 2.5 GB (plus about 650 MB for the CUDA build on Windows) |
 
-The 35B-A3B is a *mixture of experts*: it has 35 billion parameters but uses only about 3 billion
-for each word, so it runs about as fast as the 4B model while planning better. It needs the
-RAM to hold all of it, though. On a computer with a mid-sized GPU, its shared layers go on the
-GPU and its experts stay in RAM; llama.cpp works out the split from the memory available.
+The larger models stay available by hand, as the `more-ram` tier on the CPU or on a GPU:
+Qwen3.5 9B (5.3 GB, needs a GPU) and Qwen3.6 35B-A3B (19 GB). The 35B-A3B is a *mixture of
+experts*: it has 35 billion parameters but uses only about 3 billion for each word, so it runs
+about as fast as the 4B model, but it needs the RAM to hold all of it; with a mid-sized GPU,
+its shared layers go on the GPU and its experts stay in RAM.
+
+If you set up BrainO before its 4B was fine-tuned, or chose a larger model then,
+`braino model setup` proposes the fine-tuned 4B and downloads it once; the plain model's file
+(`Qwen3.5-4B-Q4_K_M.gguf` in the data folder's `models`) can then be deleted.
 
 BrainO keeps 8 GB of RAM free for the operating system, the app and your analyses. Below
 16 GB of RAM, it still sets up the 4B model but warns you that it may not fit next to your
@@ -35,7 +44,7 @@ To choose differently:
 
 ```bash
 braino model list                          # every model, its size, and whether it fits here
-braino model setup --model qwen3.5-4b      # a smaller model, for speed
+braino model setup --model qwen3.6-35b-a3b # a larger model, if it fits
 braino model setup --backend cpu           # ignore the GPU
 ```
 
