@@ -1,5 +1,8 @@
 """Pipelines: analyses declared as a list of tool steps, run with cached results."""
 
+# The tools first: some of them use the pipeline checks, so loading this package before them
+# would import it in a circle.
+from braino import tools as _tools  # noqa: F401
 from braino.pipelines.runner import (
     PipelineReport,
     PipelineState,

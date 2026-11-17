@@ -41,6 +41,10 @@ eeg = [
     "python-picard>=0.8", # fast extended-infomax ICA
     "scipy>=1.13",
 ]
+server = [
+    "fastapi>=0.115",     # the local engine service the desktop app talks to
+    "uvicorn>=0.30",
+]
 docs = [
     "mkdocs>=1.6",
     "mkdocs-material>=9.5",
@@ -49,6 +53,7 @@ docs = [
 dev = [
     "bids-validator>=1.14",
     "bidsschematools>=1.0", # reads the BIDS schema when building the documentation index
+    "httpx>=0.27",        # FastAPI's test client, for the engine service tests
     "jsonschema>=4.18",   # checks that compact tool schemas allow the same values
     "mypy>=1.10",
     "pooch>=1.8",

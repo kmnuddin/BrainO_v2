@@ -38,7 +38,7 @@ jobs:
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: pip install -e ".[dev,eeg]"
+      - run: pip install -e ".[dev,eeg,server]"
       - run: ruff check .
       - run: ruff format --check .
       - run: mypy
@@ -57,5 +57,5 @@ jobs:
           python-version: "3.11"
           cache: pip
           cache-dependency-path: engine/pyproject.toml
-      - run: pip install -e ".[dev]"
+      - run: pip install -e ".[dev,server]"
       - run: pytest

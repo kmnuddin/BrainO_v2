@@ -5,6 +5,20 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
 
 ## Unreleased
 
+- **The local engine service** (`braino serve`, with the new `server` extra): what the desktop
+  app will talk to.
+  - **Access:** a web service on this computer only, with a token.
+  - **Reads:** tools with their schemas, dataset summaries, proposals, pipelines and their
+    state per subject, and recorded runs.
+  - **Jobs:** importing, running a tool or a pipeline, deciding a proposal, and setting up
+    the model each run as a job in a process of its own. Jobs can be cancelled, report their
+    progress over a WebSocket, and run side by side as far as the computer's processors and
+    memory allow.
+  - **Saving pipelines:** pipelines built in the app are checked and saved as YAML in the
+    user's BrainO folder.
+  - See [Engine service](https://kmnuddin.github.io/BrainO_v2/reference/service/).
+- Importing `braino.pipelines` before `braino.tools` no longer fails with a circular import.
+
 ## 0.2.0
 
 The local AI agent: ask in your own words and it analyses an EEG dataset through BrainO's

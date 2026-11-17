@@ -382,7 +382,8 @@ later ones; later stages will be refined as they come closer.
 **Progress (2026-11-16):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
 done except the XDF reader, Stage C (M1.2 Pipeline) released as v0.1.0, Stage D (M1.3 Local
 AI, M1.4 Evaluation and the fine-tuned 4B) done and released as v0.2.0. Stage E: the desktop
-app's design is approved (section 6.1); next, the local engine service. Plan changed on 2026-10-27: BrainO is a desktop application on the user's own computer
+app's design is approved (section 6.1) and the local engine service and job runner are done
+(items 22–23); next, the Electron/React app (item 24). Plan changed on 2026-10-27: BrainO is a desktop application on the user's own computer
 only, with no server or paid GPU (minimum: no GPU, 16 GB RAM); Stages D and E were adjusted.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
@@ -752,6 +753,27 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     schema-driven, so this layer stays thin), started and stopped by the app.
 23. **Job runner** that fits the user's computer: as many jobs at once as cores and memory allow,
     progress reported over WebSocket, cancellable, results cached.
+
+    *Items 22 and 23 done (2026-11-16):* `braino serve`, with the new `server` extra. It is
+    FastAPI on 127.0.0.1 with a token, and every request must name this computer as its
+    host. The app starts it with `--exit-with-stdin`. It provides:
+    - reads: tools with their schemas, dataset summaries, proposals, pipelines and their
+      state, and runs;
+    - jobs: import, a tool, a pipeline, a decision, and the model setup. Each job runs as
+      `python -m braino.server.worker`, a process of its own, so it can be cancelled and a
+      crash stays in its job. Up to one job runs per two logical processors, and one per
+      3 GB of memory after the first 6 GB (three on the minimum computer), with processor
+      threads shared among them. Progress and each step's outcome arrive over a WebSocket;
+    - saving and checking the pipelines built in the app.
+
+    Pipelines reuse their cached steps as before. Two decisions changed:
+    - The jobs are plain processes, not `multiprocessing` ones: under the `braino.exe`
+      launcher, `multiprocessing` re-ran `braino serve` inside each job.
+    - Saved pipelines live in the user's BrainO folder, not the cache.
+
+    Still open: running one pipeline's subjects in parallel (the runner keeps one state file
+    per pipeline, so this needs per-subject state or a lock), and the agent over the service,
+    which is due with the agent panel. Reference: [Engine service](reference/service.md).
 24. **Electron/React app** (design in section 6.1), in this order: first run and data browser
     (home, import wizard, dataset overview) → pipelines (templates with parameter forms, then
     the builder) → decisions and plots → agent panel with approvals → trace browser (the

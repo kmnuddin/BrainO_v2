@@ -42,6 +42,42 @@ def version() -> None:
     typer.echo(__version__)
 
 
+@app.command("serve")
+def serve_command(
+    port: Annotated[int, typer.Option("--port", help="Port; 0 lets the system choose")] = 0,
+    host: Annotated[
+        str, typer.Option("--host", help="127.0.0.1, localhost or ::1 (this computer only)")
+    ] = "127.0.0.1",
+    allow_origin: Annotated[
+        list[str] | None,
+        typer.Option("--allow-origin", help="A page origin allowed to call it (repeatable)"),
+    ] = None,
+    exit_with_stdin: Annotated[
+        bool,
+        typer.Option("--exit-with-stdin", help="Stop when standard input closes (for the app)"),
+    ] = False,
+) -> None:
+    """Start the local engine service the desktop app talks to.
+
+    It listens on this computer only and needs a token: set BRAINO_SERVER_TOKEN, or use the
+    one printed in the ready line. Needs the [server] extra."""
+    try:
+        from braino.server import serve
+    except ImportError:
+        _fail('the engine service needs the server extra: pip install "braino[server]"')
+    try:
+        serve(
+            host=host,
+            port=port,
+            allow_origins=allow_origin or (),
+            exit_with_stdin=exit_with_stdin,
+        )
+    except ImportError:
+        _fail('the engine service needs the server extra: pip install "braino[server]"')
+    except (ValueError, OSError) as exc:
+        _fail(str(exc))
+
+
 @tools_app.command("list")
 def list_tools() -> None:
     """List the registered tools."""
