@@ -238,13 +238,62 @@ Initial EEG tool set:
 ## 6. User interface
 
 ### 6.1 Main UI (React + TypeScript)
-- **Data browser:** datasets, subjects and sessions, import wizard, QC status.
-- **EEG trace browser:** scrolling multichannel view with annotations and bad-channel marking
-  (WebGL-accelerated canvas, so long high-density recordings stay smooth).
-- **2D plots:** ERPs, spectra, time–frequency maps, topomaps, stats results (Plotly or similar).
-- **Pipeline view:** the steps of a run, their parameters and status; re-run from any step.
-- **Agent panel:** chat, the agent's plan, approval prompts for `decision` tools, links to outputs.
-- **Reports:** generated HTML/PDF, and export of the re-runnable script.
+Design approved on 2026-11-16 from clickable mockups of nine screens
+(<https://claude.ai/artifact/BBE5tk6htTnXRnESD51ohN>, private to the owner).
+
+**Layout.** One window with four areas:
+- a title bar with the location (Datasets / dataset / subject) and Settings;
+- a left sidebar: Overview, Import recordings, Pipelines, Pipeline builder, Decisions (with
+  the number waiting) and Results, then the dataset's subjects with a status mark each
+  (analysed, decision needed, running, imported);
+- the workspace in the centre;
+- the **agent panel, always docked on the right** (it can be collapsed);
+- a status bar: engine, model and whether it runs on the CPU or GPU, running jobs with
+  progress, memory use, and "Nothing leaves this computer".
+
+**Screens.**
+1. **First run:** the hardware check, the recommended model downloading with progress (what
+   `braino model setup` does), and the folder for new datasets. BrainO can be used without the
+   agent, and work can start while the model downloads.
+2. **Home:** open a dataset, a new dataset from recordings, try an example (ERP CORE P3), and
+   recent datasets with what is waiting in each.
+3. **Import wizard:** choose files → format → subjects and sessions (filled in from the file
+   names, rows that need the user marked; or load a mapping CSV) → personal details that will
+   be removed → import.
+4. **Dataset overview:** the running pipeline's progress (done, running, waiting for a
+   decision), filters (all, needs you, running, quality problems) and a table of subjects by
+   step (quality, bad channels, ICA, epochs kept, ERP).
+5. **Trace browser:** scrolling multichannel view with a window, scale and display filter (the
+   display filter never changes the data), event markers, annotated spans, channels proposed
+   as bad highlighted, marking channels bad, and an overview bar of the whole recording.
+   WebGL-accelerated canvas, so long high-density recordings stay smooth. Tabs for the quality
+   report and the events.
+6. **Decisions:** one inbox for every proposal from pipelines and from the agent (bad channels,
+   ICA components), with the decided ones below. Each shows its evidence (electrode map, each
+   proposed channel beside a good neighbour; for ICA, each component's map and spectrum) and
+   approve, edit (untick or add) or reject. The decision is recorded and replayed on re-runs.
+7. **Pipeline templates:** built-in templates (ERP CORE P3 and N170, resting-state spectra,
+   time–frequency) and the user's own. Each step shows a parameter form **generated from the
+   tool's JSON schema**; `decision` steps are marked "You decide". Run on all or chosen
+   subjects; the screen says how many will be skipped as unchanged.
+8. **Pipeline builder:** build a pipeline step by step: add a step from a menu (clean,
+   measure, test), reorder, remove, edit the selected step's form, choose which earlier step's
+   output it uses, check that every step gets the data it needs, save, run. Templates open
+   here to be adapted.
+9. **Results:** ERPs with the measurement window and significant clusters, topographic maps,
+   spectra, time–frequency maps (Plotly or similar), the statistics table, export of figures
+   and data; group or one subject.
+
+**Agent panel.** Chat; the agent's plan as a checklist; each tool call shown and expandable;
+decision cards in the chat (approve, edit, reject); every number in an answer links to the tool
+call that produced it. It knows which screen and item the user is looking at.
+
+**Later, after the trace browser:** History (the timeline of tool calls and decisions, export
+of the re-runnable script, checking a re-run) and Reports (HTML/PDF).
+
+**Engine work the design needs:** the service must accept, check and save pipelines built in
+the app, and the agent needs a tool to edit a pipeline (for example `pipeline.add_step`), so
+that asking the agent and using the builder change the same pipeline.
 
 ### 6.2 3D viewer (Unity 6, WebGL)
 Shows only what the engine sends. It does no analysis or file I/O.
@@ -320,7 +369,7 @@ Durations assume one developer working full-time; part-time roughly doubles them
 | M1.3 Local AI | Local model runtime and hardware tiers, LLM client, templates, plan checks, RAG index, approvals in the CLI | "Compare conditions A vs B" runs end to end from the CLI **on a computer with no GPU and 16 GB RAM** | 2–3 months |
 | M1.4 Evaluation | Agent eval set (tasks + expected outputs), scored per tier; first LoRA fine-tune (on the HPC) only if evals show gaps | Eval pass rate tracked on the minimum tier; base vs fine-tuned compared | 1–1.5 months, then ongoing |
 | **Release v0.2** | Engine + local agent | — | — |
-| M1.5 Desktop app | Local engine service, Electron/React app (data browser, trace browser, plots, agent panel with approvals), installer per OS | The M1.3 workflow runs entirely from the installed app on the minimum computer | 3–4 months |
+| M1.5 Desktop app | Local engine service, Electron/React app (data browser, import wizard, pipeline templates and builder, decisions inbox, plots, agent panel with approvals, trace browser), installer per OS | The M1.3 workflow runs entirely from the installed app on the minimum computer | 3–4 months |
 | M1.6 3D viewer | New Unity 6 WebGL viewer, embedding, JS bridge, scene service; sensor topographies over time | Results appear in the embedded 3D panel; clicking a sensor opens its ERP; smooth on integrated graphics | 2–3 months |
 | **Release v1.0** | Desktop app for Windows, macOS and Linux | — | — |
 
@@ -332,7 +381,8 @@ later ones; later stages will be refined as they come closer.
 
 **Progress (2026-11-16):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
 done except the XDF reader, Stage C (M1.2 Pipeline) released as v0.1.0, Stage D (M1.3 Local
-AI, M1.4 Evaluation and the fine-tuned 4B) done and prepared as v0.2.0. Next: Stage E. Plan changed on 2026-10-27: BrainO is a desktop application on the user's own computer
+AI, M1.4 Evaluation and the fine-tuned 4B) done and released as v0.2.0. Stage E: the desktop
+app's design is approved (section 6.1); next, the local engine service. Plan changed on 2026-10-27: BrainO is a desktop application on the user's own computer
 only, with no server or paid GPU (minimum: no GPU, 16 GB RAM); Stages D and E were adjusted.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
@@ -702,8 +752,10 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     schema-driven, so this layer stays thin), started and stopped by the app.
 23. **Job runner** that fits the user's computer: as many jobs at once as cores and memory allow,
     progress reported over WebSocket, cancellable, results cached.
-24. **Electron/React app**, in this order: data browser → plots → agent panel with approvals →
-    trace browser (the hardest view, so it comes last).
+24. **Electron/React app** (design in section 6.1), in this order: first run and data browser
+    (home, import wizard, dataset overview) → pipelines (templates with parameter forms, then
+    the builder) → decisions and plots → agent panel with approvals → trace browser (the
+    hardest view, so it comes last) → history and reports.
 25. **Installers** for Windows, macOS and Linux, each bundling a Python runtime with the engine
     and llama.cpp; the model is downloaded on first use. Tested on a computer with no GPU and
     16 GB RAM.
