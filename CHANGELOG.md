@@ -5,6 +5,39 @@ All notable changes to BrainO. Versions follow [semantic versioning](https://sem
 
 ## Unreleased
 
+- **The desktop app** (`app/`, Electron and React; not released yet). It starts the engine
+  service and works through it. Done so far:
+  - **First run:** the hardware check, downloading the AI model, and the folder for
+    datasets.
+  - **Home:** open a dataset, start one from recordings, or download the ERP CORE P3
+    example; recent datasets show the decisions waiting in each.
+  - **Import wizard:** choose files or folders, check their formats, fill in subjects and
+    sessions (read from the file names, or from a mapping CSV), see which personal details
+    are removed, and import.
+  - **Dataset overview:** each subject's progress through a pipeline.
+  - **Pipelines:** templates and pipelines, every setting in a form made from the tool's
+    schema, and a builder that checks the pipeline as you edit it.
+  - **Decisions:** the evidence for each proposal (the electrode map, each proposed channel
+    beside a good neighbour, ICA component maps and spectra), to approve, change or reject.
+  - **Results:** ERPs, scalp maps, spectra, time-frequency maps, the group test and the
+    measures, with figures and data saved as files.
+
+  The agent panel, the trace browser, history and reports come next. See `app/README.md`.
+- Engine service, for the app:
+  - **Decision evidence:** `GET /api/proposals/{id}/evidence`.
+  - **Results:** `GET /api/pipelines/{name}/results` and `.../results/{step}`.
+  - **Templates:** `GET /api/templates` and `POST /api/templates/{name}/build`.
+  - **Pipelines run on a dataset:** `GET /api/datasets/pipelines`.
+  - **The ERP CORE example:** `POST /api/jobs/example` downloads it.
+  - **More in `/api/system`:** the recommended model and your BrainO folder.
+  - **Pipelines keep the spec they last ran with,** so a pipeline that was never saved
+    still has its results.
+  - **`python -m braino`** runs the command line.
+- `/api/events` works over a real connection: the `server` extra now includes `websockets`,
+  which uvicorn needs for WebSockets.
+- On Windows, `braino serve --exit-with-stdin` no longer hangs the first time a request loads
+  numpy (for example, a decision's evidence): standard input is now watched through a
+  private copy.
 - **The local engine service** (`braino serve`, with the new `server` extra): what the desktop
   app will talk to.
   - **Access:** a web service on this computer only, with a token.

@@ -74,6 +74,9 @@ class StepRecord(BaseModel):
 class PipelineState(BaseModel):
     name: str
     spec_sha256: str
+    spec: dict[str, Any] | None = Field(
+        default=None, description="The spec as it last ran (so its results can be read back)"
+    )
     records: dict[str, StepRecord] = Field(
         default_factory=dict, description="'<subject>/<step id>' -> record"
     )
@@ -126,6 +129,21 @@ def load_state(ctx: RunContext, spec: PipelineSpec) -> PipelineState:
     if path.is_file():
         return PipelineState.model_validate_json(path.read_text(encoding="utf-8"))
     return PipelineState(name=spec.name, spec_sha256=spec.sha256())
+
+
+def ran_specs(ctx: RunContext) -> list[PipelineSpec]:
+    """The specs of the pipelines that have run on the dataset, as they last ran (pipelines
+    whose state predates keeping the spec are left out)."""
+    folder = ctx.derivatives_root / PIPELINES_DIR
+    specs = []
+    for path in sorted(folder.glob(f"*/{STATE_FILE}")) if folder.is_dir() else []:
+        try:
+            state = PipelineState.model_validate_json(path.read_text(encoding="utf-8"))
+        except ValueError:
+            continue
+        if state.spec is not None:
+            specs.append(PipelineSpec.model_validate(state.spec))
+    return specs
 
 
 def save_state(ctx: RunContext, state: PipelineState) -> None:
@@ -190,6 +208,7 @@ def run_pipeline(
         spec.step(from_step)  # check it exists
     state = load_state(ctx, spec)
     state.spec_sha256 = spec.sha256()
+    state.spec = spec.model_dump(mode="json")
     hasher = _Hasher(ctx.dataset, state)
     runner = _Runner(spec, ctx, reg, state, hasher, auto_approve, progress)
 

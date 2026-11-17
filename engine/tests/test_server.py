@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import subprocess
@@ -128,6 +129,37 @@ def test_system(client: TestClient) -> None:
     assert info["version"] == __version__
     assert info["jobs"] == {"max_parallel": 2, "threads_per_job": 1}
     assert "cpu_count" in info["hardware"]
+    models = {m["id"] for m in info["models"]}
+    assert info["recommendation"]["model"] in models
+    assert Path(info["user_folder"]).is_absolute()
+
+
+def test_example_job(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    response = client.post("/api/jobs/example", headers=HEADERS, json={"task": "P300"})
+    assert response.status_code == 422
+    response = client.post("/api/jobs/example", headers=HEADERS, json={"subjects": 0})
+    assert response.status_code == 422
+
+    # The job downloads each file of the first subjects and reports its progress.
+    from braino.datasets import erpcore
+    from braino.server import worker
+
+    fetched: list[str] = []
+    monkeypatch.setattr(erpcore, "fetch_file", lambda task, entry: fetched.append(entry["path"]))
+    reports: list[Any] = []
+    result = worker.run_example({"task": "P3", "subjects": 2}, worker.Reporter(_Queue(reports)))
+    assert result["subjects"] == ["001", "002"]
+    assert Path(result["dataset"]) == erpcore.data_dir() / "P3"
+    assert {p.split("/")[0] for p in fetched if "/" in p} == {"sub-001", "sub-002"}
+    assert reports[-1][0] == "progress" and reports[-1][1]["fraction"] == 1.0
+
+
+class _Queue:
+    def __init__(self, items: list[Any]) -> None:
+        self.items = items
+
+    def put(self, item: Any) -> None:
+        self.items.append(item)
 
 
 def test_unknown_folders_are_refused(client: TestClient, tmp_path: Path) -> None:
@@ -296,6 +328,102 @@ def dataset(tmp_path: Path) -> Path:
     return write_dataset(tmp_path / "bids", ["01", "02"], task="oddball", seconds=30.0)
 
 
+def test_templates_build_a_pipeline_for_the_dataset(client: TestClient, dataset: Path) -> None:
+    templates = {t["name"]: t for t in client.get("/api/templates", headers=HEADERS).json()}
+    erp = templates["erp-comparison"]
+    assert "condition_a" in erp["settings_schema"]["properties"]
+    settings = {
+        "condition_a": "rare",
+        "events_a": ["stimulus/rare"],
+        "condition_b": "frequent",
+        "events_b": ["stimulus/frequent"],
+        "channels": ["Pz"],
+        "tmin": 0.3,
+        "tmax": 0.5,
+        "test_scope": "measured",
+        "measure": "mean",
+        "correction": "fdr",
+    }
+    url = "/api/templates/erp-comparison/build"
+    response = client.post(
+        url, headers=HEADERS, json={"settings": settings, "dataset": str(dataset)}
+    )
+    assert response.status_code == 200, response.text
+    spec = response.json()
+    assert spec["task"] == "oddball" and spec["subjects"] == ["01", "02"]
+    check = client.post("/api/pipelines/check", headers=HEADERS, json={"spec": spec}).json()
+    assert check["valid"], check
+
+    bad = {**settings, "task": "rest"}
+    response = client.post(url, headers=HEADERS, json={"settings": bad, "dataset": str(dataset)})
+    assert (
+        response.status_code == 422 and "no recording of task 'rest'" in response.json()["detail"]
+    )
+    response = client.post(
+        "/api/templates/nope/build", headers=HEADERS, json={"settings": {}, "dataset": str(dataset)}
+    )
+    assert response.status_code == 422
+
+
+def test_results_of_a_pipeline_run_from_a_template(client: TestClient, tmp_path: Path) -> None:
+    pytest.importorskip("mne")
+    pytest.importorskip("mne_bids")
+    pytest.importorskip("pybv")
+    from braino.datasets.synthetic import write_dataset
+
+    bids = write_dataset(tmp_path / "three", ["01", "02", "03"], task="oddball", seconds=40.0)
+    settings = {
+        "condition_a": "rare",
+        "events_a": ["stimulus/rare"],
+        "condition_b": "frequent",
+        "events_b": ["stimulus/frequent"],
+        "channels": ["Pz"],
+        "tmin": 0.3,
+        "tmax": 0.5,
+        "test_scope": "measured",
+        "measure": "mean",
+        "correction": "fdr",
+        "ica": False,
+        "bad_channels": False,
+        "reject": "none",
+    }
+    spec = client.post(
+        "/api/templates/erp-comparison/build",
+        headers=HEADERS,
+        json={"settings": settings, "dataset": str(bids)},
+    ).json()
+    request = {"dataset": str(bids), "spec": spec, "auto_approve": True}
+    job = client.post("/api/jobs/pipeline", headers=HEADERS, json=request).json()
+    done = wait_done(client, job)
+    assert done["status"] == "done", done["error"]
+
+    # The pipeline was never saved, but it ran on the dataset: its state and results are there.
+    name = spec["name"]
+    ran = client.get(f"/api/datasets/pipelines?dataset={bids}", headers=HEADERS).json()
+    assert [(p["name"], p["source"]) for p in ran] == [(name, "ran")]
+    state = client.get(f"/api/pipelines/{name}/state?dataset={bids}", headers=HEADERS).json()
+    assert set(state["subjects"]) >= {"01", "02", "03"}
+
+    results = client.get(f"/api/pipelines/{name}/results?dataset={bids}", headers=HEADERS).json()
+    erp_step = next(s for s in results["steps"] if s["kind"] == "erp")
+    assert erp_step["subjects"] == ["01", "02", "03"]
+    assert results["measures"] and results["group"][0]["result"] is not None
+
+    url = f"/api/pipelines/{name}/results/{erp_step['id']}"
+    params = {"dataset": str(bids), "channel": "Pz", "tmin": 0.3, "tmax": 0.5}
+    waves = client.get(url, headers=HEADERS, params=params).json()
+    assert waves["channel"] == "Pz" and waves["subjects"] == ["01", "02", "03"]
+    assert {"rare", "frequent"} <= set(waves["series"])
+    assert all(len(v) == len(waves["x"]) for v in waves["series"].values())
+    # The synthetic P3: rare above frequent at Pz in 300-500 ms.
+    pz = waves["channels"].index("Pz")
+    assert waves["maps"]["rare"][pz] > waves["maps"]["frequent"][pz] + 1.0
+    one = client.get(url, headers=HEADERS, params={**params, "subject": "02"}).json()
+    assert one["subjects"] == ["02"]
+    missing = client.get(url, headers=HEADERS, params={**params, "subject": "09"})
+    assert missing.status_code == 404
+
+
 def test_a_pipeline_waits_for_a_decision_made_in_the_app(client: TestClient, dataset: Path) -> None:
     summary = client.get(f"/api/datasets/summary?path={dataset}", headers=HEADERS).json()
     assert summary["subjects"] == ["01", "02"] and summary["tasks"] == ["oddball"]
@@ -313,6 +441,17 @@ def test_a_pipeline_waits_for_a_decision_made_in_the_app(client: TestClient, dat
     pending = client.get(f"/api/proposals?dataset={dataset}&status=pending", headers=HEADERS).json()
     assert len(pending) == 1 and pending[0]["tool"] == "eeg.detect_bad_channels"
     proposal_id = pending[0]["proposal_id"]
+
+    # What the app shows to decide: the electrodes, and each proposed channel beside a
+    # good neighbour.
+    url = f"/api/proposals/{proposal_id}/evidence?dataset={dataset}"
+    evidence = client.get(url, headers=HEADERS).json()
+    assert evidence["kind"] == "bad_channels"
+    assert "Pz" in evidence["layout"]["names"] and len(evidence["amplitude_uv"]) == 20
+    for channel in evidence["channels"]:
+        assert channel["name"] in evidence["proposed"]
+        assert channel["neighbour"] not in evidence["proposed"]
+        assert len(channel["signal"]) == len(channel["neighbour_signal"]) > 500
 
     client.put("/api/pipelines/my-oddball", headers=HEADERS, json={"spec": SPEC})
     state = client.get(f"/api/pipelines/my-oddball/state?dataset={dataset}", headers=HEADERS).json()
@@ -332,6 +471,28 @@ def test_a_pipeline_waits_for_a_decision_made_in_the_app(client: TestClient, dat
     assert len(runs) == 2
     log = client.get(f"/api/runs/{runs[0]}?dataset={dataset}", headers=HEADERS).json()
     assert [c["tool"] for c in log["calls"]] == ["eeg.preprocess", "eeg.detect_bad_channels"]
+
+
+def test_evidence_for_an_ica_proposal(dataset: Path) -> None:
+    pytest.importorskip("mne_icalabel")
+    from braino.server.evidence import evidence
+    from braino.tools import RunContext, registry
+
+    ctx = RunContext(dataset_root=dataset)
+    registry.get("eeg.preprocess").run({"subject": "01", "h_freq": 40.0}, ctx)
+    result = registry.get("eeg.ica_clean").run({"subject": "01", "n_components": 8}, ctx)
+    record = ctx.proposals.get(result.model_dump()["proposal_id"])
+    shown = evidence(ctx, record)
+    assert shown["kind"] == "ica" and shown["shown"] == 8
+    n_channels = len(shown["channels"])
+    for component in shown["components"]:
+        assert len(component["weights"]) == n_channels
+        assert len(component["psd_db"]) == len(shown["freqs"])
+        assert component["label"] != "?"
+    assert {c["index"] for c in shown["components"] if c["proposed"]} == set(
+        record.proposal["exclude"]
+    )
+    assert shown["freqs"][0] >= 1 and shown["freqs"][-1] <= 45
 
 
 def test_a_pipeline_that_fails_its_check_does_not_run(client: TestClient, dataset: Path) -> None:
@@ -366,12 +527,13 @@ def test_detecting_recordings_in_a_folder(client: TestClient, tmp_path: Path) ->
 # --- the command --------------------------------------------------------------------------
 
 
-def test_braino_serve_starts_answers_and_stops_with_its_input() -> None:
+def test_braino_serve_starts_answers_and_stops_with_its_input(tmp_path: Path) -> None:
     import httpx
+    from websockets.sync.client import connect
 
     env = {**os.environ, "BRAINO_SERVER_TOKEN": TOKEN}
     process = subprocess.Popen(
-        [sys.executable, "-c", "from braino.cli import app; app()", "serve", "--exit-with-stdin"],
+        [sys.executable, "-m", "braino", "serve", "--exit-with-stdin"],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         env=env,
@@ -384,6 +546,20 @@ def test_braino_serve_starts_answers_and_stops_with_its_input() -> None:
         assert httpx.get(f"{ready['url']}/api/health", timeout=30).json()["status"] == "ok"
         tools = httpx.get(f"{ready['url']}/api/tools", headers=HEADERS, timeout=30)
         assert tools.status_code == 200
+        # A request that first loads numpy answers. On Windows it froze while a thread read
+        # the stdin pipe for --exit-with-stdin.
+        evidence = httpx.get(
+            f"{ready['url']}/api/proposals/nope/evidence",
+            params={"dataset": str(tmp_path)},
+            headers=HEADERS,
+            timeout=60,
+        )
+        has_numpy = importlib.util.find_spec("numpy") is not None
+        assert evidence.status_code == (404 if has_numpy else 501)
+        # The events WebSocket works over a real connection (it needs a WebSocket library).
+        ws_url = ready["url"].replace("http", "ws") + "/api/events"
+        with connect(ws_url, subprotocols=["braino", TOKEN], open_timeout=30) as events:  # type: ignore[list-item]
+            assert json.loads(events.recv(timeout=30)) == {"type": "jobs", "jobs": []}
         process.stdin.close()
         assert process.wait(timeout=30) == 0
     finally:

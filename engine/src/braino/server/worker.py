@@ -253,7 +253,27 @@ def run_model_setup(payload: dict[str, Any], reporter: Reporter) -> dict[str, An
     return settings.model_dump(mode="json")
 
 
+def run_example(payload: dict[str, Any], reporter: Reporter) -> dict[str, Any]:
+    """Download the first subjects of an ERP CORE task (BIDS), checked against pinned
+    hashes; files already downloaded are reused."""
+    from braino.datasets import erpcore
+
+    task = payload["task"]
+    subjects = erpcore.SUBJECTS[: int(payload["subjects"])]
+    reporter.started(None)
+    entries = erpcore.files(task, subjects)
+    total = sum(e["size"] for e in entries) or 1
+    done = 0
+    for entry in entries:
+        erpcore.fetch_file(task, entry)
+        done += entry["size"]
+        reporter.progress(done / total, f"{done / 2**20:.0f} of {total / 2**20:.0f} MB")
+    root = erpcore.data_dir() / task
+    return {"dataset": str(root), "task": task, "subjects": list(subjects)}
+
+
 KINDS: dict[str, Callable[[dict[str, Any], Reporter], Any]] = {
+    "example": run_example,
     "tool": run_tool,
     "pipeline": run_pipeline_job,
     "import": run_import,

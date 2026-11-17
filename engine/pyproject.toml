@@ -44,6 +44,7 @@ eeg = [
 server = [
     "fastapi>=0.115",     # the local engine service the desktop app talks to
     "uvicorn>=0.30",
+    "websockets>=13",     # uvicorn's WebSocket support, for /api/events
 ]
 docs = [
     "mkdocs>=1.6",

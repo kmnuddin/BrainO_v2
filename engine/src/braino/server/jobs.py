@@ -32,7 +32,7 @@ THREAD_VARIABLES = (
 """Set in each job's environment, so that the numerical libraries of jobs running side by side
 share the processor instead of each using all of it."""
 
-JobKind = Literal["tool", "pipeline", "import", "decision", "model_setup"]
+JobKind = Literal["tool", "pipeline", "import", "decision", "model_setup", "example"]
 JobStatus = Literal["queued", "running", "done", "failed", "cancelled"]
 FINISHED: tuple[JobStatus, ...] = ("done", "failed", "cancelled")
 

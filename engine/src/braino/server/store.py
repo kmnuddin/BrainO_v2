@@ -18,7 +18,8 @@ from braino.paths import user_pipelines_dir
 from braino.pipelines import PipelineSpec, SpecError, builtin_specs, check_spec, load_spec
 from braino.pipelines.spec import NAME_PATTERN
 
-Source = Literal["builtin", "user"]
+Source = Literal["builtin", "user", "ran"]
+"""Built in, saved by the user, or only run on a dataset (from a template or the builder)."""
 
 
 class BuiltinPipelineError(ValueError):
@@ -36,14 +37,14 @@ class PipelineStore:
     def list(self) -> list[dict[str, Any]]:
         """Built-in pipelines first, then the user's, each with its name, description, task
         and steps."""
-        items = [self._item("builtin", load_spec(name)) for name in sorted(builtin_specs())]
+        items = [self.item("builtin", load_spec(name)) for name in sorted(builtin_specs())]
         for path in sorted(self.directory.glob("*.yaml")) if self.directory.is_dir() else []:
             try:
                 spec = load_spec(path)
             except (SpecError, OSError, yaml.YAMLError) as exc:
                 items.append({"name": path.stem, "source": "user", "error": str(exc)})
                 continue
-            items.append(self._item("user", spec))
+            items.append(self.item("user", spec))
         return items
 
     def get(self, name: str) -> tuple[Source, PipelineSpec]:
@@ -96,7 +97,7 @@ class PipelineStore:
         return self.directory / f"{name}.yaml"
 
     @staticmethod
-    def _item(source: Source, spec: PipelineSpec) -> dict[str, Any]:
+    def item(source: Source, spec: PipelineSpec) -> dict[str, Any]:
         return {
             "name": spec.name,
             "source": source,

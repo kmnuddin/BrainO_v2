@@ -86,6 +86,16 @@ class DecisionRequest(BaseModel):
     note: str | None = None
 
 
+class TemplateRequest(BaseModel):
+    settings: dict[str, Any]
+    dataset: str = Field(description="The dataset the pipeline is for (its task and subjects)")
+
+
+class ExampleRequest(BaseModel):
+    task: str = Field(default="P3", description="ERP CORE task: P3 or N170")
+    subjects: int = Field(default=10, ge=1, le=40, description="How many subjects, from 001")
+
+
 class ModelSetupRequest(BaseModel):
     model: str | None = Field(default=None, description="Model ID; the recommended one if null")
     backend: str | None = None
@@ -151,14 +161,23 @@ def create_app(
 
     @app.get("/api/system", dependencies=auth)
     def system() -> dict[str, Any]:
+        from braino.paths import user_root
         from braino.runtime import installed_models, load_settings
+        from braino.runtime.catalog import catalog
+        from braino.runtime.tiers import recommend
 
+        cat = catalog()
         return {
             "version": __version__,
             "hardware": _hardware().model_dump(mode="json"),
             "jobs": {"max_parallel": jobs.max_parallel, "threads_per_job": jobs.threads},
             "model": load_settings().model_dump(mode="json"),
             "installed_models": [m.id for m in installed_models()],
+            "recommendation": recommend(_hardware(), cat).model_dump(mode="json"),
+            "models": [
+                {"id": m.id, "name": m.name, "size_gb": round(m.size_gb, 2)} for m in cat.models
+            ],
+            "user_folder": str(user_root()),
         }
 
     # --- tools ----------------------------------------------------------------------------
@@ -205,6 +224,19 @@ def create_app(
             key=f"import:{dataset}",
         )
 
+    @app.post("/api/jobs/example", dependencies=auth)
+    def example_job(request: ExampleRequest) -> JobInfo:
+        from braino.datasets.erpcore import TASKS
+
+        if request.task not in TASKS:
+            raise HTTPException(422, f"unknown ERP CORE task {request.task!r}; choose {TASKS}")
+        return jobs.submit(
+            "example",
+            request.model_dump(),
+            title=f"Download ERP CORE {request.task} ({request.subjects} subjects)",
+            key=f"example:{request.task}",
+        )
+
     # --- running tools --------------------------------------------------------------------
 
     @app.post("/api/jobs/tool", dependencies=auth)
@@ -234,6 +266,17 @@ def create_app(
 
         ctx = RunContext(dataset_root=_folder(dataset))
         return ctx.proposals.get(proposal_id).model_dump(mode="json")
+
+    @app.get("/api/proposals/{proposal_id}/evidence", dependencies=auth)
+    def proposal_evidence(proposal_id: str, dataset: str) -> dict[str, Any]:
+        try:
+            from braino.server.evidence import evidence
+        except ImportError as exc:  # numpy and MNE come with the eeg extra
+            raise HTTPException(501, f"showing evidence needs the eeg extra ({exc})") from None
+        from braino.tools import RunContext
+
+        ctx = RunContext(dataset_root=_folder(dataset))
+        return evidence(ctx, ctx.proposals.get(proposal_id))
 
     @app.post("/api/proposals/{proposal_id}/decide", dependencies=auth)
     def decide(proposal_id: str, request: DecisionRequest) -> JobInfo:
@@ -284,10 +327,96 @@ def create_app(
         dataset = _folder(request.dataset) if request.dataset else None
         return _check(request.spec, dataset, request.subjects)
 
+    @app.get("/api/templates", dependencies=auth)
+    def template_list() -> list[dict[str, Any]]:
+        from braino.pipelines.templates import TEMPLATES
+
+        return [
+            {
+                "name": t.name,
+                "description": t.description,
+                "settings_schema": t.settings.model_json_schema(),
+            }
+            for t in TEMPLATES.values()
+        ]
+
+    @app.post("/api/templates/{name}/build", dependencies=auth)
+    def template_build(name: str, request: TemplateRequest) -> dict[str, Any]:
+        from braino.pipelines.templates import TemplateError, build
+
+        try:
+            spec = build(name, request.settings, _folder(request.dataset))
+        except TemplateError as exc:
+            raise HTTPException(422, str(exc)) from None
+        return spec.model_dump(mode="json")
+
+    def spec_for(name: str, folder: Path) -> Any:
+        """A saved or built-in pipeline, else one that ran on the dataset (from a template or
+        the builder) without being saved."""
+        from braino.pipelines.runner import ran_specs
+        from braino.tools import RunContext
+
+        try:
+            return store.get(name)[1]
+        except FileNotFoundError:
+            for spec in ran_specs(RunContext(dataset_root=folder)):
+                if spec.name == name:
+                    return spec
+            raise
+
+    @app.get("/api/datasets/pipelines", dependencies=auth)
+    def dataset_pipelines(dataset: str) -> list[dict[str, Any]]:
+        """The pipelines that have run on the dataset, as they last ran."""
+        from braino.pipelines.runner import ran_specs
+        from braino.tools import RunContext
+
+        saved = {p["name"] for p in store.list()}
+        return [
+            {**PipelineStore.item("user" if s.name in saved else "ran", s)}
+            for s in ran_specs(RunContext(dataset_root=_folder(dataset)))
+        ]
+
     @app.get("/api/pipelines/{name}/state", dependencies=auth)
     def pipeline_state(name: str, dataset: str) -> dict[str, Any]:
-        _, spec = store.get(name)
-        return _state(spec, _folder(dataset))
+        folder = _folder(dataset)
+        return _state(spec_for(name, folder), folder)
+
+    @app.get("/api/pipelines/{name}/results", dependencies=auth)
+    def pipeline_results(name: str, dataset: str) -> dict[str, Any]:
+        from braino.server.results import index
+        from braino.tools import RunContext
+
+        folder = _folder(dataset)
+        return index(RunContext(dataset_root=folder), spec_for(name, folder))
+
+    @app.get("/api/pipelines/{name}/results/{step}", dependencies=auth)
+    def pipeline_result_data(
+        name: str,
+        step: str,
+        dataset: str,
+        subject: str | None = None,
+        channel: str | None = None,
+        tmin: float | None = None,
+        tmax: float | None = None,
+        condition: str | None = None,
+    ) -> dict[str, Any]:
+        from braino.server.results import ResultsError, data
+        from braino.tools import RunContext
+
+        folder = _folder(dataset)
+        try:
+            return data(
+                RunContext(dataset_root=folder),
+                spec_for(name, folder),
+                step,
+                subject=subject,
+                channel=channel,
+                tmin=tmin,
+                tmax=tmax,
+                name=condition,
+            )
+        except ResultsError as exc:
+            raise HTTPException(404, str(exc)) from None
 
     @app.post("/api/jobs/pipeline", dependencies=auth)
     def pipeline_job(request: PipelineJobRequest) -> JobInfo:

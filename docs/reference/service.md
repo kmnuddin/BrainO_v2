@@ -69,7 +69,7 @@ It first sends `{"type": "jobs", "jobs": [...]}`, then one message for every cha
 | Route | What it does |
 |---|---|
 | `GET /api/health` | Whether the service is up, and its version (no token needed) |
-| `GET /api/system` | The computer, how many jobs run at once, the chosen model, the installed models |
+| `GET /api/system` | The computer, how many jobs run at once, the chosen model, the model recommended for this computer, the installed models, every model's size, and your BrainO folder |
 | `GET /api/tools`, `GET /api/tools/{name}` | The tools, with their risk and the JSON schemas of their input and output (the app builds its forms from these) |
 | `GET /api/datasets/summary?path=` | A dataset's subjects, sessions, tasks and recordings |
 | `POST /api/import/detect` | The recordings among files and folders, with their formats; other files, with the reason they were left out |
@@ -77,12 +77,19 @@ It first sends `{"type": "jobs", "jobs": [...]}`, then one message for every cha
 | `POST /api/jobs/tool` | Run one tool (job): `tool`, `arguments`, `dataset`. The arguments are checked before the job is queued. A decision tool's result is its pending proposal |
 | `GET /api/proposals?dataset=&status=` | The dataset's proposals, optionally only `pending`, `approved` or `rejected` |
 | `GET /api/proposals/{id}?dataset=` | One proposal |
+| `GET /api/proposals/{id}/evidence?dataset=` | What the person needs in order to decide, read from the recording. For bad channels: the electrode layout, each channel's amplitude, and ten seconds of each proposed channel beside its nearest good neighbour. For ICA: each component's weights at the electrodes and the spectrum of its activity |
 | `POST /api/proposals/{id}/decide` | Approve or reject (job): `dataset`, `approve`, optional `edits` and `note`. The decision is recorded in the name of the person using the computer |
 | `GET /api/pipelines` | The built-in pipelines, then the ones you saved |
 | `GET`, `PUT`, `DELETE /api/pipelines/{name}` | Read, save or delete a pipeline (`PUT` takes `{"spec": ...}`). Built-in pipelines cannot be replaced or deleted |
 | `POST /api/pipelines/check` | Check a spec: its steps against the tools, then the whole plan, against the data if `dataset` is given |
 | `GET /api/pipelines/{name}/state?dataset=` | For each subject and step: done, waiting for a decision, or rejected |
+| `GET /api/datasets/pipelines?dataset=` | The pipelines that have run on the dataset, as they last ran, including pipelines that were never saved (from a template or the builder) |
+| `GET /api/pipelines/{name}/results?dataset=` | The pipeline's results: its ERP, spectrum and time-frequency steps with the subjects that have results, the measures, and each group test's result |
+| `GET /api/pipelines/{name}/results/{step}?dataset=` | One measure step's data at one `channel`, averaged over the subjects or for one `subject`. For ERPs, also each waveform's scalp map between `tmin` and `tmax`. For time-frequency, the map of one `condition` |
+| `GET /api/templates` | The pipeline templates, with the JSON schema of their settings |
+| `POST /api/templates/{name}/build` | A template's pipeline for a dataset's task and subjects: `settings`, `dataset` |
 | `POST /api/jobs/pipeline` | Run a pipeline (job): `dataset`, a pipeline `name` or a `spec`, optional `subjects`, `from_step`, `auto_approve`. A plan that fails its check is refused with `422` and its findings |
+| `POST /api/jobs/example` | Download the first `subjects` (10 by default) of an ERP CORE `task` (P3 or N170), checked against pinned hashes (job). The result names the dataset's folder |
 | `POST /api/jobs/model-setup` | Install llama.cpp and download the model (job), with download progress: `model` (the recommended one by default), `backend`, `benchmark` |
 | `GET /api/jobs`, `GET /api/jobs/{id}` | This session's jobs, newest first; one job in full |
 | `POST /api/jobs/{id}/cancel` | Cancel a queued job, or stop a running one |
@@ -96,7 +103,11 @@ Errors come back as `{"detail": ...}`:
 - `404`: an unknown tool, proposal, pipeline, run or job;
 - `409`: a conflict, such as a job already working on it, a decided proposal, or a built-in
   pipeline;
-- `422`: arguments or a spec that do not fit.
+- `422`: arguments or a spec that do not fit;
+- `501`: something that needs the `eeg` extra, which is not installed.
+
+A pipeline's state keeps the spec it last ran with. That is how pipelines that were never
+saved still have results, and how `/api/datasets/pipelines` lists them.
 
 ## Saved pipelines
 

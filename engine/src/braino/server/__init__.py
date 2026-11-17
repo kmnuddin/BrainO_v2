@@ -71,13 +71,7 @@ def serve(
     server = uvicorn.Server(config)
 
     if exit_with_stdin:
-
-        def watch_stdin() -> None:
-            for _ in sys.stdin:
-                pass
-            server.should_exit = True
-
-        threading.Thread(target=watch_stdin, daemon=True).start()
+        _exit_when_stdin_closes(lambda: setattr(server, "should_exit", True))
 
     shown_host = f"[{host}]" if ":" in host else host
     ready: dict[str, object] = {"url": f"http://{shown_host}:{bound}", "pid": os.getpid()}
@@ -85,6 +79,30 @@ def serve(
         ready["token"] = token
     (announce or _print)(json.dumps({"braino_server": ready}))
     server.run(sockets=[sock])
+
+
+def _exit_when_stdin_closes(stop: Callable[[], None]) -> None:
+    """Call ``stop`` when the standard input closes (the app that started us has ended).
+
+    The pipe is read from a private copy, and standard input itself is pointed at the null
+    device. On Windows, a thread reading standard input directly made the service hang the
+    first time a request loaded numpy's native code (the evidence for a decision): Windows
+    lets only one operation at a time use a pipe opened this way, and something in the
+    loading waited for the read to finish.
+    """
+    private = os.dup(sys.stdin.fileno())
+    null = os.open(os.devnull, os.O_RDONLY)
+    os.dup2(null, 0)
+    os.close(null)
+    sys.stdin = open(os.devnull, encoding="utf-8")  # noqa: SIM115 (open for the process)
+
+    def watch() -> None:
+        with os.fdopen(private, "rb", buffering=0) as stream:
+            while stream.read(65536):
+                pass
+        stop()
+
+    threading.Thread(target=watch, daemon=True, name="braino-stdin").start()
 
 
 def _print(line: str) -> None:

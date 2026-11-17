@@ -379,11 +379,12 @@ Durations assume one developer working full-time; part-time roughly doubles them
 The detailed order of work within milestone 1. Near-term stages are specified in more detail than
 later ones; later stages will be refined as they come closer.
 
-**Progress (2026-11-16):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
+**Progress (2026-11-17):** Stage A done (items 1–4), the Qwen spike done, Stage B (M1.1 Import)
 done except the XDF reader, Stage C (M1.2 Pipeline) released as v0.1.0, Stage D (M1.3 Local
 AI, M1.4 Evaluation and the fine-tuned 4B) done and released as v0.2.0. Stage E: the desktop
 app's design is approved (section 6.1) and the local engine service and job runner are done
-(items 22–23); next, the Electron/React app (item 24). Plan changed on 2026-10-27: BrainO is a desktop application on the user's own computer
+(items 22–23). The Electron/React app (item 24) is under way: first run, the data browser,
+pipelines, decisions and results are done; the agent panel is next. Plan changed on 2026-10-27: BrainO is a desktop application on the user's own computer
 only, with no server or paid GPU (minimum: no GPU, 16 GB RAM); Stages D and E were adjusted.
 
 **Stage A — Engine plumbing (before any EEG code, ~2–3 weeks).** Every later tool depends on
@@ -778,6 +779,32 @@ tokens/s using 6.4 GB of VRAM. The tool contract needed no changes.
     (home, import wizard, dataset overview) → pipelines (templates with parameter forms, then
     the builder) → decisions and plots → agent panel with approvals → trace browser (the
     hardest view, so it comes last) → history and reports.
+
+    *Progress (2026-11-17): the first three parts are done.* The app is in `app/`: Electron
+    45, React 19 and TypeScript, built with electron-vite. Its charts are its own SVG and
+    canvas drawings, with no chart library. Each screen was checked against the real engine
+    by a script that drives the app and saves screenshots (`BRAINO_CAPTURE`). Done:
+    - the shell: the sidebar with subjects and their status, the agent panel's place (still
+      empty), and the status bar;
+    - first run, home with the ERP CORE example, the import wizard and the dataset overview;
+    - pipeline templates with forms generated from the JSON schemas (templates' settings and
+      every step's arguments), and the builder;
+    - decisions with their evidence, and results.
+
+    The engine gained what these needed:
+    - the evidence for a decision, a pipeline's results, the templates over the service, and
+      the example download;
+    - pipelines remember the spec they ran with, so ones never saved still show results;
+    - two fixes found by running the app. `/api/events` needed a WebSocket library. And on
+      Windows, `--exit-with-stdin` made the service hang the first time a request loaded
+      numpy.
+
+    Next: the agent panel, which needs the agent over the service; then the trace browser,
+    history and reports.
+
+    One thing to settle: pipelines on one dataset share its derivatives. A pipeline with
+    other preprocessing therefore makes the bad channels approved for another one stale, and
+    its epoching refuses them until they are decided again.
 25. **Installers** for Windows, macOS and Linux, each bundling a Python runtime with the engine
     and llama.cpp; the model is downloaded on first use. Tested on a computer with no GPU and
     16 GB RAM.

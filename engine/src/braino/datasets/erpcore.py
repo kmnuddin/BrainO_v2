@@ -107,14 +107,18 @@ def fetch(
     Files already in the cache are reused if their size matches; ``verify=True`` re-checks
     their hashes too. Raises :class:`DownloadError` if a download does not match its hash.
     """
-    root = data_dir() / task
     for entry in files(task, subjects, stimuli=stimuli):
-        target = root / entry["path"]
-        cached = target.is_file() and target.stat().st_size == entry["size"]
-        if cached and (not verify or _sha256(target) == entry["sha256"]):
-            continue
+        fetch_file(task, entry, verify=verify)
+    return data_dir() / task
+
+
+def fetch_file(task: str, entry: dict[str, Any], *, verify: bool = False) -> Path:
+    """Download (or reuse) one manifest entry of ``task``; returns its path."""
+    target = data_dir() / task / str(entry["path"])
+    cached = target.is_file() and target.stat().st_size == entry["size"]
+    if not (cached and (not verify or _sha256(target) == entry["sha256"])):
         _download(entry, target)
-    return root
+    return target
 
 
 def _label(subject: str | int) -> str:
